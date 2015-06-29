@@ -2,6 +2,7 @@
 #r "packages/Suave/lib/net40/Suave.dll"
 #r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
 #r "packages/DotLiquid/lib/NET45/DotLiquid.dll"
+#r "packages/Suave.DotLiquid/lib/net40/Suave.DotLiquid.dll"
 #load "packages/FSharp.Formatting/FSharp.Formatting.fsx"
 open System
 open System.Web
@@ -18,7 +19,6 @@ open Suave.Http.Successful
 // Loading the FsSnip.WebSite project files
 // -------------------------------------------------------------------------------------------------
 
-#load "code/common/dotliquid.fs"
 #load "code/common/utils.fs"
 #load "code/common/filters.fs"
 #load "code/common/data.fs"
@@ -50,7 +50,11 @@ let browseStaticFiles ctx = async {
   return! browseStaticFile file ctx }
 
 // Configure DotLiquid templates & register filters (in 'filters.fs')
-DotLiquid.registerFiltersByName "FsSnip.Filters"
+[ for t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes() do
+    if t.Name = "Filters" && not (t.FullName.StartsWith "<") then yield t ]
+|> Seq.last
+|> DotLiquid.registerFiltersByType
+
 DotLiquid.setTemplatesDir (__SOURCE_DIRECTORY__ + "/templates")
 
 // Handles routing for the server
@@ -71,8 +75,8 @@ let app =
 
 #if INTERACTIVE
 #else
-let cfg = 
-  { defaultConfig with 
+let cfg =
+  { defaultConfig with
       bindings = [ HttpBinding.mk' HTTP  "127.0.0.1" 8011 ]
       homeFolder = Some __SOURCE_DIRECTORY__ }
 let _, server = startWebServerAsync cfg app
