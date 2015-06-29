@@ -1,0 +1,80 @@
+{% extends "page.html" %}
+{% block head %}
+  <title>Home page | F# Snippets</title>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12"><h2>Recent snippets</h2></div>
+</div>
+
+<div class="row">
+  <div class="content col-md-6">
+    <ul>
+      {% for item in model.Recent limit:3 %}
+      {% include "item.html" item:item %}
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="content col-md-6">
+    <ul>
+      {% for item in model.Recent limit:3 offset:3 %}
+      {% include "item.html" item:item %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12"><h2>Popular snippets</h2></div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <ul>
+      {% for item in model.Popular limit:3 %}
+      {% include "item.html" item:item %}
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="col-md-6">
+    <ul>
+      {% for item in model.Popular limit:3 offset:3 %}
+      {% include "item.html" item:item %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h2>Snippets by tags</h2>
+    <p class="brief-listing">
+      {% for it in model.Tags %}
+      <a style="font-size:{{ it.Size }}%" href="/tags/{{ it.Link }}">{{ it.Text }}</a> ({{ it.Count }})
+      {% endfor %}
+    </p>
+    <p class="brief-all"><a href="/tags/">View all...</a></p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h2>Snippets by authors</h2>
+    <p class="brief-listing">
+      {% for it in model.authors %}
+      <a style="font-size:{{ it.Size }}%" href="/authors/{{ it.Link }}">{{ it.Text }}</a> ({{ it.Count }})
+      {% endfor %}
+    </p>
+    <p class="brief-all"><a href="/authors/">View all...</a></p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <p class="brief-listing">
+      <small>Database contains {{ model.total_count }} snippets out of which {{ model.public_count }} is public.</small>
+    </p>
+  </div>
+</div>
+{% endblock %}

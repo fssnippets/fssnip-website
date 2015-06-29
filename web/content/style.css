@@ -1,0 +1,108 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
+
+/******************************* General page formatting ******************************************/
+
+body {
+  font-family:'Open Sans';
+  background-color:#E0E0E0;
+}
+
+.main {
+  padding-bottom:40px;
+}
+.content {
+  background:white;
+}
+
+body {
+  font-family: 'Open Sans', serif;
+  padding-top: 0px;
+  padding-bottom: 40px;
+}
+
+a, a:visited, a:link, a:hover {
+  color:#5A1345;
+  text-decoration:underline;
+}
+
+/*********************************** Styles for the home page ******************************************/
+
+.brief-listing {
+  text-align:center;
+}
+.brief-all {
+  text-align:right;
+}
+
+/*********************************** Styles for snippet details ******************************************/
+
+.snip-tweet {
+  float:right;
+  padding-top:5px;
+  margin:20px 30px 0px 0px;
+}
+
+.snip-like {
+  float:right;
+  font-size:80%;
+  margin:20px 30px 0px 0px;
+}
+
+#snip-tools {
+  float:right;
+  margin-right:8%;
+}
+
+#snip-tools a {
+  text-decoration:none;
+}
+
+.detail-table {
+  margin-left:30px;
+}
+
+.detail-lbl {
+  font-weight:bold;
+  width:80px;
+}
+
+/*********************************** Insert form ******************************************/
+
+#insert-form {
+  margin:30px 40px 0px 0px;
+}
+
+/*********************************** Headers and footers ******************************************/
+
+#heading {
+  background:#693F6A;
+  padding:10px 30px 10px 10px;
+  text-align:right;
+}
+#links {
+  background:#390F3A;
+  padding:2px 0px 2px 10px;
+}
+#links a:hover, #links a:visited, #links a:link {
+  font-weight:bold;
+  text-decoration:none;
+  color:white;
+  padding-right:10px;
+}
+
+.footer {
+  background:#693F6A;
+}
+
+.footer .col-sm-4 {
+  color:white;
+  font-size:80%;
+  padding:20px;
+}
+
+.footer a, .footer a:visited, .footer a:link, .footer a:hover {
+  color:white;
+  text-decoration:underline;
+}
+
+/*********************************** Headers and footers ******************************************/

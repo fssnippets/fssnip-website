@@ -1,0 +1,22 @@
+NUGET
+  remote: https://nuget.org/api/v2
+  specs:
+    DotLiquid (1.8.0)
+    FAKE (3.35.5)
+    FSharp.Compiler.Service (0.0.90)
+    FSharp.Core (3.1.2.1)
+    FSharp.Data (2.2.3)
+      Zlib.Portable (>= 1.10.0) - framework: portable-net40+sl50+wp80+win80
+    FSharp.Formatting (2.9.10)
+      FSharp.Compiler.Service (>= 0.0.87)
+      FSharpVSPowerTools.Core (1.8.0)
+    FSharpVSPowerTools.Core (1.8.0)
+      FSharp.Compiler.Service (>= 0.0.87)
+    FsPickler (1.2.9)
+    Suave (0.29.1)
+      FSharp.Core (>= 3.1.2.1)
+      FsPickler (>= 1.2.5)
+    Suave.DotLiquid (0.29.1)
+      DotLiquid (>= 1.8.0)
+      Suave (>= 0.29.1)
+    Zlib.Portable (1.11.0) - framework: portable-net40+sl50+wp80+win80

@@ -1,0 +1,56 @@
+{% extends "page.html" %}
+{% block head %}
+  <title>{{ model.Details.Title }} | F# Snippets</title>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-md-12" id="xxx">
+  <p class="snip-tweet">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-via="tomaspetricek">Tweet</a>
+    <script>!function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https'; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = p + '://platform.twitter.com/widgets.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'twitter-wjs');</script>
+  </p>
+  <p class="snip-like">
+    <span id="likeCount">{{ model.Details.Likes }}</span> people like it.<br />
+    <a href="javascript:;" id="likeLink" onclick="alert('not implemented :(')">Like the snippet!</a>
+  </p>
+
+  <h1>{{ model.Details.Title }}</h1>
+  <p>{{ model.Details.Comment }}</p>
+
+  {{ model.Html }}
+
+  <div class="btn-group" role="group" aria-label="..." id="snip-tools">
+    <button class="btn btn-default" onclick="alert('not implemented :(');">Copy link</button>
+    <button class="btn btn-default" onclick="alert('not implemented :(');">Copy source</button>
+    <a class="btn btn-default" href="/raw/{{ model.Details.Id | format_id }}">Raw view</a>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Load in
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="http://tsunami.io/cloud_tsunami.html?initurl=http://fssnip.net/raw/{{ model.Details.Id | format_id }}">tsunami.io</a></li>
+        <li><a href="http://www.tryfsharp.org/Create?codeUrl=http://fssnip.net/raw/{{ model.Details.Id | format_id }}">tryfsharp.org</a></li>
+        <li><a href="http://tryfs.net/snippets/snippet-{{ model.Details.Id | format_id }}">tryfs.net</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <br />
+  <h3>More information</h3>
+
+  <table class="detail-table">
+    <tr><td class="detail-lbl">Link:</td><td><a href="http://fssnip.net/{{ model.Details.Id | format_id }}">http://fssnip.net/{{ model.Details.Id | format_id }}</a></td></tr>
+    <tr><td class="detail-lbl">Posted:</td><td>{{ model.Details.Date | nice_date }}</td></tr>
+    <tr><td class="detail-lbl">Author:</td><td><a href="/authors/{{ model.Details.Author | url_encode }}">{{ model.Details.Author }}</a></td></tr>
+    <tr><td class="detail-lbl">Tags:</td><td>
+      {% assign next=false %}
+      {% for tag in model.Details.Tags %}{% if next %}, {% endif %}<a 
+        href="/tags/{{ tag | url_encode }}">{{ tag }}
+      </a>{% assign next=true %}{% endfor tag %}  
+    </td></tr>
+  </table>
+</div>
+</div>
+{% endblock %}

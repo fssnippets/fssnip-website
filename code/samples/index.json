@@ -1,0 +1,45 @@
+﻿{
+  "snippets": [
+    {
+      "id": 22,
+      "title": "Filtering lists",
+      "comment": "Two functions showing how to filter functional lists using the specified predicate. First version uses naive recursion and the second one is tail-recursive using the accumulator parameter.",
+      "author": "Tomas Petricek",
+      "link": "http://tomasp.net",
+      "date": "2010-12-03T23:56:49.3730000",
+      "likes": 56,
+      "isPrivate": false,
+      "passcode": "nada",
+      "references": ["Nada"],
+      "source": "http",
+      "versions": 1,
+      "tags": [
+        "list",
+        "filter",
+        "recursion",
+        "pattern matching"
+      ]
+    },
+    {
+      "id": 23,
+      "title": "Projecting lists",
+      "comment": "Three functions showing how to implement projection for functional lists. First version uses naive recursion and the second one is tail-recursive using the accumulator parameter. The third version extends this with continuation passing.",
+      "author": "Tomas Petricek",
+      "link": "http://tomasp.net",
+      "date": "2010-12-04T00:11:55.0030000",
+      "likes": 60,
+      "isPrivate": false,
+      "passcode": "nada",
+      "references": [],
+      "source": "http",
+      "versions": 3,
+      "tags": [
+        "list",
+        "map",
+        "recursion",
+        "pattern matching",
+        "continuation passing"
+      ]
+    } 
+  ]
+}
