@@ -26,6 +26,7 @@ open Suave.Http.Successful
 #load "code/pages/insert.fs"
 #load "code/pages/snippet.fs"
 open FsSnip
+open FsSnip.Data
 open FsSnip.Utils
 open FsSnip.Pages
 
@@ -61,8 +62,10 @@ DotLiquid.setTemplatesDir (__SOURCE_DIRECTORY__ + "/templates")
 let app =
   choose
     [ path "/" >>= Home.showHome
-      pathWithId "/%s" Snippet.showSnippet
-      pathWithId "/raw/%s" Snippet.showRawSnippet
+      pathScan "/%s/%d" (fun (id, r) -> Snippet.showSnippet id (Revision r))
+      pathWithId "/%s" (fun id -> Snippet.showSnippet id Latest)
+      pathScan "/raw/%s/%d" (fun (id, r) -> Snippet.showRawSnippet id (Revision r))
+      pathWithId "/raw/%s" (fun id -> Snippet.showRawSnippet id Latest)
       path "/pages/insert" >>= Insert.insertSnippet
       browseStaticFiles ]
 
