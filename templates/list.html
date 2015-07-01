@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="content col-md-6">
+    <ul>
+      {% for item in items %}
+	    {% capture leftRight %}{% cycle 'left', 'right' %}{% endcapture %}
+        {% if leftRight == 'left' %}
+           {% include "item.html" item:item %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="content col-md-6">
+    <ul>
+      {% for item in items %}
+	    {% capture leftRight %}{% cycle 'left', 'right' %}{% endcapture %}
+        {% if leftRight == 'right' %}
+           {% include "item.html" item:item %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
