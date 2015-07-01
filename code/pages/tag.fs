@@ -18,10 +18,9 @@ type TagModel =
 // Loading tag page information (snippets by the given tag)
 // -------------------------------------------------------------------------------------------------
 
-let showSnippets (tag) =
-  let t = System.Web.HttpUtility.UrlDecode tag
-  publicSnippets
-  |> Seq.filter (fun s -> Seq.exists (fun t' -> t.Equals(t', StringComparison.InvariantCultureIgnoreCase)) s.Tags)
-  |> (fun s ->
-      { Tag = t; Snippets = s})
-  |> DotLiquid.page "tag.html"
+let showSnippets (tag) = 
+    let t = System.Web.HttpUtility.UrlDecode tag
+    let hasTag s = Seq.exists (fun t' -> t.Equals(t', StringComparison.InvariantCultureIgnoreCase)) s.Tags
+    let ss = Seq.filter hasTag publicSnippets
+    DotLiquid.page "tag.html" { Tag = t
+                                Snippets = ss }

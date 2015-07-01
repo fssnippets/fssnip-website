@@ -17,11 +17,10 @@ type AuthorModel =
 // -------------------------------------------------------------------------------------------------
 // Loading author page information (snippets by the given author)
 // -------------------------------------------------------------------------------------------------
-
-let showSnippets (author) =
-  let a = System.Web.HttpUtility.UrlDecode author
-  publicSnippets
-  |> Seq.filter (fun s -> s.Author.Equals(a, StringComparison.InvariantCultureIgnoreCase))
-  |> (fun s ->
-      { Author = a; Snippets = s})
-  |> DotLiquid.page "author.html"
+let showSnippets (author) = 
+    let a = System.Web.HttpUtility.UrlDecode author
+    let fromAuthor (s:Snippet) = 
+        s.Author.Equals(a, StringComparison.InvariantCultureIgnoreCase)
+    let ss = Seq.filter fromAuthor publicSnippets
+    DotLiquid.page "author.html" { Author = a
+                                   Snippets = ss }
