@@ -1,5 +1,5 @@
 <li>
-  <h3><a href="{{ item.ID | format_id }}">{{ item.Title }}</a></h3>
+  <h3><a href="/{{ item.ID | format_id }}">{{ item.Title }}</a></h3>
   <p>{{ item.Comment }}</p>
   <p>{{ item.Likes }} people like this</p>
   <p><strong>Posted:</strong> {{ item.Date | nice_date }} by 
