@@ -25,6 +25,8 @@ open Suave.Http.Successful
 #load "code/pages/home.fs"
 #load "code/pages/insert.fs"
 #load "code/pages/snippet.fs"
+#load "code/pages/author.fs"
+#load "code/pages/tag.fs"
 open FsSnip
 open FsSnip.Utils
 open FsSnip.Pages
@@ -64,6 +66,8 @@ let app =
       pathWithId "/%s" Snippet.showSnippet
       pathWithId "/raw/%s" Snippet.showRawSnippet
       path "/pages/insert" >>= Insert.insertSnippet
+      pathScan "/authors/%s" Author.showSnippets
+      pathScan "/tags/%s" Tag.showSnippets
       browseStaticFiles ]
 
 

@@ -1,0 +1,34 @@
+{% extends "page.html" %}
+{% block head %}
+  <title>{{ model.Author }} | F# Snippets</title>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12"><h2>Snippets created by {{ model.Author }}</h2></div>
+</div>
+
+<div class="row">
+  <div class="content col-md-6">
+    <ul>
+      {% for item in model.Snippets %}
+	    {% capture leftRight %}{% cycle 'left', 'right' %}{% endcapture %}
+        {% if leftRight == 'left' %}
+           {% include "item.html" item:item %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="content col-md-6">
+    <ul>
+      {% for item in model.Snippets %}
+	    {% capture leftRight %}{% cycle 'left', 'right' %}{% endcapture %}
+        {% if leftRight == 'right' %}
+           {% include "item.html" item:item %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+{% endblock %}
