@@ -1,11 +1,11 @@
 {% extends "page.html" %}
 {% block head %}
-  <title>{{ model.Author }} | F# Snippets</title>
+  <title>Tagged {{ model.Tag }} | F# Snippets</title>
 {% endblock %}
 
 {% block content %}
 <div class="row">
-  <div class="col-md-12"><h2>Snippets created by {{ model.Author }}</h2></div>
+  <div class="col-md-12"><h2>Snippets tagged {{ model.Tag }}</h2></div>
 </div>
 
 {% include "list.html" items:model.Snippets %}
