@@ -3,6 +3,7 @@ module FsSnip.Pages.Snippet
 open System
 open System.Web
 open FsSnip
+open FsSnip.Data
 open FsSnip.Utils
 open Suave
 open Suave.Http
@@ -16,12 +17,16 @@ type FormattedSnippet =
   { Html : string
     Details : Data.Snippet }
 
-// TODO: Handle the case when `id` does not exist (#5)
-
 let showSnippet id =
-  { Html = Data.loadSnippet id
-    Details = Data.snippets |> Seq.find (fun s -> s.ID = demangleId id) }
-  |> DotLiquid.page<FormattedSnippet> "snippet.html"
+  match Data.loadSnippet id Latest with
+  | Some s ->
+            { Html = s
+              Details = Data.snippets |> Seq.find (fun s -> s.ID = demangleId id) }
+            |> DotLiquid.page<FormattedSnippet> "snippet.html"
+  | None -> RequestErrors.NOT_FOUND "Invalid snippet ID"
 
 let showRawSnippet id =
-  Writers.setMimeType "text/plain" >>= OK (Data.loadRawSnippet id)
+  match Data.loadRawSnippet id Latest with
+  | Some s ->
+    Writers.setMimeType "text/plain" >>= OK s
+  | None -> RequestErrors.NOT_FOUND "Invalid snippet ID"

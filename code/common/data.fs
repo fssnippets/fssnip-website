@@ -17,6 +17,10 @@ open FSharp.Data
 let [<Literal>] Index = __SOURCE_DIRECTORY__ + "/../samples/index.json"
 type Index = JsonProvider<Index>
 
+type SnippetVersion =
+    | Latest
+    | Revision of int
+
 type Snippet =
   { ID : int; Title : string; Comment : string; Author : string;
     Link : string; Date : DateTime; Likes : int; Private : bool;
@@ -43,11 +47,20 @@ let readSnippets () =
 
 let mutable snippets, publicSnippets = readSnippets ()
 
-let loadSnippet id =
-  File.ReadAllText(sprintf "%s/../../data/formatted/%d/0" __SOURCE_DIRECTORY__ (demangleId id))
+let rec private loadSnippetInternal basePath id revision =
+  let id' = demangleId id
+  match Seq.tryFind (fun s -> s.ID = id') publicSnippets with
+  | Some snippetInfo ->
+      match revision with
+      | Latest -> loadSnippetInternal basePath id (Revision (snippetInfo.Versions - 1))
+      | Revision r -> Some (File.ReadAllText(sprintf "%s/%d" basePath r))
+  | None -> None
 
-let loadRawSnippet id =
-  File.ReadAllText(sprintf "%s/../../data/source/%d/0" __SOURCE_DIRECTORY__ (demangleId id))
+let loadSnippet id = 
+  loadSnippetInternal (sprintf "%s/../../data/formatted/%d" __SOURCE_DIRECTORY__ (demangleId id)) id
+
+let rec loadRawSnippet id =
+  loadSnippetInternal (sprintf "%s/../../data/source/%d" __SOURCE_DIRECTORY__ (demangleId id)) id
 
 let getNextId () = (snippets |> Seq.map (fun s -> s.ID) |> Seq.max) + 1
 
@@ -56,10 +69,13 @@ let insertSnippet newSnippet source formatted =
   let json = Index.Root(Array.append index.Snippets [| saveSnippet newSnippet |]).JsonValue.ToString()
   File.WriteAllText(indexFile, json)
   let id = newSnippet.ID
-  Directory.CreateDirectory(sprintf "%s/../../data/source/%d" __SOURCE_DIRECTORY__ id) |> ignore
-  Directory.CreateDirectory(sprintf "%s/../../data/formatted/%d" __SOURCE_DIRECTORY__ id) |> ignore
-  File.WriteAllText(sprintf "%s/../../data/source/%d/0" __SOURCE_DIRECTORY__ id, source)
-  File.WriteAllText(sprintf "%s/../../data/formatted/%d/0" __SOURCE_DIRECTORY__ id, formatted)
+  let rawPath = sprintf "%s/../../data/source/%d" __SOURCE_DIRECTORY__ id
+  let formattedPath = sprintf "%s/../../data/formatted/%d" __SOURCE_DIRECTORY__ id
+  Directory.CreateDirectory(rawPath) |> ignore
+  Directory.CreateDirectory(formattedPath) |> ignore
+
+  File.WriteAllText(sprintf "%s/%d" rawPath (newSnippet.Versions - 1), source)
+  File.WriteAllText(sprintf "%s/%d" formattedPath (newSnippet.Versions - 1), formatted)
 
   let newSnippets, newPublicSnippets  = readSnippets ()
   snippets <- newSnippets
