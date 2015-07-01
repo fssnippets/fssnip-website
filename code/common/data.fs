@@ -47,19 +47,21 @@ let readSnippets () =
 
 let mutable snippets, publicSnippets = readSnippets ()
 
-let rec private loadSnippetInternal basePath id revision =
+let private loadSnippetInternal basePath id revision =
   let id' = demangleId id
   match Seq.tryFind (fun s -> s.ID = id') publicSnippets with
   | Some snippetInfo ->
       match revision with
-      | Latest -> loadSnippetInternal basePath id (Revision (snippetInfo.Versions - 1))
+      | Latest -> 
+        let r = match revision with Latest -> snippetInfo.Versions - 1 | Revision r -> r
+        Some (File.ReadAllText (sprintf "%s/%d" basePath r))
       | Revision r -> Some (File.ReadAllText(sprintf "%s/%d" basePath r))
   | None -> None
 
 let loadSnippet id = 
   loadSnippetInternal (sprintf "%s/../../data/formatted/%d" __SOURCE_DIRECTORY__ (demangleId id)) id
 
-let rec loadRawSnippet id =
+let loadRawSnippet id =
   loadSnippetInternal (sprintf "%s/../../data/source/%d" __SOURCE_DIRECTORY__ (demangleId id)) id
 
 let getNextId () = (snippets |> Seq.map (fun s -> s.ID) |> Seq.max) + 1
