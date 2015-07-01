@@ -21,6 +21,13 @@
   {{ model.Html }}
 
   <div class="btn-group" role="group" aria-label="..." id="snip-tools">
+    {% if model.Revision > 0 %}
+	<a class="btn btn-default" href="/{{ model.Details.Id | format_id }}/{{ model.Revision | minus:1 }}">Previous Version</a>
+	{% endif %}
+	{% capture rev %}{{ model.Revision | plus:1 }}{% endcapture %}
+	{% if rev < model.Details.Versions %}
+	<a class="btn btn-default" href="/{{ model.Details.Id | format_id }}/{{ model.Revision | plus:1 }}">Next Version</a>
+	{% endif %}
     <button class="btn btn-default" onclick="alert('not implemented :(');">Copy link</button>
     <button class="btn btn-default" onclick="alert('not implemented :(');">Copy source</button>
     <a class="btn btn-default" href="/raw/{{ model.Details.Id | format_id }}">Raw view</a>
