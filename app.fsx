@@ -76,7 +76,11 @@ let app =
       pathScan "/authors/%s" Author.showSnippets
       path "/tags/" >>= Tag.showAll
       pathScan "/tags/%s" Tag.showSnippets
-      GET >>= path "/rss/" >>= setHeader "Content-Type" "application/rss+xml; charset=utf-8" >>= Rss.getRss
+      ( path "/rss/"
+        <|> path "/rss"
+        <|> path "/pages/Rss"
+        <|> path "/pages/Rss/"
+      ) >>= setHeader "Content-Type" "application/rss+xml; charset=utf-8" >>= Rss.getRss
       browseStaticFiles ]
 
 
