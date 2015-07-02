@@ -14,6 +14,7 @@ open Suave.Types
 open FSharp.Data
 open Suave.Http.Applicatives
 open Suave.Http.Successful
+open Suave.Http.Writers
 
 // -------------------------------------------------------------------------------------------------
 // Loading the FsSnip.WebSite project files
@@ -22,11 +23,13 @@ open Suave.Http.Successful
 #load "code/common/utils.fs"
 #load "code/common/filters.fs"
 #load "code/common/data.fs"
+#load "code/common/rssfeed.fs"
 #load "code/pages/home.fs"
 #load "code/pages/insert.fs"
 #load "code/pages/snippet.fs"
 #load "code/pages/author.fs"
 #load "code/pages/tag.fs"
+#load "code/pages/rss.fs"
 open FsSnip
 open FsSnip.Data
 open FsSnip.Utils
@@ -73,6 +76,7 @@ let app =
       pathScan "/authors/%s" Author.showSnippets
       path "/tags/" >>= Tag.showAll
       pathScan "/tags/%s" Tag.showSnippets
+      GET >>= path "/rss/" >>= setHeader "Content-Type" "application/rss+xml; charset=utf-8" >>= Rss.getRss
       browseStaticFiles ]
 
 
