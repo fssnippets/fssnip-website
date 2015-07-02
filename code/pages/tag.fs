@@ -9,10 +9,32 @@ open FsSnip.Data
 // -------------------------------------------------------------------------------------------------
 // Tag page - domain model
 // -------------------------------------------------------------------------------------------------
+type TagLink = 
+  { Text : string
+    Link : string
+    Size : int 
+    Count : int }
+
+type TagLinks = seq<TagLink>
 
 type TagModel =
   { Tag : string
     Snippets : seq<Snippet> }
+
+type AllTagsModel =
+  { Taglinks: TagLinks}
+
+let getAllTags () = 
+    let links = 
+      publicSnippets
+      |> Seq.collect (fun s -> s.Tags)
+      |> Seq.countBy id
+      |> Seq.sortBy (fun (_, c) -> -c)
+      |> Seq.withSizeBy snd
+      |> Seq.map (fun ((n,c),s) -> 
+          { Text = n; Size = 80 + s; Count = c;
+            Link = HttpUtility.UrlEncode(n) })
+    {Taglinks = links}
 
 // -------------------------------------------------------------------------------------------------
 // Loading tag page information (snippets by the given tag)
@@ -24,3 +46,9 @@ let showSnippets (tag) =
     let ss = Seq.filter hasTag publicSnippets
     DotLiquid.page "tag.html" { Tag = t
                                 Snippets = ss }
+
+// -------------------------------------------------------------------------------------------------
+// Loading tag page information (all tags)
+// -------------------------------------------------------------------------------------------------
+let showAll = delay (fun () -> 
+  DotLiquid.page "tags.html" (getAllTags()))
