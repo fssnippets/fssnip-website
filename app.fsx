@@ -69,7 +69,9 @@ let app =
       pathScan "/raw/%s/%d" (fun (id, r) -> Snippet.showRawSnippet id (Revision r))
       pathWithId "/raw/%s" (fun id -> Snippet.showRawSnippet id Latest)
       path "/pages/insert" >>= Insert.insertSnippet
+      path "/authors/" >>= Author.showAll
       pathScan "/authors/%s" Author.showSnippets
+      path "/tags/" >>= Tag.showAll
       pathScan "/tags/%s" Tag.showSnippets
       browseStaticFiles ]
 
