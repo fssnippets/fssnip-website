@@ -3,7 +3,31 @@
   <title>{{ model.Details.Title }} | F# Snippets</title>
 {% endblock %}
 
+{% block customPageScripts %}
+  <script src="/content/copyContent.js"></script>
+{% endblock %}
+
 {% block content %}
+
+<div id="linkModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Link to Snippet</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <span class="label label-info">PRESS <kbd>CTRL+C</kbd> OR <kbd>CMD+C</kbd> TO COPY SELECTED TEXT AND CLOSE THIS DIALOG</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="row">
 <div class="col-md-12" id="xxx">
   <p class="snip-tweet">
@@ -28,8 +52,8 @@
 	{% if rev < model.Details.Versions %}
 	<a class="btn btn-default" href="/{{ model.Details.Id | format_id }}/{{ model.Revision | plus:1 }}">Next Version</a>
 	{% endif %}
-    <button class="btn btn-default" onclick="alert('not implemented :(');">Copy link</button>
-    <button class="btn btn-default" onclick="alert('not implemented :(');">Copy source</button>
+    <button class="btn btn-default" data-action="show-link" data-snippetid="{{ model.Details.Id | format_id }}" data-toggle="modal" data-target="#linkModal" >Copy link</button>
+    <button class="btn btn-default" data-action="show-source" data-snippetid="{{ model.Details.Id | format_id }}" data-toggle="modal" data-target="#linkModal" >Copy source</button>
     <a class="btn btn-default" href="/raw/{{ model.Details.Id | format_id }}">Raw view</a>
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -53,9 +77,9 @@
     <tr><td class="detail-lbl">Author:</td><td><a href="/authors/{{ model.Details.Author | url_encode }}">{{ model.Details.Author }}</a></td></tr>
     <tr><td class="detail-lbl">Tags:</td><td>
       {% assign next=false %}
-      {% for tag in model.Details.Tags %}{% if next %}, {% endif %}<a 
+      {% for tag in model.Details.Tags %}{% if next %}, {% endif %}<a
         href="/tags/{{ tag | url_encode }}">{{ tag }}
-      </a>{% assign next=true %}{% endfor tag %}  
+      </a>{% assign next=true %}{% endfor tag %}
     </td></tr>
   </table>
 </div>
