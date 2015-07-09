@@ -25,7 +25,7 @@ let showSnippet id r =
   let id' = demangleId id
   match Seq.tryFind (fun s -> s.ID = id') publicSnippets with
   | Some snippetInfo -> 
-    match Data.loadSnippet id r with
+    match Data.loadSnippetAzure id r with
     | Some s ->
             { Html = s
               Details = Data.snippets |> Seq.find (fun s -> s.ID = demangleId id)
@@ -38,7 +38,7 @@ let showSnippet id r =
   
 
 let showRawSnippet id r =
-  match Data.loadRawSnippet id r with
+  match Data.loadRawSnippetAzure id r with
   | Some s ->
     Writers.setMimeType "text/plain" >>= OK s
   | None -> invalidSnippetId id

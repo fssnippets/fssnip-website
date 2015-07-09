@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>FsSnip</RootNamespace>
     <AssemblyName>FsSnip</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
     <Name>FsSnip</Name>
@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="code\common\utils.fs" />
     <Compile Include="code\common\filters.fs" />
+    <Compile Include="code\common\blobstorage.fs" />
     <Compile Include="code\common\data.fs" />
     <Compile Include="code\common\rssfeed.fs" />
     <Compile Include="code\pages\home.fs" />
@@ -111,6 +112,52 @@
       <ItemGroup>
         <Reference Include="DotLiquid">
           <HintPath>packages\DotLiquid\lib\NET45\DotLiquid.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="($(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')) Or ($(TargetFrameworkIdentifier) == 'MonoAndroid') Or ($(TargetFrameworkIdentifier) == 'MonoTouch')">
+      <ItemGroup>
+        <Reference Include="FSharp.Azure.StorageTypeProvider">
+          <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net40\FSharp.Azure.StorageTypeProvider.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Microsoft.Data.Edm">
+          <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Microsoft.Data.OData">
+          <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net40\Microsoft.Data.OData.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Microsoft.Data.Services.Client">
+          <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Microsoft.WindowsAzure.Configuration">
+          <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Microsoft.WindowsAzure.Storage">
+          <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Newtonsoft.Json">
+          <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net40\Newtonsoft.Json.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="System.Spatial">
+          <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net40\System.Spatial.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

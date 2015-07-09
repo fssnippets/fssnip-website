@@ -3,6 +3,7 @@ module FsSnip.Data
 open System
 open System.IO
 open FsSnip.Utils
+open FsSnip.BlobStorage
 open FSharp.Data
 
 // -------------------------------------------------------------------------------------------------
@@ -63,6 +64,24 @@ let loadSnippet id =
 
 let loadRawSnippet id =
   loadSnippetInternal (sprintf "%s/../../data/source/%d" __SOURCE_DIRECTORY__ (demangleId id)) id
+
+let private loadSnippetAzureInternal container path id revision =
+  let id' = demangleId id
+  match Seq.tryFind (fun s -> s.ID = id') publicSnippets with
+  | Some snippetInfo ->
+      match revision with
+      | Latest -> 
+        let r = match revision with Latest -> snippetInfo.Versions - 1 | Revision r -> r
+        ReadBlobText container (sprintf "%s/%d" path r)
+      | Revision r -> ReadBlobText container (sprintf "%s/%d" path r)
+  | None -> None
+
+let loadSnippetAzure id = 
+  loadSnippetAzureInternal "data" (sprintf "formatted/%d" (demangleId id)) id
+
+let loadRawSnippetAzure id =
+  loadSnippetAzureInternal "data" (sprintf "source/%d" (demangleId id)) id
+
 
 let getNextId () = (snippets |> Seq.map (fun s -> s.ID) |> Seq.max) + 1
 
