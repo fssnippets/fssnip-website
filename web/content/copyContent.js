@@ -27,18 +27,25 @@ $(document).ready(function(){
     var snippetId = button.data('snippetid');
 
     if (action == 'show-link') {
+
+      dialog.find('.modal-dialog').removeClass('modal-lg')
       dialog.find('.modal-title').text('Link to Snippet');
       dialog.find('.modal-body')
         .html('<p>http://fssnip.net/' + snippetId + '</p>')
         .selectText();
     } else if (action == 'show-source') {
+      dialog.find('.modal-dialog').addClass('modal-lg');
+
       dialog.find('.modal-title').text('Snippet Source');
       var snippetSourceUrl = 'http://localhost:8083/raw/' + snippetId;
       $.get(snippetSourceUrl, function (data) {
         dialog.find('.modal-body')
           .html('<pre>'+ data +'</pre>')
+          .css('max-height', $(window).height() * 0.7)
+          .css('overflow-y', 'auto')
           .selectText();
       });
+
     }
 
     var dismissDialogHandler = function () {
