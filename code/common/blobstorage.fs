@@ -62,3 +62,17 @@ let ReadBlobText containerName blobPath =
             Some(blob.DownloadText(System.Text.Encoding.UTF8))
         else None
     else None
+
+let ReadBlobStream containerName blobPath =
+    let stream = new MemoryStream();
+    let container = Azure.Containers.CloudBlobClient.GetContainerReference(containerName)
+    let blob = container.GetBlockBlobReference(blobPath)
+    if blob.Exists() then
+        blob.DownloadToStream(stream)
+    stream
+
+let WriteBlobText containerName blobPath text = 
+    let container = Azure.Containers.CloudBlobClient.GetContainerReference(containerName)
+    if container.Exists() then
+        let blob = container.GetBlockBlobReference(blobPath)
+        blob.UploadText(text, System.Text.Encoding.UTF8)

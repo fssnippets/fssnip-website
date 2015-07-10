@@ -65,23 +65,6 @@ let loadSnippet id =
 let loadRawSnippet id =
   loadSnippetInternal (sprintf "%s/../../data/source/%d" __SOURCE_DIRECTORY__ (demangleId id)) id
 
-let private loadSnippetAzureInternal container path id revision =
-  let id' = demangleId id
-  match Seq.tryFind (fun s -> s.ID = id') publicSnippets with
-  | Some snippetInfo ->
-      match revision with
-      | Latest -> 
-        let r = match revision with Latest -> snippetInfo.Versions - 1 | Revision r -> r
-        ReadBlobText container (sprintf "%s/%d" path r)
-      | Revision r -> ReadBlobText container (sprintf "%s/%d" path r)
-  | None -> None
-
-let loadSnippetAzure id = 
-  loadSnippetAzureInternal "data" (sprintf "formatted/%d" (demangleId id)) id
-
-let loadRawSnippetAzure id =
-  loadSnippetAzureInternal "data" (sprintf "source/%d" (demangleId id)) id
-
 
 let getNextId () = (snippets |> Seq.map (fun s -> s.ID) |> Seq.max) + 1
 
@@ -101,3 +84,51 @@ let insertSnippet newSnippet source formatted =
   let newSnippets, newPublicSnippets  = readSnippets ()
   snippets <- newSnippets
   publicSnippets <- newPublicSnippets
+
+//===================
+// Azure data functions
+//================
+let readSnippetsAzure () =
+  match ReadBlobText "data" "index.json" with
+  | Some text -> 
+      let index = Index.Parse(text)
+      let snippets = index.Snippets |> Seq.map readSnippet |> List.ofSeq
+      Some (snippets, snippets |> Seq.filter (fun s -> not s.Private))
+  | None -> None
+
+let private loadSnippetAzureInternal container path id revision =
+  let id' = demangleId id
+  match Seq.tryFind (fun s -> s.ID = id') publicSnippets with
+  | Some snippetInfo ->
+      match revision with
+      | Latest -> 
+        let r = match revision with Latest -> snippetInfo.Versions - 1 | Revision r -> r
+        ReadBlobText container (sprintf "%s/%d" path r)
+      | Revision r -> 
+        ReadBlobText container (sprintf "%s/%d" path r)
+  | None -> None
+
+let loadSnippetAzure id = 
+  loadSnippetAzureInternal "data" (sprintf "formatted/%d" (demangleId id)) id
+
+let loadRawSnippetAzure id =
+  loadSnippetAzureInternal "data" (sprintf "source/%d" (demangleId id)) id
+
+let insertSnippetAzure newSnippet source formatted =
+  match ReadBlobText "data" "index.json" with
+  | Some text -> 
+      let index = Index.Parse(text)
+      let json = Index.Root(Array.append index.Snippets [| saveSnippet newSnippet |]).JsonValue.ToString()
+      WriteBlobText "data" "index.json" json
+
+      let id = newSnippet.ID
+      let rawPath = sprintf "source/%d" id
+      let formattedPath = sprintf "formatted/%d" id
+      WriteBlobText "data" (sprintf "%s/%d" rawPath (newSnippet.Versions - 1)) source
+      WriteBlobText "data" (sprintf "%s/%d" formattedPath (newSnippet.Versions - 1)) formatted
+
+      let newSnippets, newPublicSnippets  = readSnippets ()
+      snippets <- newSnippets
+      publicSnippets <- newPublicSnippets
+  | None -> ()
+
