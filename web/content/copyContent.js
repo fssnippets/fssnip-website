@@ -31,13 +31,13 @@ $(document).ready(function(){
       dialog.find('.modal-dialog').removeClass('modal-lg')
       dialog.find('.modal-title').text('Link to Snippet');
       dialog.find('.modal-body')
-        .html('<p>http://fssnip.net/' + snippetId + '</p>')
+        .html('<p>' + $(location).attr('href') + '</p>')
         .selectText();
     } else if (action == 'show-source') {
       dialog.find('.modal-dialog').addClass('modal-lg');
 
       dialog.find('.modal-title').text('Snippet Source');
-      var snippetSourceUrl = 'http://localhost:8083/raw/' + snippetId;
+      var snippetSourceUrl = document.location.href.replace(document.location.pathname, '/raw/') + snippetId;
       $.get(snippetSourceUrl, function (data) {
         dialog.find('.modal-body')
           .html('<pre>'+ data +'</pre>')
