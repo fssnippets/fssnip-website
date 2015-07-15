@@ -24,7 +24,6 @@ open FSharp.Azure.StorageTypeProvider
 
 #load "code/common/utils.fs"
 #load "code/common/filters.fs"
-#load "code/common/blobstorage.fs"
 #load "code/common/data.fs"
 #load "code/common/rssfeed.fs"
 #load "code/pages/home.fs"
@@ -37,7 +36,6 @@ open FsSnip
 open FsSnip.Data
 open FsSnip.Utils
 open FsSnip.Pages
-open FsSnip.BlobStorage
 
 // -------------------------------------------------------------------------------------------------
 // Server entry-point and routing
