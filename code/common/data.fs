@@ -38,7 +38,7 @@ type Snippet =
     Versions: int; Tags : seq<string> }
 
 // select the storage provider here...
-let storageProvider = AzureBlobStorage // or LocalFileSystem
+let storageProvider = LocalFilesystem // or AzureBlobStorage
 
 //=======
 // Private Filesystem functions
