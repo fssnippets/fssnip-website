@@ -3,6 +3,7 @@
 #r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
 #r "packages/DotLiquid/lib/NET45/DotLiquid.dll"
 #r "packages/Suave.DotLiquid/lib/net40/Suave.DotLiquid.dll"
+#load "packages/FSharp.Azure.StorageTypeProvider/StorageTypeProvider.fsx"
 #load "packages/FSharp.Formatting/FSharp.Formatting.fsx"
 open System
 open System.Web
@@ -15,6 +16,7 @@ open FSharp.Data
 open Suave.Http.Applicatives
 open Suave.Http.Successful
 open Suave.Http.Writers
+open FSharp.Azure.StorageTypeProvider
 
 // -------------------------------------------------------------------------------------------------
 // Loading the FsSnip.WebSite project files
@@ -34,7 +36,6 @@ open FsSnip
 open FsSnip.Data
 open FsSnip.Utils
 open FsSnip.Pages
-
 
 // -------------------------------------------------------------------------------------------------
 // Server entry-point and routing
@@ -82,6 +83,7 @@ let app =
         <|> path "/pages/Rss/"
       ) >>= setHeader "Content-Type" "application/rss+xml; charset=utf-8" >>= Rss.getRss
       browseStaticFiles ]
+
 
 
 // -------------------------------------------------------------------------------------------------

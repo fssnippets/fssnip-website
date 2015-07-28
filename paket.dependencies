@@ -7,3 +7,4 @@ nuget FSharp.Data
 nuget FSharp.Compiler.Service
 nuget DotLiquid
 nuget FSharp.Formatting
+nuget FSharp.Azure.StorageTypeProvider
