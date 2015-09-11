@@ -36,6 +36,10 @@ a, a:visited, a:link, a:hover {
 
 /*********************************** Styles for snippet details ******************************************/
 
+.modal-backdrop.in {
+  z-index: auto;
+}
+
 .snip-tweet {
   float:right;
   padding-top:5px;

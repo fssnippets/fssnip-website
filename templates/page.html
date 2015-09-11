@@ -17,6 +17,8 @@
   <link href="/content/style.css" rel="stylesheet" />
   <link href="/content/snippets.css" rel="stylesheet" />
   <script src="/content/tips.js"></script>
+  {% block customPageScripts %}
+  {% endblock %}
   <link href="/favicon.ico" rel="icon" />
 </head>
 <body>
@@ -51,7 +53,7 @@
           <div class="col-sm-4">
             <p>
               This web site is created using <a href="http://www.fsharp.org">F#</a>
-              and <a href="http://suave.io/">Suave</a> web server. It is hosted on 
+              and <a href="http://suave.io/">Suave</a> web server. It is hosted on
               <a href="http://www.hanselman.com/blog/RunningSuaveioAndFWithFAKEInAzureWebAppsWithGitAndTheDeployButton.aspx">Azure</a>
               and the source code is on <a href="https://github.com/tpetricek/FsSnip.Website">GitHub</a>.
               Contributions are welcome!
