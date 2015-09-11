@@ -5,3 +5,4 @@ packages/
 obj/
 bin/
 .paket/paket.exe
+*.svclog

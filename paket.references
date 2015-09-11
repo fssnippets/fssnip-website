@@ -4,4 +4,3 @@ FSharp.Data
 DotLiquid
 FSharp.Formatting
 FSharp.Azure.StorageTypeProvider
-Microsoft.WindowsAzure.ConfigurationManager
