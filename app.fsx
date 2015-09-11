@@ -88,9 +88,17 @@ let app =
       browseStaticFiles ]
 *)
 #r "System.Configuration.dll"
+let appSettings = 
+  [ for a in System.Configuration.ConfigurationManager.AppSettings.AllKeys ->
+    sprintf "<li><strong>%s</strong><br />%s</li>" a (System.Configuration.ConfigurationManager.AppSettings.[a]) ]
+  |> String.concat ""
 
-let app = 
+let connStrings = 
   [ for c in System.Configuration.ConfigurationManager.ConnectionStrings ->
     sprintf "<li><strong>%s</strong><br />%s</li>" c.Name c.ConnectionString ]
   |> String.concat ""
+
+let app = 
+  ( (sprintf "<h3>App settings</h3><ul>%s</ul>" appSettings) +
+    (sprintf "<h3>Conn strings</h3><ul>%s</ul>" connStrings) )
   |> Successful.OK
