@@ -88,6 +88,8 @@ let app =
       browseStaticFiles ]
 *)
 #r "System.Configuration.dll"
+#r "packages/Microsoft.WindowsAzure.ConfigurationManager/lib/net40/Microsoft.WindowsAzure.Configuration.dll"
+
 let appSettings = 
   [ for a in System.Configuration.ConfigurationManager.AppSettings.AllKeys ->
     sprintf "<li><strong>%s</strong><br />%s</li>" a (System.Configuration.ConfigurationManager.AppSettings.[a]) ]
@@ -100,5 +102,6 @@ let connStrings =
 
 let app = 
   ( (sprintf "<h3>App settings</h3><ul>%s</ul>" appSettings) +
-    (sprintf "<h3>Conn strings</h3><ul>%s</ul>" connStrings) )
+    (sprintf "<h3>Conn strings</h3><ul>%s</ul>" connStrings) +
+    (sprintf "<h3>Test</h3><p>%s</p>" (Microsoft.Azure.CloudConfigurationManager.GetSetting("Test"))) )
   |> Successful.OK

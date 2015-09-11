@@ -8,3 +8,4 @@ nuget FSharp.Compiler.Service
 nuget DotLiquid
 nuget FSharp.Formatting
 nuget FSharp.Azure.StorageTypeProvider
+nuget Microsoft.WindowsAzure.ConfigurationManager
