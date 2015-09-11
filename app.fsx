@@ -4,7 +4,7 @@
 #r "packages/DotLiquid/lib/NET45/DotLiquid.dll"
 #r "packages/Suave.DotLiquid/lib/net40/Suave.DotLiquid.dll"
 #load "packages/FSharp.Azure.StorageTypeProvider/StorageTypeProvider.fsx"
-#load "packages/FSharp.Formatting/FSharp.Formatting.fsx"
+//#load "packages/FSharp.Formatting/FSharp.Formatting.fsx"
 open System
 open System.Web
 open System.IO
@@ -101,8 +101,14 @@ let connStrings =
     sprintf "<li><strong>%s</strong><br />%s</li>" c.Name c.ConnectionString ]
   |> String.concat ""
 
+let envVars = 
+  [ for c in System.Environment.GetEnvironmentVariables().Keys |> Seq.cast<string> ->
+    sprintf "<li><strong>%s</strong><br />%s</li>" c (System.Environment.GetEnvironmentVariable(c)) ]
+  |> String.concat ""
+
 let app = 
   ( (sprintf "<h3>App settings</h3><ul>%s</ul>" appSettings) +
     (sprintf "<h3>Conn strings</h3><ul>%s</ul>" connStrings) +
+    (sprintf "<h3>Environment variables</h3><ul>%s</ul>" envVars) +
     (sprintf "<h3>Test</h3><p>%s</p>" (CloudConfigurationManager.GetSetting("Test"))) )
   |> Successful.OK
