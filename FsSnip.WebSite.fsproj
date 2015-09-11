@@ -298,6 +298,8 @@
     </When>
   </Choose>
   <ItemGroup>
+    <Compile Include="code\common\storage\azure.fs" />
+    <Compile Include="code\common\storage\local.fs" />
     <Compile Include="code\common\utils.fs" />
     <Compile Include="code\common\filters.fs" />
     <Compile Include="code\common\data.fs" />

@@ -17,11 +17,13 @@ open Suave.Http.Applicatives
 open Suave.Http.Successful
 open Suave.Http.Writers
 open FSharp.Azure.StorageTypeProvider
-
+(*
 // -------------------------------------------------------------------------------------------------
 // Loading the FsSnip.WebSite project files
 // -------------------------------------------------------------------------------------------------
 
+//#load "code/common/storage/azure.fs"
+#load "code/common/storage/local.fs"
 #load "code/common/utils.fs"
 #load "code/common/filters.fs"
 #load "code/common/data.fs"
@@ -67,7 +69,8 @@ DotLiquid.setTemplatesDir (__SOURCE_DIRECTORY__ + "/templates")
 // Handles routing for the server
 let app =
   choose
-    [ path "/" >>= Home.showHome
+    [ path "/test" >>= Successful.OK "yo"
+      path "/" >>= Home.showHome
       pathScan "/%s/%d" (fun (id, r) -> Snippet.showSnippet id (Revision r))
       pathWithId "/%s" (fun id -> Snippet.showSnippet id Latest)
       pathScan "/raw/%s/%d" (fun (id, r) -> Snippet.showRawSnippet id (Revision r))
@@ -83,23 +86,11 @@ let app =
         <|> path "/pages/Rss/"
       ) >>= setHeader "Content-Type" "application/rss+xml; charset=utf-8" >>= Rss.getRss
       browseStaticFiles ]
+*)
+#r "System.Configuration.dll"
 
-
-
-// -------------------------------------------------------------------------------------------------
-// To run the web site, you can use `build.sh` or `build.cmd` script, which is nice because it
-// automatically reloads the script when it changes. But for debugging, you can also use run or
-// run with debugger in VS or XS. This runs the code below.
-// -------------------------------------------------------------------------------------------------
-
-#if INTERACTIVE
-#else
-let cfg =
-  { defaultConfig with
-      bindings = [ HttpBinding.mk' HTTP  "127.0.0.1" 8011 ]
-      homeFolder = Some __SOURCE_DIRECTORY__ }
-let _, server = startWebServerAsync cfg app
-Async.Start(server)
-System.Diagnostics.Process.Start("http://localhost:8011")
-System.Console.ReadLine() |> ignore
-#endif
+let app = 
+  [ for c in System.Configuration.ConfigurationManager.ConnectionStrings ->
+    sprintf "<li><strong>%s</strong><br />%s</li>" c.Name c.ConnectionString ]
+  |> String.concat ""
+  |> Successful.OK
