@@ -5,6 +5,7 @@ open System.IO
 open FSharp.Azure.StorageTypeProvider
 open Microsoft.WindowsAzure.Storage.Blob
 open FsSnip.Utils
+open FsSnip.Data
 open FSharp.Data
 
 // -------------------------------------------------------------------------------------------------
@@ -13,13 +14,16 @@ open FSharp.Data
 // save it back. Aside from that, we keep the source, parsed and formatted snippets as blobs.
 // -------------------------------------------------------------------------------------------------
 
-// This is currently using a local file system, but it needs to be changed
-// so that the files can be loaded from Azure blob storage (see issue #6)
-open FsSnip.Data.Local
+/// The storage can be either file system or Azure blob storage. This chooses Azure
+/// (when it has the connection string) or file system (when running locally)
+module Storage = 
+  let readIndex, saveIndex, readFile, writeFile =
+    if Azure.Storage.isConfigured() then Azure.Storage.functions
+    else Local.Storage.functions
+
 
 let [<Literal>] Index = __SOURCE_DIRECTORY__ + "/../samples/index.json"
 type Index = JsonProvider<Index>
-
 
 type SnippetVersion =
     | Latest
