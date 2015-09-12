@@ -1,5 +1,4 @@
-$(document).ready(function(){
-
+$(document).ready(function () {
 
   jQuery.fn.selectText = function(){
     var doc = document;
@@ -20,14 +19,12 @@ $(document).ready(function(){
   };
 
   $('#linkModal').on('show.bs.modal', function (e) {
-
     var dialog = $(this);
     var button = $(e.relatedTarget); // Button that triggered the modal
     var action = button.data('action');
     var snippetId = button.data('snippetid');
 
     if (action == 'show-link') {
-
       dialog.find('.modal-dialog').removeClass('modal-lg')
       dialog.find('.modal-title').text('Link to Snippet');
       dialog.find('.modal-body')
@@ -35,7 +32,6 @@ $(document).ready(function(){
         .selectText();
     } else if (action == 'show-source') {
       dialog.find('.modal-dialog').addClass('modal-lg');
-
       dialog.find('.modal-title').text('Snippet Source');
       var snippetSourceUrl = document.location.href.replace(document.location.pathname, '/raw/') + snippetId;
       $.get(snippetSourceUrl, function (data) {
@@ -45,7 +41,6 @@ $(document).ready(function(){
           .css('overflow-y', 'auto')
           .selectText();
       });
-
     }
 
     var dismissDialogHandler = function () {

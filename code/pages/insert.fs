@@ -1,6 +1,7 @@
 module FsSnip.Pages.Insert
 
 open System
+open System.IO
 open Suave
 open Suave.Types
 open Suave.Http
@@ -37,7 +38,7 @@ let insertSnippet ctx = async {
       | _ -> [| |]
 
     // TODO: Download NuGet packages and pass "-r:..." args to the formatter! (issue #13)
-    let doc = Literate.ParseScriptString(form.Code, "/temp/Snippet.fsx", formatAgent)  
+    let doc = Literate.ParseScriptString(form.Code, "/temp/Snippet.fsx", formatAgent)
     let html = Literate.WriteHtml(doc, "fs", true, true)
     let id = Data.getNextId()
     match form with
@@ -63,3 +64,23 @@ let insertSnippet ctx = async {
     return! Redirection.FOUND ("/" + Utils.mangleId id) ctx
   else
     return! DotLiquid.page "insert.html" () ctx }
+
+
+open FSharp.Data
+type Errors = JsonProvider<"""[ {"location":[1,1,10,10], "error":true, "message":"sth"} ]""">
+
+let checkSnippet ctx = async {
+  use sr = new StreamReader(new MemoryStream(ctx.request.rawForm))
+  let request = sr.ReadToEnd()
+  let doc = Literate.ParseScriptString(request, "/temp/Snippet.fsx", formatAgent)
+  let json = 
+    JsonValue.Array
+      [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Errors ->
+         Errors.Root([| l1; c1; l2; c2 |], (kind = ErrorKind.Error), msg).JsonValue |]
+
+  return! ctx |>
+    ( Writers.setHeader "Cache-Control" "no-cache, no-store, must-revalidate"
+      >>= Writers.setHeader "Pragma" "no-cache"
+      >>= Writers.setHeader "Expires" "0"
+      >>= Writers.setMimeType "application/json"
+      >>= Successful.OK(json.ToString()) ) }

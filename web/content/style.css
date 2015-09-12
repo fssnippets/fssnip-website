@@ -76,6 +76,22 @@ a, a:visited, a:link, a:hover {
   margin:30px 40px 0px 0px;
 }
 
+#errors .alert {
+  margin:0px 0px 4px 0px;
+  padding:4px 10px 4px 10px;
+}
+#errors .glyphicon {
+  float:left;
+}
+#errors .loc {
+  margin-left:15px;
+  display:block;
+  float:left;
+}
+#errors .msg {
+  display:block;
+  margin-left:70px;
+}
 /*********************************** Headers and footers ******************************************/
 
 #heading {
@@ -108,5 +124,3 @@ a, a:visited, a:link, a:hover {
   color:white;
   text-decoration:underline;
 }
-
-/*********************************** Headers and footers ******************************************/
