@@ -79,6 +79,7 @@ let app =
       path "/authors/" >>= Author.showAll
       pathScan "/authors/%s" Author.showSnippets
       path "/tags/" >>= Tag.showAll
+      pathScan "/test/%s" (fun s -> Successful.OK s)
       pathScan "/tags/%s" Tag.showSnippets
       ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
       browseStaticFiles ]
