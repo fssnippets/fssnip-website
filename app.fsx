@@ -81,6 +81,10 @@ let app =
       path "/tags/" >>= Tag.showAll
       pathScan "/test/%s" (fun s -> Successful.OK s)
       pathScan "/tags/%s" Tag.showSnippets
+      PUT >>= path "/api/1/snippet" >>= Insert.Api.putSnippet
+      GET >>= path "/api/1/snippet" >>=
+        request (fun x -> cond (x.queryParam "all") (fun _ -> Snippet.Api.allPublicSnippets) never)
+      GET >>= pathWithId "/api/1/snippet/%s" (fun id -> Snippet.Api.getSnippet id)
       ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
       browseStaticFiles ]
 

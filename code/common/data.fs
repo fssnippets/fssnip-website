@@ -67,6 +67,9 @@ let loadSnippet id revision =
 let loadRawSnippet id revision =
   loadSnippetInternal "source" id revision 
 
+let getAllPublicSnippets () =
+    publicSnippets
+
 let getNextId () = 
   let largest = snippets |> Seq.map (fun s -> s.ID) |> Seq.max
   largest + 1
