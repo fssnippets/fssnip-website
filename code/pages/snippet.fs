@@ -29,7 +29,7 @@ let showSnippet id r =
       | Some snippet ->
           let rev = match r with Latest -> snippetInfo.Versions - 1 | Revision r -> r
           { Html = snippet
-            Details = Data.snippets |> Seq.find (fun s -> s.ID = demangleId id)
+            Details = Data.snippets |> Seq.find (fun s -> s.ID = id')
             Revision = rev }
           |> DotLiquid.page<FormattedSnippet> "snippet.html"
       | None -> invalidSnippetId id
