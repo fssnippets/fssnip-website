@@ -113,5 +113,5 @@ module Api =
                 let response = PutSnippetResponseJson.Root("created", mangledId, "http://fssnip.net/" + mangledId)
                 Successful.CREATED <| response.JsonValue.ToString()
             with
-            | _ as ex -> RequestErrors.BAD_REQUEST <| (JsonValue.Record [| ("error", JsonValue.String ex.Message) |]).ToString()
+            | ex -> RequestErrors.BAD_REQUEST <| (JsonValue.Record [| ("error", JsonValue.String ex.Message) |]).ToString()
     )
