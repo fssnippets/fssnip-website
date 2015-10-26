@@ -30,6 +30,7 @@ open FSharp.Azure.StorageTypeProvider
 #load "code/common/rssfeed.fs"
 #load "code/pages/home.fs"
 #load "code/pages/insert.fs"
+#load "code/pages/update.fs"
 #load "code/pages/snippet.fs"
 #load "code/pages/author.fs"
 #load "code/pages/tag.fs"
