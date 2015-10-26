@@ -5,7 +5,7 @@ open System.IO
 open FSharp.Azure.StorageTypeProvider
 open Microsoft.WindowsAzure.Storage.Blob
 open FsSnip.Utils
-open FsSnip.Data
+open FsSnip.Storage
 open FSharp.Data
 
 // -------------------------------------------------------------------------------------------------
@@ -18,9 +18,8 @@ open FSharp.Data
 /// (when it has the connection string) or file system (when running locally)
 module Storage = 
   let readIndex, saveIndex, readFile, writeFile =
-    if Azure.Storage.isConfigured() then Azure.Storage.functions
-    else Local.Storage.functions
-
+    if Storage.Azure.isConfigured() then Storage.Azure.functions
+    else Storage.Local.functions
 
 let [<Literal>] Index = __SOURCE_DIRECTORY__ + "/../samples/index.json"
 type Index = JsonProvider<Index>
