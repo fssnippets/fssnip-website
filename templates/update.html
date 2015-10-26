@@ -1,6 +1,6 @@
 {% extends "page.html" %}
 {% block head %}
-  <title>Insert Snippet | F# Snippets</title>
+  <title>Update Snippet | F# Snippets</title>
 {% endblock %}
 
 {% block customPageScripts %}
@@ -11,36 +11,17 @@
 <div class="row">
 <div class="col-md-12">
 
-  <form class="form-horizontal" name="insert-form" id="insert-form" action="/pages/insert" method="post">
-    <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-2">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" onclick="$('#public-details').css('display', ($('#hidden').is(':checked')) ? 'none' : '');" id="hidden" name="hidden" checked="checked"> Hidden
-          </label>
-        </div>
-      </div>
-      <div class="col-sm-8">
-        <small>Hidden snippets will not be listed on the page. Uncheck this for generally useful snippets. If you specify 'Passcode' only you'll be able to create a new version.</small>
-      </div>
-    </div>
-    
+  <h1>Update snippet '{{ model.Details.Title }}'</h1>
+  
+  <form class="form-horizontal" name="insert-form" id="insert-form" action="/{{ model.Details.Id | format_id }}/update" method="post">   
     <div class="form-group">
       <label for="title" class="col-sm-2 control-label">Title</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="title" name="title" placeholder="Snippet title">
+        <input type="text" class="form-control" id="title" name="title" value="{{ model.Details.Title }}">
       </div>
     </div>
-    <div class="form-group">
-      <label for="passcode" class="col-sm-2 control-label">Passcode</label>
-      <div class="col-sm-10">
-        <input type="text" class="form-control" id="passcode" name="passcode" placeholder="Password">
-      </div>
-    </div>
-    
-    <!-- Additional information required for public snippets only -->
 
-    <div id="public-details" style="display:none;">
+    <div id="public-details">
     <div class="form-group">
       <div class="col-sm-10 col-sm-offset-2">
         <small>Public F# snippets will be listed on the web site. The purpose of public snippets is to create a repository of useful snippets that people can easily find, view and use in their code. To make this possible, please add more information about the snippet such as a brief description, tags and your name.</small>
@@ -49,25 +30,25 @@
     <div class="form-group">
       <label for="description" class="col-sm-2 control-label">Description</label>
       <div class="col-sm-10">
-        <textarea class="form-control" name="description" rows="3" id="description"></textarea>
+        <textarea class="form-control" name="description" rows="3" id="description">{{ model.Details.Comment }}</textarea>
       </div>
     </div>
     <div class="form-group">
       <label for="tags" class="col-sm-2 control-label">Tags</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="tags" name="tags" placeholder="For example: list, recursion, pattern matching">
+        <input type="text" class="form-control" id="tags" name="tags" value="{{ model.Details.Tags | join: ", " }}">
       </div>
     </div>
     <div class="form-group">
       <label for="tags" class="col-sm-2 control-label">Author</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="author" name="author" placeholder="Your Name">
+        <input type="text" class="form-control" id="author" name="author" value="{{ model.Details.Author }}">
       </div>
     </div>
     <div class="form-group">
       <label for="tags" class="col-sm-2 control-label">Link</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="link" name="link" placeholder="http://...">
+        <input type="text" class="form-control" id="link" name="link" value="{{ model.Details.Link }}">
       </div>
     </div>
     </div>
@@ -76,7 +57,7 @@
     <div class="form-group">
       <label for="code" class="col-sm-2 control-label">Source code</label>
       <div class="col-sm-10">
-        <textarea class="form-control" name="code" rows="15" id="code"></textarea>
+        <textarea class="form-control" name="code" rows="15" id="code">{{ model.Raw }}</textarea>
       </div>
     </div>
     <div class="form-group">
