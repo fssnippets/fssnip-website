@@ -1,7 +1,5 @@
 module FsSnip.Pages.Snippet
 
-open System
-open System.Web
 open FsSnip
 open FsSnip.Data
 open FsSnip.Utils
@@ -17,9 +15,6 @@ type FormattedSnippet =
   { Html : string
     Details : Data.Snippet
     Revision : int }
-
-let invalidSnippetId id =
-  RequestErrors.NOT_FOUND (sprintf "Snippet with id %s not found" id)
 
 let showSnippet id r =
   let id' = demangleId id
