@@ -74,11 +74,16 @@ let getNextId () =
   largest + 1
 
 let insertSnippet newSnippet source formatted =
-  if newSnippet.Versions <> 1 then invalidOp "insertSnippet can only insert first version"
   let index = Index.Parse(Storage.readIndex())
-  let json = Index.Root(Array.append index.Snippets [| saveSnippet newSnippet |]).JsonValue.ToString()
-  Storage.writeFile (sprintf "source/%d/0" newSnippet.ID) source
-  Storage.writeFile (sprintf "formatted/%d/0" newSnippet.ID) formatted
+  let oldVersion, otherSnippets = index.Snippets |> Array.partition (fun snippet -> snippet.Id = newSnippet.ID)
+  
+  // TODO: index currently overwrites old metadata when adding a new version, rather than supporting multiple versions
+  // of the metadata
+  let json = Index.Root(Array.append otherSnippets [| saveSnippet newSnippet |]).JsonValue.ToString()
+
+  let version = newSnippet.Versions - 1
+  Storage.writeFile (sprintf "source/%d/%d" newSnippet.ID version) source
+  Storage.writeFile (sprintf "formatted/%d/%d" newSnippet.ID version) formatted
   Storage.saveIndex json
 
   let newSnippets, newPublicSnippets  = readSnippets ()

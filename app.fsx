@@ -22,5 +22,6 @@
 #load "code/pages/author.fs"
 #load "code/pages/tag.fs"
 #load "code/pages/rss.fs"
+#load "code/pages/update.fs"
 #load "app.fs"
 
