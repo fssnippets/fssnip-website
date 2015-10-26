@@ -1,4 +1,4 @@
-module FsSnip.Data.Local.Storage
+module FsSnip.Storage.Local
 
 open System
 open System.IO
