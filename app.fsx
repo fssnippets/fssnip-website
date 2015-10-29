@@ -88,7 +88,8 @@ let app =
         request (fun x -> cond (x.queryParam "all") (fun _ -> Snippet.Api.allPublicSnippets) never)
       GET >>= pathWithId "/api/1/snippet/%s" (fun id -> Snippet.Api.getSnippet id)
       ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
-      browseStaticFiles ]
+      browseStaticFiles
+      RequestErrors.NOT_FOUND "Found no handlers." ]
 
 // -------------------------------------------------------------------------------------------------
 // To run the web site, you can use `build.sh` or `build.cmd` script, which is nice because it
