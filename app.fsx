@@ -45,19 +45,9 @@ open FsSnip.Pages
 // -------------------------------------------------------------------------------------------------
 
 // TODO: This should be removed/fixed (see issue #4)
-let browseStaticFile file ctx = async {
-  let actualFile = Path.Combine(ctx.runtime.homeDirectory, "web", file)
-  let mime = Suave.Http.Writers.defaultMimeTypesMap(Path.GetExtension(actualFile))
-  let setMime =
-    match mime with
-    | None -> fun c -> async { return None }
-    | Some mime -> Suave.Http.Writers.setMimeType mime.name
-  return! ctx |> ( setMime >>= Successful.ok(File.ReadAllBytes actualFile) ) }
-
 let browseStaticFiles ctx = async {
-  let local = ctx.request.url.LocalPath
-  let file = if local = "/" then "index.html" else local.Substring(1)
-  return! browseStaticFile file ctx }
+  let root = Path.Combine(ctx.runtime.homeDirectory, "web")
+  return! Files.browse root ctx }
 
 // Configure DotLiquid templates & register filters (in 'filters.fs')
 [ for t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes() do
