@@ -75,11 +75,17 @@
     <Compile Include="code\pages\tag.fs" />
     <Compile Include="code\pages\author.fs" />
     <Compile Include="code\pages\rss.fs" />
-    <Compile Include="app.fsx" />
+    <Compile Include="code\pages\update.fs" />
+    <Compile Include="app.fs" />
+    <Compile Include="program.fs" />
+    <None Include="app.fsx" />
     <Content Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="azurehelper.fsx" />
+    <None Include="app.azure.fsx" />
+    <None Include="paket.dependencies" />
+    <None Include="paket.lock" />
+    <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

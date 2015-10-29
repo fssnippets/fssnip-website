@@ -3,6 +3,7 @@ module FsSnip.Utils
 open System
 open Suave.Http.Applicatives
 open Microsoft.FSharp.Reflection
+open Suave.Http
 
 // -------------------------------------------------------------------------------------------------
 // Helpers for working with fssnip IDs and for various Suave things
@@ -83,3 +84,5 @@ let readForm<'T> (form:list<string*string option>) =
          | _ -> getDefaultValue pi.PropertyType |]
   FSharpValue.MakeRecord(typeof<'T>, values) :?> 'T
   
+let invalidSnippetId id =
+  RequestErrors.NOT_FOUND (sprintf "Snippet with id %s not found" id)
