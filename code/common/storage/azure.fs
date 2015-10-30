@@ -1,4 +1,4 @@
-module FsSnip.Data.Azure.Storage
+module FsSnip.Storage.Azure
 
 open System
 open System.IO

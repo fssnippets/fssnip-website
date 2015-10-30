@@ -6,6 +6,7 @@
 #load "app.fsx"
 open App
 open Fake
+open FsSnip.App
 open System
 open Suave
 
