@@ -44,7 +44,7 @@ let reloadScript () =
     traceImportant "Reloading app.fsx script..."
     let appFsx = __SOURCE_DIRECTORY__ @@ "app.fsx"
     fsiSession.EvalInteraction(sprintf "#load @\"%s\"" appFsx)
-    fsiSession.EvalInteraction("open App")
+    fsiSession.EvalInteraction("open FsSnip.App")
     match fsiSession.EvalExpression("app") with
     | Some app -> Some(app.ReflectionValue :?> WebPart)
     | None -> failwith "Couldn't get 'app' value"

@@ -5,18 +5,6 @@
 #r "packages/Suave.DotLiquid/lib/net40/Suave.DotLiquid.dll"
 #load "packages/FSharp.Azure.StorageTypeProvider/StorageTypeProvider.fsx"
 #load "packages/FSharp.Formatting/FSharp.Formatting.fsx"
-open System
-open System.Web
-open System.IO
-open Suave
-open Suave.Web
-open Suave.Http
-open Suave.Types
-open FSharp.Data
-open Suave.Http.Applicatives
-open Suave.Http.Successful
-open Suave.Http.Writers
-open FSharp.Azure.StorageTypeProvider
 
 // -------------------------------------------------------------------------------------------------
 // Loading the FsSnip.WebSite project files
@@ -35,66 +23,4 @@ open FSharp.Azure.StorageTypeProvider
 #load "code/pages/author.fs"
 #load "code/pages/tag.fs"
 #load "code/pages/rss.fs"
-open FsSnip
-open FsSnip.Data
-open FsSnip.Utils
-open FsSnip.Pages
-
-// -------------------------------------------------------------------------------------------------
-// Server entry-point and routing
-// -------------------------------------------------------------------------------------------------
-
-// TODO: This should be removed/fixed (see issue #4)
-let browseStaticFiles ctx = async {
-  let root = Path.Combine(ctx.runtime.homeDirectory, "web")
-  return! Files.browse root ctx }
-
-// Configure DotLiquid templates & register filters (in 'filters.fs')
-[ for t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes() do
-    if t.Name = "Filters" && not (t.FullName.StartsWith "<") then yield t ]
-|> Seq.last
-|> DotLiquid.registerFiltersByType
-
-DotLiquid.setTemplatesDir (__SOURCE_DIRECTORY__ + "/templates")
-
-// Handles routing for the server
-let app =
-  choose
-    [ path "/" >>= Home.showHome
-      pathScan "/%s/%d" (fun (id, r) -> Snippet.showSnippet id (Revision r))
-      pathWithId "/%s" (fun id -> Snippet.showSnippet id Latest)
-      pathWithId "/%s/update" (fun id ctx -> Update.updateSnippet id ctx)
-      pathScan "/raw/%s/%d" (fun (id, r) -> Snippet.showRawSnippet id (Revision r))
-      pathWithId "/raw/%s" (fun id -> Snippet.showRawSnippet id Latest)
-      path "/pages/insert" >>= Insert.insertSnippet
-      path "/pages/insert/check" >>= Insert.checkSnippet
-      path "/authors/" >>= Author.showAll
-      pathScan "/authors/%s" Author.showSnippets
-      path "/tags/" >>= Tag.showAll
-      pathScan "/test/%s" (fun s -> Successful.OK s)
-      pathScan "/tags/%s" Tag.showSnippets
-      PUT >>= path "/api/1/snippet" >>= Insert.Api.putSnippet
-      GET >>= path "/api/1/snippet" >>=
-        request (fun x -> cond (x.queryParam "all") (fun _ -> Snippet.Api.allPublicSnippets) never)
-      GET >>= pathWithId "/api/1/snippet/%s" (fun id -> Snippet.Api.getSnippet id)
-      ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
-      browseStaticFiles
-      RequestErrors.NOT_FOUND "Found no handlers." ]
-
-// -------------------------------------------------------------------------------------------------
-// To run the web site, you can use `build.sh` or `build.cmd` script, which is nice because it
-// automatically reloads the script when it changes. But for debugging, you can also use run or
-// run with debugger in VS or XS. This runs the code below.
-// -------------------------------------------------------------------------------------------------
-
-#if INTERACTIVE
-#else
-let cfg =
-  { defaultConfig with
-      bindings = [ HttpBinding.mk' HTTP  "127.0.0.1" 8011 ]
-      homeFolder = Some __SOURCE_DIRECTORY__ }
-let _, server = startWebServerAsync cfg app
-Async.Start(server)
-System.Diagnostics.Process.Start("http://localhost:8011")
-System.Console.ReadLine() |> ignore
-#endif
+#load "app.fs"

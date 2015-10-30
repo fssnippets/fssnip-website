@@ -76,7 +76,9 @@
     <Compile Include="code\pages\author.fs" />
     <Compile Include="code\pages\rss.fs" />
     <Compile Include="code\pages\update.fs" />
-    <Compile Include="app.fsx" />
+    <Compile Include="app.fs" />
+    <Compile Include="program.fs" />
+    <None Include="app.fsx" />
     <Content Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
