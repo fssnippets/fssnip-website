@@ -77,7 +77,7 @@ let app =
       log logger logFormat >>= never
       path "/" >>= Home.showHome
       pathScan "/%s/%d" (fun (id, r) -> Snippet.showSnippet id (Revision r))
-//      pathWithId "/%s" (fun id -> Snippet.showSnippet id Latest)
+      pathWithId "/%s" (fun id -> Snippet.showSnippet id Latest)
 //      pathScan "/raw/%s/%d" (fun (id, r) -> Snippet.showRawSnippet id (Revision r))
 //      pathWithId "/raw/%s" (fun id -> Snippet.showRawSnippet id Latest)
 //      path "/pages/insert" >>= Insert.insertSnippet
