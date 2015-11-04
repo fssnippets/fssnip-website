@@ -77,17 +77,17 @@ let app =
       log logger logFormat >>= never
       path "/" >>= Home.showHome
       pathScan "/%s/%d" (fun (id, r) -> Snippet.showSnippet id (Revision r))
-      pathWithId "/%s" (fun id -> Snippet.showSnippet id Latest)
-      pathScan "/raw/%s/%d" (fun (id, r) -> Snippet.showRawSnippet id (Revision r))
-      pathWithId "/raw/%s" (fun id -> Snippet.showRawSnippet id Latest)
-      path "/pages/insert" >>= Insert.insertSnippet
-      path "/pages/insert/check" >>= Insert.checkSnippet
-      path "/authors/" >>= Author.showAll
-      pathScan "/authors/%s" Author.showSnippets
-      path "/tags/" >>= Tag.showAll
-      pathScan "/test/%s" (fun s -> Successful.OK s)
-      pathScan "/tags/%s" Tag.showSnippets
-      ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
+//      pathWithId "/%s" (fun id -> Snippet.showSnippet id Latest)
+//      pathScan "/raw/%s/%d" (fun (id, r) -> Snippet.showRawSnippet id (Revision r))
+//      pathWithId "/raw/%s" (fun id -> Snippet.showRawSnippet id Latest)
+//      path "/pages/insert" >>= Insert.insertSnippet
+//      path "/pages/insert/check" >>= Insert.checkSnippet
+//      path "/authors/" >>= Author.showAll
+//      pathScan "/authors/%s" Author.showSnippets
+//      path "/tags/" >>= Tag.showAll
+//      pathScan "/test/%s" (fun s -> Successful.OK s)
+//      pathScan "/tags/%s" Tag.showSnippets
+//      ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
       browseStaticFiles ] >>= log logger logFormat
 
 // -------------------------------------------------------------------------------------------------
