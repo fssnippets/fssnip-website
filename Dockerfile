@@ -4,4 +4,4 @@ WORKDIR ${source}
 ADD . $source
 RUN mono ./.paket/paket.bootstrapper.exe
 RUN mono ./.paket/paket.exe restore
-CMD ["fsharpi", "--debug", "app.docker.fsx"]
+CMD ["fsharpi", "--debug", "docker.fsx"]
