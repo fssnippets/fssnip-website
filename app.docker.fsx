@@ -17,6 +17,7 @@ open FSharp.Data
 open Suave.Http.Applicatives
 open Suave.Http.Successful
 open Suave.Http.Writers
+open Suave.Logging
 open FSharp.Azure.StorageTypeProvider
 
 // -------------------------------------------------------------------------------------------------
@@ -67,10 +68,14 @@ let browseStaticFiles ctx = async {
 
 DotLiquid.setTemplatesDir (__SOURCE_DIRECTORY__ + "/templates")
 
+let logger = Loggers.ConsoleWindowLogger LogLevel.Verbose
+
 // Handles routing for the server
 let app =
   choose
-    [ path "/" >>= Home.showHome
+    [ 
+      log logger logFormat >>= never
+      path "/" >>= Home.showHome
       pathScan "/%s/%d" (fun (id, r) -> Snippet.showSnippet id (Revision r))
       pathWithId "/%s" (fun id -> Snippet.showSnippet id Latest)
       pathScan "/raw/%s/%d" (fun (id, r) -> Snippet.showRawSnippet id (Revision r))
@@ -83,7 +88,7 @@ let app =
       pathScan "/test/%s" (fun s -> Successful.OK s)
       pathScan "/tags/%s" Tag.showSnippets
       ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
-      browseStaticFiles ]
+      browseStaticFiles ] >>= log logger logFormat
 
 // -------------------------------------------------------------------------------------------------
 // To run the web site, you can use `build.sh` or `build.cmd` script, which is nice because it
