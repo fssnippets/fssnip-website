@@ -19,7 +19,7 @@ type FormattedSnippet =
     Revision : int }
 
 let invalidSnippetId id =
-  RequestErrors.NOT_FOUND ""
+  RequestErrors.NOT_FOUND id
 
 let showSnippet id r =
   let id' = demangleId id

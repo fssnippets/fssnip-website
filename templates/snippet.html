@@ -5,6 +5,7 @@
 
 {% block customPageScripts %}
   <script src="/content/copycontent.js"></script>
+  <script src="/content/likes.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -32,8 +33,8 @@
     <script>!function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https'; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = p + '://platform.twitter.com/widgets.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'twitter-wjs');</script>
   </p>
   <p class="snip-like">
-    <span id="likeCount">{{ model.Details.Likes }}</span> people like it.<br />
-    <a href="javascript:;" id="likeLink" onclick="alert('not implemented :(')">Like the snippet!</a>
+    <span class="likeCount">{{ model.Details.Likes }}</span> people like it.<br />
+    <a href="javascript:;" class="likeLink" data-snippetid="{{ model.Details.Id | format_id }}">Like the snippet!</a>
   </p>
 
   <h1>{{ model.Details.Title }}</h1>

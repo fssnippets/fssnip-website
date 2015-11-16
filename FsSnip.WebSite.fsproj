@@ -72,6 +72,7 @@
     <Compile Include="code\pages\home.fs" />
     <Compile Include="code\pages\insert.fs" />
     <Compile Include="code\pages\snippet.fs" />
+    <Compile Include="code\pages\like.fs" />
     <Compile Include="code\pages\tag.fs" />
     <Compile Include="code\pages\author.fs" />
     <Compile Include="code\pages\rss.fs" />
