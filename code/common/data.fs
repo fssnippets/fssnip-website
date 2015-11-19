@@ -82,3 +82,20 @@ let insertSnippet newSnippet source formatted =
   let newSnippets, newPublicSnippets  = readSnippets ()
   snippets <- newSnippets
   publicSnippets <- newPublicSnippets
+
+let likeSnippet id revision =
+    let currentLikes = ref 0
+    let index = Index.Parse(Storage.readIndex())
+    let newSnippets = index.Snippets |> Array.map (fun snippet -> 
+        if snippet.Id = id then 
+            currentLikes := snippet.Likes + 1
+            Index.Snippet(snippet.Id, snippet.Title, snippet.Comment, snippet.Author, snippet.Link, snippet.Date, !currentLikes, snippet.IsPrivate,
+                snippet.Passcode, Array.ofSeq snippet.References, snippet.Source, snippet.Versions, Array.ofSeq snippet.Tags)
+            else snippet)
+    let json = Index.Root(newSnippets).JsonValue.ToString()
+    Storage.saveIndex json
+
+    let newSnippets, newPublicSnippets  = readSnippets ()
+    snippets <- newSnippets
+    publicSnippets <- newPublicSnippets
+    !currentLikes

@@ -31,6 +31,7 @@ open FSharp.Azure.StorageTypeProvider
 #load "code/pages/home.fs"
 #load "code/pages/insert.fs"
 #load "code/pages/snippet.fs"
+#load "code/pages/like.fs"
 #load "code/pages/author.fs"
 #load "code/pages/tag.fs"
 #load "code/pages/rss.fs"
@@ -76,6 +77,7 @@ let app =
       pathWithId "/raw/%s" (fun id -> Snippet.showRawSnippet id Latest)
       path "/pages/insert" >>= Insert.insertSnippet
       path "/pages/insert/check" >>= Insert.checkSnippet
+      pathWithId "/like/%s" (fun id -> Like.likeSnippet id Latest)
       path "/authors/" >>= Author.showAll
       pathScan "/authors/%s" Author.showSnippets
       path "/tags/" >>= Tag.showAll
