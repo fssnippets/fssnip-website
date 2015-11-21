@@ -17,6 +17,7 @@
   <link href="/content/style.css" rel="stylesheet" />
   <link href="/content/snippets.css" rel="stylesheet" />
   <script src="/content/tips.js"></script>
+  <script src="/content/search.js"></script>
   {% block customPageScripts %}
   {% endblock %}
   <link href="/favicon.ico" rel="icon" />
@@ -34,7 +35,10 @@
       <div class="col-lg-1"></div>
       <div id="links" class="col-md-12 col-lg-10">
         <a href="/">Home</a>
-        <a href="/pages/insert">Insert</a>
+          <a href="/pages/insert">Insert</a>
+
+          <!-- search form -->
+          <div id="search"><form id="searchForm"><input type="text" name="query" id="searchbox" placeholder="search..." /></form></div>
       </div>
       <div class="col-lg-1"></div>
     </div>

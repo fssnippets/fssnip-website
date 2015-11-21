@@ -31,6 +31,7 @@ open FSharp.Azure.StorageTypeProvider
 #load "code/pages/home.fs"
 #load "code/pages/insert.fs"
 #load "code/pages/snippet.fs"
+#load "code/pages/search.fs"
 #load "code/pages/like.fs"
 #load "code/pages/author.fs"
 #load "code/pages/tag.fs"
@@ -83,6 +84,7 @@ let app =
       path "/tags/" >>= Tag.showAll
       pathScan "/test/%s" (fun s -> Successful.OK s)
       pathScan "/tags/%s" Tag.showSnippets
+      pathScan "/search/%s" Search.showResults
       ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
       browseStaticFiles ]
 

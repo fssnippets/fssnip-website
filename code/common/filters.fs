@@ -13,6 +13,9 @@ let formatId (id:int) =
 let urlEncode (url:string) =
   System.Web.HttpUtility.UrlEncode(url)
 
+let urlDecode (input:string) =
+  System.Web.HttpUtility.UrlDecode(input)
+
 let niceDate (dt:DateTime) =
   let ts = DateTime.UtcNow - dt
   if ts.TotalSeconds < 60.0 then sprintf "%d secs ago" (int ts.TotalSeconds)
