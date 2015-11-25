@@ -1,0 +1,23 @@
+{% extends "page.html" %}
+{% block head %}
+<title>Search: {{ model.Query }} | F# Snippets</title>
+{% endblock %}
+
+{% block customPageScripts %}
+<script src="/content/likes.js"></script>
+{% endblock %}
+
+{% block content %}
+<h1>Search: {{ model.Query }}</h1>
+<p>{{ model.Count }} result(s)</p>
+
+<div class="row">
+    <div class="col-md-12">
+        <ul>
+            {% for item in model.Results %}
+            {% include "item.html" item:item %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

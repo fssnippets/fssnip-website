@@ -110,6 +110,16 @@ a, a:visited, a:link, a:hover {
   padding-right:10px;
 }
 
+#search {
+	width: 150px;
+	float: right;
+}
+
+#searchbox {
+	height: 1.3em;
+	width: 140px;
+}
+
 .footer {
   background:#693F6A;
 }
