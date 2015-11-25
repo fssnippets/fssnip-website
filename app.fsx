@@ -35,6 +35,7 @@ open FSharp.Azure.StorageTypeProvider
 #load "code/pages/author.fs"
 #load "code/pages/tag.fs"
 #load "code/pages/rss.fs"
+#load "code/api.fs"
 open FsSnip
 open FsSnip.Data
 open FsSnip.Utils
@@ -44,11 +45,6 @@ open FsSnip.Pages
 // Server entry-point and routing
 // -------------------------------------------------------------------------------------------------
 
-// TODO: This should be removed/fixed (see issue #4)
-let browseStaticFiles ctx = async {
-  let root = Path.Combine(ctx.runtime.homeDirectory, "web")
-  return! Files.browse root ctx }
-
 // Configure DotLiquid templates & register filters (in 'filters.fs')
 [ for t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes() do
     if t.Name = "Filters" && not (t.FullName.StartsWith "<") then yield t ]
@@ -56,6 +52,11 @@ let browseStaticFiles ctx = async {
 |> DotLiquid.registerFiltersByType
 
 DotLiquid.setTemplatesDir (__SOURCE_DIRECTORY__ + "/templates")
+
+/// Browse static files in the 'web' subfolder
+let browseStaticFiles ctx = async {
+  let root = Path.Combine(ctx.runtime.homeDirectory, "web")
+  return! Files.browse root ctx }
 
 // Handles routing for the server
 let app =
@@ -73,10 +74,7 @@ let app =
       path "/tags/" >>= Tag.showAll
       pathScan "/test/%s" (fun s -> Successful.OK s)
       pathScan "/tags/%s" Tag.showSnippets
-      PUT >>= path "/api/1/snippet" >>= Insert.Api.putSnippet
-      GET >>= path "/api/1/snippet" >>=
-        request (fun x -> cond (x.queryParam "all") (fun _ -> Snippet.Api.allPublicSnippets) never)
-      GET >>= pathWithId "/api/1/snippet/%s" (fun id -> Snippet.Api.getSnippet id)
+      Api.webParts
       ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
       browseStaticFiles
       RequestErrors.NOT_FOUND "Found no handlers." ]

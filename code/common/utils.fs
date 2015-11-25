@@ -4,10 +4,14 @@ open System
 open Suave.Http.Applicatives
 open Microsoft.FSharp.Reflection
 open Suave.Http
+open FSharp.CodeFormat
 
 // -------------------------------------------------------------------------------------------------
-// Helpers for working with fssnip IDs and for various Suave things
+// Helpers for working with fssnip IDs, formatting F# code and for various Suave things
 // -------------------------------------------------------------------------------------------------
+
+// Global instance of code formatting agent from F# Formatting
+let formatAgent = CodeFormat.CreateAgent()
 
 // This is the alphabet used in the IDs
 let alphabet = [ '0' .. '9' ] @ [ 'a' .. 'z' ] @ [ 'A' .. 'Z' ] |> Array.ofList

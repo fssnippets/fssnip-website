@@ -76,9 +76,6 @@ let getNextId () =
 let insertSnippet newSnippet source formatted =
   let index = Index.Parse(Storage.readIndex())
   let oldVersion, otherSnippets = index.Snippets |> Array.partition (fun snippet -> snippet.Id = newSnippet.ID)
-  
-  // TODO: index currently overwrites old metadata when adding a new version, rather than supporting multiple versions
-  // of the metadata
   let json = Index.Root(Array.append otherSnippets [| saveSnippet newSnippet |]).JsonValue.ToString()
 
   let version = newSnippet.Versions - 1
