@@ -63,9 +63,7 @@ let rec findPort port =
 
   if portIsTaken then findPort (port + 1) else port
 
-let port = findPort 8083
-
-let serverConfig =
+let getLocalServerConfig port =
   { defaultConfig with
       homeFolder = Some __SOURCE_DIRECTORY__
       logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Debug
@@ -78,7 +76,8 @@ let reloadAppServer () =
 
 Target "run" (fun _ ->
   let app ctx = currentApp.Value ctx
-  let _, server = startWebServerAsync serverConfig app
+  let port = findPort 8083
+  let _, server = startWebServerAsync (getLocalServerConfig port) app
 
   // Start Suave to host it on localhost
   reloadAppServer()
