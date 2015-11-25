@@ -1,6 +1,7 @@
 ﻿module FsSnip.Pages.Search
 
 open Suave
+open Suave.Http.Applicatives
 open System
 open System.Web
 open FsSnip.Utils
@@ -29,3 +30,5 @@ let showResults (query) = delay (fun () ->
   DotLiquid.page "search.html" { Query = decodedQuery
                                  Results = results
                                  Count = (List.length results) })
+
+let webPart = pathScan "/search/%s" showResults                                 

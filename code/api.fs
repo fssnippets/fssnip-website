@@ -111,11 +111,8 @@ let putSnippet =
         | ex -> RequestErrors.BAD_REQUEST <| (JsonValue.Record [| ("error", JsonValue.String ex.Message) |]).ToString()
 )
 
-// -------------------------------------------------------------------------------------------------
-//
-// -------------------------------------------------------------------------------------------------
-
-let webParts = 
+// Composed web part to be included in the top-level route
+let webPart = 
   choose 
     [ GET >>= path "/api/1/snippet" >>=
         request (fun x -> cond (x.queryParam "all") (fun _ -> allPublicSnippets) never)

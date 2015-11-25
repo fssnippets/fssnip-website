@@ -63,23 +63,23 @@ let browseStaticFiles ctx = async {
 // Handles routing for the server
 let app =
   choose
-    [ path "/" >>= Home.showHome
-      pathScan "/%s/%d" (fun (id, r) -> Snippet.showSnippet id (Revision r))
-      pathWithId "/%s" (fun id -> Snippet.showSnippet id Latest)
-      pathWithId "/%s/update" (fun id ctx -> Update.updateSnippet id ctx)
-      pathScan "/raw/%s/%d" (fun (id, r) -> Snippet.showRawSnippet id (Revision r))
-      pathWithId "/raw/%s" (fun id -> Snippet.showRawSnippet id Latest)
-      path "/pages/insert" >>= Insert.insertSnippet
-      path "/pages/insert/check" >>= Insert.checkSnippet
-      pathWithId "/like/%s" (fun id -> Like.likeSnippet id Latest)
-      path "/authors/" >>= Author.showAll
-      pathScan "/authors/%s" Author.showSnippets
-      path "/tags/" >>= Tag.showAll
-      pathScan "/test/%s" (fun s -> Successful.OK s)
-      pathScan "/tags/%s" Tag.showSnippets
-      pathScan "/search/%s" Search.showResults
-      Api.webParts
-      ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
+    [ // Home page, search and author & tag listings
+      Home.webPart
+      Search.webPart
+      Author.webPart
+      Tag.webPart
+    
+      // Snippet display, like, update & insert
+      Snippet.webPart
+      Like.webPart
+      Update.webPart
+      Insert.webPart
+      
+      // REST API and RSS feeds
+      Api.webPart
+      Rss.webPart
+      
+      // Static files and fallback case
       browseStaticFiles
       RequestErrors.NOT_FOUND "Found no handlers." ]
 

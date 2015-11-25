@@ -1,6 +1,8 @@
 module FsSnip.Pages.Tag
 
 open Suave
+open Suave.Http
+open Suave.Http.Applicatives
 open System
 open System.Web
 open FsSnip.Utils
@@ -9,6 +11,7 @@ open FsSnip.Data
 // -------------------------------------------------------------------------------------------------
 // Tag page - domain model
 // -------------------------------------------------------------------------------------------------
+
 type TagLink = 
   { Text : string
     Link : string
@@ -37,9 +40,10 @@ let getAllTags () =
     {Taglinks = links}
 
 // -------------------------------------------------------------------------------------------------
-// Loading tag page information (snippets by the given tag)
+// Suave web parts
 // -------------------------------------------------------------------------------------------------
 
+// Loading tag page information (snippets by the given tag)
 let showSnippets (tag) = 
     let t = System.Web.HttpUtility.UrlDecode tag
     let hasTag s = Seq.exists (fun t' -> t.Equals(t', StringComparison.InvariantCultureIgnoreCase)) s.Tags
@@ -47,8 +51,13 @@ let showSnippets (tag) =
     DotLiquid.page "tag.html" { Tag = t
                                 Snippets = ss }
 
-// -------------------------------------------------------------------------------------------------
 // Loading tag page information (all tags)
-// -------------------------------------------------------------------------------------------------
 let showAll = delay (fun () -> 
   DotLiquid.page "tags.html" (getAllTags()))
+
+// Composed web part to be included in the top-level route
+let webPart = 
+  choose   
+   [ path "/tags/" >>= showAll
+     pathScan "/tags/%s" showSnippets ]
+  

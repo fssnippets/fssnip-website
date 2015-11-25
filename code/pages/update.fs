@@ -76,3 +76,5 @@ let updateSnippet id ctx = async {
     else
       return! showForm snippetInfo id id' ctx
   | None -> return! invalidSnippetId id ctx }
+
+let webPart = pathWithId "/%s/update" updateSnippet

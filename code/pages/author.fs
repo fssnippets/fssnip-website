@@ -1,6 +1,8 @@
 module FsSnip.Pages.Author
 
 open Suave
+open Suave.Http
+open Suave.Http.Applicatives
 open System
 open System.Web
 open FsSnip.Utils
@@ -9,6 +11,7 @@ open FsSnip.Data
 // -------------------------------------------------------------------------------------------------
 // Author page - domain model
 // -------------------------------------------------------------------------------------------------
+
 type AuthorLink = 
   { Text : string
     Link : string
@@ -38,8 +41,10 @@ let getAllAuthors () =
     { Authors = links }
 
 // -------------------------------------------------------------------------------------------------
-// Loading author page information (snippets by the given author)
+// Suave web parts
 // -------------------------------------------------------------------------------------------------
+
+// Loading author page information (snippets by the given author)
 let showSnippets (author) = 
     let a = System.Web.HttpUtility.UrlDecode author
     let fromAuthor (s:Snippet) = 
@@ -47,8 +52,13 @@ let showSnippets (author) =
     let ss = Seq.filter fromAuthor publicSnippets
     DotLiquid.page "author.html" { Author = a
                                    Snippets = ss }
-// -------------------------------------------------------------------------------------------------
+
 // Loading author page information (all authors)
-// -------------------------------------------------------------------------------------------------
 let showAll = delay (fun () -> 
   DotLiquid.page "authors.html" (getAllAuthors()))
+
+// Composed web part to be included in the top-level route
+let webPart =   
+  choose 
+    [ path "/authors/" >>= showAll
+      pathScan "/authors/%s" showSnippets ]

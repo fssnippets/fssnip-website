@@ -4,7 +4,10 @@ open Suave.Http
 open FsSnip
 open FsSnip.Data
 open FsSnip.Utils
-open FsSnip.Pages.Snippet
+
+// -------------------------------------------------------------------------------------------------
+// Incrementing the number of likes when called from the client-side
+// -------------------------------------------------------------------------------------------------
 
 let likeSnippet id r =
     let id' = demangleId id
@@ -13,3 +16,6 @@ let likeSnippet id r =
         let newLikes = Data.likeSnippet id' r
         Successful.OK (newLikes.ToString())
     | None -> invalidSnippetId (id'.ToString())
+    
+let webPart = 
+  pathWithId "/like/%s" (fun id -> likeSnippet id Latest)    

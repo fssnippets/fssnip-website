@@ -5,6 +5,7 @@ open FsSnip.Data
 open FsSnip.Utils
 open Suave
 open Suave.Http
+open Suave.Http.Applicatives
 open Suave.Http.Successful
 
 // -------------------------------------------------------------------------------------------------
@@ -37,3 +38,12 @@ let showRawSnippet id r =
   match Data.loadRawSnippet id r with
   | Some s -> Writers.setMimeType "text/plain" >>= OK s
   | None -> invalidSnippetId id
+  
+// Web part to be included in the top-level route specification  
+let webPart = 
+  choose 
+    [ pathScan "/%s/%d" (fun (id, r) -> showSnippet id (Revision r))
+      pathWithId "/%s" (fun id -> showSnippet id Latest)
+      pathScan "/raw/%s/%d" (fun (id, r) -> showRawSnippet id (Revision r))
+      pathWithId "/raw/%s" (fun id -> showRawSnippet id Latest) ]
+  

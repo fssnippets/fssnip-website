@@ -1,6 +1,8 @@
 module FsSnip.Pages.Home
 
 open Suave
+open Suave.Http
+open Suave.Http.Applicatives
 open System
 open System.Web
 open FsSnip.Utils
@@ -67,3 +69,5 @@ let getHome () =
 
 let showHome = delay (fun () -> 
   DotLiquid.page "home.html" (getHome()))
+  
+let webPart =  path "/" >>= showHome

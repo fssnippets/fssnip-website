@@ -5,6 +5,7 @@ open System.IO
 open Suave
 open Suave.Types
 open Suave.Http
+open Suave.Http.Applicatives
 open Suave.Http.Successful
 open FsSnip
 open FSharp.CodeFormat
@@ -82,3 +83,8 @@ let checkSnippet ctx = async {
       >>= Writers.setHeader "Expires" "0"
       >>= Writers.setMimeType "application/json"
       >>= Successful.OK(json.ToString()) ) }
+      
+let webPart = 
+  choose 
+   [ path "/pages/insert" >>= insertSnippet
+     path "/pages/insert/check" >>= checkSnippet ]
