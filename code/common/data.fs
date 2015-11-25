@@ -5,7 +5,7 @@ open System.IO
 open FSharp.Azure.StorageTypeProvider
 open Microsoft.WindowsAzure.Storage.Blob
 open FsSnip.Utils
-open FsSnip.Data
+open FsSnip.Storage
 open FSharp.Data
 
 // -------------------------------------------------------------------------------------------------
@@ -18,9 +18,8 @@ open FSharp.Data
 /// (when it has the connection string) or file system (when running locally)
 module Storage = 
   let readIndex, saveIndex, readFile, writeFile =
-    if Azure.Storage.isConfigured() then Azure.Storage.functions
-    else Local.Storage.functions
-
+    if Storage.Azure.isConfigured() then Storage.Azure.functions
+    else Storage.Local.functions
 
 let [<Literal>] Index = __SOURCE_DIRECTORY__ + "/../samples/index.json"
 type Index = JsonProvider<Index>
@@ -67,16 +66,21 @@ let loadSnippet id revision =
 let loadRawSnippet id revision =
   loadSnippetInternal "source" id revision 
 
+let getAllPublicSnippets () =
+    publicSnippets
+
 let getNextId () = 
   let largest = snippets |> Seq.map (fun s -> s.ID) |> Seq.max
   largest + 1
 
 let insertSnippet newSnippet source formatted =
-  if newSnippet.Versions <> 1 then invalidOp "insertSnippet can only insert first version"
   let index = Index.Parse(Storage.readIndex())
-  let json = Index.Root(Array.append index.Snippets [| saveSnippet newSnippet |]).JsonValue.ToString()
-  Storage.writeFile (sprintf "source/%d/0" newSnippet.ID) source
-  Storage.writeFile (sprintf "formatted/%d/0" newSnippet.ID) formatted
+  let oldVersion, otherSnippets = index.Snippets |> Array.partition (fun snippet -> snippet.Id = newSnippet.ID)
+  let json = Index.Root(Array.append otherSnippets [| saveSnippet newSnippet |]).JsonValue.ToString()
+
+  let version = newSnippet.Versions - 1
+  Storage.writeFile (sprintf "source/%d/%d" newSnippet.ID version) source
+  Storage.writeFile (sprintf "formatted/%d/%d" newSnippet.ID version) formatted
   Storage.saveIndex json
 
   let newSnippets, newPublicSnippets  = readSnippets ()

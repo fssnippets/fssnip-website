@@ -25,8 +25,6 @@ type InsertForm =
     Code : string
     NugetPkgs : string option }
 
-let formatAgent = CodeFormat.CreateAgent()
-
 let insertSnippet ctx = async { 
   if ctx.request.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
     let form = Utils.readForm<InsertForm> ctx.request.form
@@ -38,7 +36,7 @@ let insertSnippet ctx = async {
       | _ -> [| |]
 
     // TODO: Download NuGet packages and pass "-r:..." args to the formatter! (issue #13)
-    let doc = Literate.ParseScriptString(form.Code, "/temp/Snippet.fsx", formatAgent)
+    let doc = Literate.ParseScriptString(form.Code, "/temp/Snippet.fsx", Utils.formatAgent)
     let html = Literate.WriteHtml(doc, "fs", true, true)
     let id = Data.getNextId()
     match form with
@@ -72,7 +70,7 @@ type Errors = JsonProvider<"""[ {"location":[1,1,10,10], "error":true, "message"
 let checkSnippet ctx = async {
   use sr = new StreamReader(new MemoryStream(ctx.request.rawForm))
   let request = sr.ReadToEnd()
-  let doc = Literate.ParseScriptString(request, "/temp/Snippet.fsx", formatAgent)
+  let doc = Literate.ParseScriptString(request, "/temp/Snippet.fsx", Utils.formatAgent)
   let json = 
     JsonValue.Array
       [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Errors ->

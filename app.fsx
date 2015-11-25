@@ -30,12 +30,14 @@ open FSharp.Azure.StorageTypeProvider
 #load "code/common/rssfeed.fs"
 #load "code/pages/home.fs"
 #load "code/pages/insert.fs"
+#load "code/pages/update.fs"
 #load "code/pages/snippet.fs"
 #load "code/pages/search.fs"
 #load "code/pages/like.fs"
 #load "code/pages/author.fs"
 #load "code/pages/tag.fs"
 #load "code/pages/rss.fs"
+#load "code/api.fs"
 open FsSnip
 open FsSnip.Data
 open FsSnip.Utils
@@ -45,21 +47,6 @@ open FsSnip.Pages
 // Server entry-point and routing
 // -------------------------------------------------------------------------------------------------
 
-// TODO: This should be removed/fixed (see issue #4)
-let browseStaticFile file ctx = async {
-  let actualFile = Path.Combine(ctx.runtime.homeDirectory, "web", file)
-  let mime = Suave.Http.Writers.defaultMimeTypesMap(Path.GetExtension(actualFile))
-  let setMime =
-    match mime with
-    | None -> fun c -> async { return None }
-    | Some mime -> Suave.Http.Writers.setMimeType mime.name
-  return! ctx |> ( setMime >>= Successful.ok(File.ReadAllBytes actualFile) ) }
-
-let browseStaticFiles ctx = async {
-  let local = ctx.request.url.LocalPath
-  let file = if local = "/" then "index.html" else local.Substring(1)
-  return! browseStaticFile file ctx }
-
 // Configure DotLiquid templates & register filters (in 'filters.fs')
 [ for t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes() do
     if t.Name = "Filters" && not (t.FullName.StartsWith "<") then yield t ]
@@ -68,12 +55,18 @@ let browseStaticFiles ctx = async {
 
 DotLiquid.setTemplatesDir (__SOURCE_DIRECTORY__ + "/templates")
 
+/// Browse static files in the 'web' subfolder
+let browseStaticFiles ctx = async {
+  let root = Path.Combine(ctx.runtime.homeDirectory, "web")
+  return! Files.browse root ctx }
+
 // Handles routing for the server
 let app =
   choose
     [ path "/" >>= Home.showHome
       pathScan "/%s/%d" (fun (id, r) -> Snippet.showSnippet id (Revision r))
       pathWithId "/%s" (fun id -> Snippet.showSnippet id Latest)
+      pathWithId "/%s/update" (fun id ctx -> Update.updateSnippet id ctx)
       pathScan "/raw/%s/%d" (fun (id, r) -> Snippet.showRawSnippet id (Revision r))
       pathWithId "/raw/%s" (fun id -> Snippet.showRawSnippet id Latest)
       path "/pages/insert" >>= Insert.insertSnippet
@@ -85,8 +78,10 @@ let app =
       pathScan "/test/%s" (fun s -> Successful.OK s)
       pathScan "/tags/%s" Tag.showSnippets
       pathScan "/search/%s" Search.showResults
+      Api.webParts
       ( path "/rss/" <|> path "/rss" <|> path "/pages/Rss" <|> path "/pages/Rss/" ) >>= Rss.getRss
-      browseStaticFiles ]
+      browseStaticFiles
+      RequestErrors.NOT_FOUND "Found no handlers." ]
 
 // -------------------------------------------------------------------------------------------------
 // To run the web site, you can use `build.sh` or `build.cmd` script, which is nice because it
