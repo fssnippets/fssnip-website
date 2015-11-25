@@ -56,11 +56,20 @@ let reloadScript () =
 
 let currentApp = ref (fun _ -> async { return None })
 
+let rec findPort port =
+  let portIsTaken =
+    System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners()
+    |> Seq.exists (fun x -> x.Port = port)
+
+  if portIsTaken then findPort (port + 1) else port
+
+let port = findPort 8083
+
 let serverConfig =
   { defaultConfig with
       homeFolder = Some __SOURCE_DIRECTORY__
       logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Debug
-      bindings = [ HttpBinding.mk' HTTP  "127.0.0.1" 8083] }
+      bindings = [ HttpBinding.mk' HTTP  "127.0.0.1" port ] }
 
 let reloadAppServer () =
   reloadScript() |> Option.iter (fun app ->
@@ -75,7 +84,7 @@ Target "run" (fun _ ->
   reloadAppServer()
   Async.Start(server)
   // Open web browser with the loaded file
-  System.Diagnostics.Process.Start("http://localhost:8083") |> ignore
+  System.Diagnostics.Process.Start(sprintf "http://localhost:%d" port) |> ignore
   
   // Watch for changes & reload when app.fsx changes
   let sources = { BaseDirectory = __SOURCE_DIRECTORY__; Includes = [ "**/*.fs*" ]; Excludes = [] }
