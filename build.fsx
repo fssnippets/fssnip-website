@@ -69,10 +69,11 @@ let getLocalServerConfig port =
       logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Debug
       bindings = [ HttpBinding.mk' HTTP  "127.0.0.1" port ] }
 
-let reloadAppServer () =
+let reloadAppServer (changedFiles: string seq) =
+  traceImportant <| sprintf "Changes in %s" (String.Join(",",changedFiles))
   reloadScript() |> Option.iter (fun app ->
     currentApp.Value <- app
-    traceImportant "New version of app.fsx loaded!" )
+    traceImportant "Refreshed app." )
 
 Target "run" (fun _ ->
   let app ctx = currentApp.Value ctx
@@ -80,16 +81,20 @@ Target "run" (fun _ ->
   let _, server = startWebServerAsync (getLocalServerConfig port) app
 
   // Start Suave to host it on localhost
-  reloadAppServer()
+  reloadAppServer ["app.fsx"]
   Async.Start(server)
   // Open web browser with the loaded file
   System.Diagnostics.Process.Start(sprintf "http://localhost:%d" port) |> ignore
   
   // Watch for changes & reload when app.fsx changes
-  let sources = { BaseDirectory = __SOURCE_DIRECTORY__; Includes = [ "**/*.fs*" ]; Excludes = [] }
-  use watcher = sources |> WatchChanges (fun _ -> reloadAppServer())
+  let sources = 
+    { BaseDirectory = __SOURCE_DIRECTORY__
+      Includes = [ "**/*.fsx"; "**/*.fs" ; "**/*.fsproj" ]; 
+      Excludes = [] }
+      
+  use watcher = sources |> WatchChanges (Seq.map (fun x -> x.FullPath) >> reloadAppServer)
   traceImportant "Waiting for app.fsx edits. Press any key to stop."
-  //System.Console.ReadLine() |> ignore
+
   System.Threading.Thread.Sleep(System.Threading.Timeout.Infinite)
 )
 
