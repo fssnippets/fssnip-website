@@ -8,3 +8,4 @@ nuget FSharp.Compiler.Service
 nuget DotLiquid
 nuget FSharp.Formatting >= 2.10.3
 nuget FSharp.Azure.StorageTypeProvider
+nuget Paket.Core
