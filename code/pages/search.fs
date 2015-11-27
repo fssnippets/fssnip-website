@@ -27,8 +27,7 @@ let getResults (query) =
 let showResults (query) = delay (fun () -> 
   let decodedQuery = FsSnip.Filters.urlDecode query
   let results = getResults decodedQuery |> Seq.toList
-  let htmlEncodedQuery = FsSnip.Filters.htmlEncode decodedQuery
-  DotLiquid.page "search.html" { Query = htmlEncodedQuery
+  DotLiquid.page "search.html" { Query = decodedQuery
                                  Results = results
                                  Count = (List.length results) })
 
