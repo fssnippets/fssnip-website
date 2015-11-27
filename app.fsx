@@ -3,6 +3,7 @@
 #r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
 #r "packages/DotLiquid/lib/NET45/DotLiquid.dll"
 #r "packages/Suave.DotLiquid/lib/net40/Suave.DotLiquid.dll"
+#r "packages/Paket.Core/lib/net45/Paket.Core.dll"
 #load "packages/FSharp.Azure.StorageTypeProvider/StorageTypeProvider.fsx"
 #load "packages/FSharp.Formatting/FSharp.Formatting.fsx"
 open System
@@ -28,6 +29,7 @@ open FSharp.Azure.StorageTypeProvider
 #load "code/common/filters.fs"
 #load "code/common/data.fs"
 #load "code/common/rssfeed.fs"
+#load "code/common/parser.fs"
 #load "code/pages/home.fs"
 #load "code/pages/insert.fs"
 #load "code/pages/update.fs"

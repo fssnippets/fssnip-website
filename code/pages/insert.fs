@@ -36,10 +36,8 @@ let insertSnippet ctx = async {
       | Some s when not (String.IsNullOrWhiteSpace(s)) -> s.Split(',')
       | _ -> [| |]
 
-    // TODO: Download NuGet packages and pass "-r:..." args to the formatter! (issue #13)
-    let doc = Literate.ParseScriptString(form.Code, "/temp/Snippet.fsx", Utils.formatAgent)
-    let html = Literate.WriteHtml(doc, "fs", true, true)
     let id = Data.getNextId()
+    let html = Parser.parseScript id form.Code nugetReferences
     match form with
     | { Hidden = true } ->
         Data.insertSnippet 
