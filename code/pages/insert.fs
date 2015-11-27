@@ -38,6 +38,7 @@ let insertSnippet ctx = async {
 
     let id = Data.getNextId()
     let html = Parser.parseScript id form.Code nugetReferences
+
     match form with
     | { Hidden = true } ->
         Data.insertSnippet 

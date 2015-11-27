@@ -9,12 +9,16 @@ open FsSnip
 let framework = DotNetFramework(FrameworkVersion.V4_5)
 
 let private restorePackages packages folder =
-    Dependencies.Init folder
-    let dependencies = Dependencies.Locate folder
-    packages |> Seq.iter dependencies.Add
+    if Array.isEmpty packages
+    then [| |]
+    else
+        Dependencies.Init folder
+        let dependencies = Dependencies.Locate folder
+        packages |> Seq.iter dependencies.Add
 
-    packages
-    |> Seq.collect(fun package -> dependencies.GetLibraries((None, package), framework))
+        packages
+        |> Seq.collect(fun package -> dependencies.GetLibraries((None, package), framework))
+        |> Array.ofSeq
 
 let parseScript id content packages =
     let tempFolder = Path.Combine(Environment.CurrentDirectory, "temp", id.ToString())
@@ -22,7 +26,7 @@ let parseScript id content packages =
     if (not <| Directory.Exists tempFolder)
     then Directory.CreateDirectory tempFolder |> ignore
 
-    let references =
+    let references = 
         restorePackages packages tempFolder
         |> Seq.map (sprintf "-r \"%s\"")
         |> String.concat " "
