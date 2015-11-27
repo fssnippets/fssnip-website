@@ -20,6 +20,7 @@ let private restorePackages packages folder =
         |> Seq.collect(fun package -> dependencies.GetLibraries((None, package), framework))
         |> Array.ofSeq
 
+/// Parses F# script file and download NuGet packages if required.
 let parseScript id content packages =
     let tempFolder = Path.Combine(Environment.CurrentDirectory, "temp", id.ToString())
 
