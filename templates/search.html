@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<h1>Search: {{ model.Query | html_encode }}</h1>
+<h1>Search: {{ model.Query | escape }}</h1>
 <p>{{ model.Count }} result(s)</p>
 
 <div class="row">
