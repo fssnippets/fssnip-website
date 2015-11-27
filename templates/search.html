@@ -1,6 +1,6 @@
 {% extends "page.html" %}
 {% block head %}
-<title>Search: {{ model.Query }} | F# Snippets</title>
+<title>Search: {{ model.Query | escape }} | F# Snippets</title>
 {% endblock %}
 
 {% block customPageScripts %}
@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<h1>Search: {{ model.Query }}</h1>
+<h1>Search: {{ model.Query | escape }}</h1>
 <p>{{ model.Count }} result(s)</p>
 
 <div class="row">
