@@ -134,3 +134,14 @@ a, a:visited, a:link, a:hover {
   color:white;
   text-decoration:underline;
 }
+
+/*********************** Form validation errors *********************/
+
+label.error{
+  color:red;
+  font-style:italic
+}
+  
+input.error{
+  border:1px dotted red;
+}
