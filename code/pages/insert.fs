@@ -24,10 +24,17 @@ type InsertForm =
     Author : string option
     Link : string option
     Code : string
-    NugetPkgs : string option }
+    NugetPkgs : string option
+    Session : string }
+
+type InsertSnippetModel =
+    { Session: string }
+    with static member Create() = { Session = Guid.NewGuid().ToString() }
 
 let private parsePackages = function
-  | Some s when not (String.IsNullOrWhiteSpace(s)) -> s.Split(',')
+  | Some s when not (String.IsNullOrWhiteSpace(s)) -> 
+    s.Split([|","|], StringSplitOptions.RemoveEmptyEntries)
+    |> Array.map (fun s -> s.Trim())
   | _ -> [| |]
 
 let insertSnippet ctx = async {
@@ -38,8 +45,9 @@ let insertSnippet ctx = async {
     let nugetReferences = parsePackages form.NugetPkgs
 
     let id = Data.getNextId()
-    let doc = Parser.parseScript id form.Code nugetReferences
+    let doc = Parser.parseScript form.Session form.Code nugetReferences
     let html = Literate.WriteHtml(doc, "fs", true, true)
+    Parser.completeSession form.Session
 
     match form with
     | { Hidden = true } ->
@@ -63,7 +71,7 @@ let insertSnippet ctx = async {
         failwith "Invalid input!"
     return! Redirection.FOUND ("/" + Utils.mangleId id) ctx
   else
-    return! DotLiquid.page "insert.html" () ctx }
+    return! DotLiquid.page "insert.html" (InsertSnippetModel.Create()) ctx }
 
 
 open FSharp.Data
@@ -72,7 +80,7 @@ type Errors = JsonProvider<"""[ {"location":[1,1,10,10], "error":true, "message"
 let checkSnippet ctx = async {
   let form = Utils.readForm<InsertForm> ctx.request.form
   let nugetReferences = parsePackages form.NugetPkgs
-  let doc = Parser.parseScript "42" form.Code nugetReferences
+  let doc = Parser.parseScript form.Session form.Code nugetReferences
   let json =
     JsonValue.Array
       [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Errors ->

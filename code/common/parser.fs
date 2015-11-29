@@ -9,28 +9,39 @@ open FsSnip
 let framework = DotNetFramework(FrameworkVersion.V4_5)
 
 let private restorePackages packages folder =
-    if Array.isEmpty packages
-    then [| |]
-    else
-        Dependencies.Init folder
-        let dependencies = Dependencies.Locate folder
-        packages |> Seq.iter dependencies.Add
+  if Array.isEmpty packages
+  then [| |]
+  else
+    Dependencies.Init folder
+    let dependencies = Dependencies.Locate folder
+    packages |> Seq.iter dependencies.Add
 
-        packages
-        |> Seq.collect(fun package -> dependencies.GetLibraries((None, package), framework))
-        |> Array.ofSeq
+    packages
+    |> Seq.collect(fun package -> dependencies.GetLibraries((None, package), framework))
+    |> Array.ofSeq
+
+let private workingFolderFor session = Path.Combine(Environment.CurrentDirectory, "temp", session)
 
 /// Parses F# script file and download NuGet packages if required.
-let parseScript id content packages =
-    let tempFolder = Path.Combine(Environment.CurrentDirectory, "temp", id.ToString())
+let parseScript session content packages =
+  let workingFolder = workingFolderFor session
 
-    if (not <| Directory.Exists tempFolder)
-    then Directory.CreateDirectory tempFolder |> ignore
+  if (not <| Directory.Exists workingFolder)
+  then Directory.CreateDirectory workingFolder |> ignore
 
-    let references = 
-        restorePackages packages tempFolder
-        |> Seq.map (sprintf "--reference:\"%s\"")
-        |> String.concat " "
+  let references = 
+    restorePackages packages workingFolder
+    |> Seq.map (sprintf "--reference:\"%s\"")
+    |> String.concat " "
 
-    let scriptFile = Path.Combine(tempFolder, "Script.fsx")
-    Literate.ParseScriptString(content, scriptFile, Utils.formatAgent, references)
+  let scriptFile = Path.Combine(workingFolder, "Script.fsx")
+  Literate.ParseScriptString(content, scriptFile, Utils.formatAgent, references)
+
+/// Marks parsing session as complete - basically deletes working forlder for the given session
+let completeSession session =
+  let folder = workingFolderFor session
+  if Directory.Exists folder then
+    try
+      Directory.Delete(folder, true)
+    with 
+      | e -> printfn "Failed to delete folder \"%s\": %O" folder e
