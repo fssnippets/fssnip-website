@@ -52,13 +52,21 @@ let readSnippets () =
 
 let mutable snippets, publicSnippets = readSnippets ()
 
+
 let loadSnippetInternal folder id revision = 
   let id = demangleId id
   publicSnippets
-  |> Seq.tryFind (fun s -> s.ID = id) 
-  |> Option.map (fun snippetInfo ->
-      let r = match revision with Latest -> snippetInfo.Versions - 1 | Revision r -> r
-      Storage.readFile (sprintf "%s/%d/%d" folder id r) )
+  |> Seq.tryFind (fun s -> s.ID = id)
+  |> function
+     | Some snippetInfo ->
+       try
+         match revision with Latest -> snippetInfo.Versions - 1 | Revision r -> r
+         |> sprintf "%s/%d/%d" folder id
+         |> Storage.readFile
+        |> Some
+       with
+       | _ -> None
+     | None -> None 
 
 let loadSnippet id revision = 
   loadSnippetInternal "formatted" id revision 
