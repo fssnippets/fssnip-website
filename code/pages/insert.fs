@@ -16,7 +16,7 @@ open FSharp.Literate
 // -------------------------------------------------------------------------------------------------
 
 type InsertForm =
-  { Hidden : bool 
+  { Hidden : bool
     Title : string
     Passcode : string option
     Description : string option
@@ -26,38 +26,40 @@ type InsertForm =
     Code : string
     NugetPkgs : string option }
 
-let insertSnippet ctx = async { 
+let private parsePackages = function
+  | Some s when not (String.IsNullOrWhiteSpace(s)) -> s.Split(',')
+  | _ -> [| |]
+
+let insertSnippet ctx = async {
   if ctx.request.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
     let form = Utils.readForm<InsertForm> ctx.request.form
-    
+
     // Assuming all input is valid (TODO issue #12)
-    let nugetReferences = 
-      match form.NugetPkgs with
-      | Some s when not (String.IsNullOrWhiteSpace(s)) -> s.Split(',')
-      | _ -> [| |]
+    let nugetReferences = parsePackages form.NugetPkgs
 
     let id = Data.getNextId()
-    let html = Parser.parseScript id form.Code nugetReferences
+    let doc = Parser.parseScript id form.Code nugetReferences
+    let html = Literate.WriteHtml(doc, "fs", true, true)
 
     match form with
     | { Hidden = true } ->
-        Data.insertSnippet 
-          { ID = id; Title = form.Title; Comment = ""; Author = ""; 
-            Link = ""; Date = System.DateTime.UtcNow; Likes = 0; Private = true; 
-            Passcode = defaultArg form.Passcode ""; 
+        Data.insertSnippet
+          { ID = id; Title = form.Title; Comment = ""; Author = "";
+            Link = ""; Date = System.DateTime.UtcNow; Likes = 0; Private = true;
+            Passcode = defaultArg form.Passcode "";
             References = nugetReferences; Source = ""; Versions = 1; Tags = [| |] }
           form.Code html
-    | { Hidden = false; Description = Some descr; Author = Some author; Link = Some link; 
+    | { Hidden = false; Description = Some descr; Author = Some author; Link = Some link;
         Tags = Some tags } when not (String.IsNullOrWhiteSpace(tags)) ->
         let tags = tags.Split(',')
-        Data.insertSnippet 
-          { ID = id; Title = form.Title; Comment = descr; 
+        Data.insertSnippet
+          { ID = id; Title = form.Title; Comment = descr;
             Author = author; Link = link; Date = System.DateTime.UtcNow;
-            Likes = 0; Private = form.Hidden; Passcode = defaultArg form.Passcode ""; 
-            References = nugetReferences; Source = ""; Versions = 1; 
+            Likes = 0; Private = form.Hidden; Passcode = defaultArg form.Passcode "";
+            References = nugetReferences; Source = ""; Versions = 1;
             Tags = tags }
           form.Code html
-    | _ -> 
+    | _ ->
         failwith "Invalid input!"
     return! Redirection.FOUND ("/" + Utils.mangleId id) ctx
   else
@@ -68,10 +70,10 @@ open FSharp.Data
 type Errors = JsonProvider<"""[ {"location":[1,1,10,10], "error":true, "message":"sth"} ]""">
 
 let checkSnippet ctx = async {
-  use sr = new StreamReader(new MemoryStream(ctx.request.rawForm))
-  let request = sr.ReadToEnd()
-  let doc = Literate.ParseScriptString(request, "/temp/Snippet.fsx", Utils.formatAgent)
-  let json = 
+  let form = Utils.readForm<InsertForm> ctx.request.form
+  let nugetReferences = parsePackages form.NugetPkgs
+  let doc = Parser.parseScript "42" form.Code nugetReferences
+  let json =
     JsonValue.Array
       [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Errors ->
          Errors.Root([| l1; c1; l2; c2 |], (kind = ErrorKind.Error), msg).JsonValue |]
@@ -82,8 +84,8 @@ let checkSnippet ctx = async {
       >>= Writers.setHeader "Expires" "0"
       >>= Writers.setMimeType "application/json"
       >>= Successful.OK(json.ToString()) ) }
-      
-let webPart = 
-  choose 
+
+let webPart =
+  choose
    [ path "/pages/insert" >>= insertSnippet
      path "/pages/insert/check" >>= checkSnippet ]

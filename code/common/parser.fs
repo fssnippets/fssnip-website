@@ -29,9 +29,8 @@ let parseScript id content packages =
 
     let references = 
         restorePackages packages tempFolder
-        |> Seq.map (sprintf "-r \"%s\"")
+        |> Seq.map (sprintf "--reference:\"%s\"")
         |> String.concat " "
 
     let scriptFile = Path.Combine(tempFolder, "Script.fsx")
-    let doc = Literate.ParseScriptString(content, scriptFile, Utils.formatAgent, references)
-    Literate.WriteHtml(doc, "fs", true, true)
+    Literate.ParseScriptString(content, scriptFile, Utils.formatAgent, references)
