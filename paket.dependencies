@@ -8,3 +8,5 @@ nuget FSharp.Compiler.Service
 nuget DotLiquid
 nuget FSharp.Formatting >= 2.10.3
 nuget FSharp.Azure.StorageTypeProvider
+
+github fsprojects/Chessie src/Chessie/ErrorHandling.fs

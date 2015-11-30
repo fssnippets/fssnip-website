@@ -22,6 +22,7 @@ open FSharp.Azure.StorageTypeProvider
 // Loading the FsSnip.WebSite project files
 // -------------------------------------------------------------------------------------------------
 
+#load "paket-files/fsprojects/Chessie/src/Chessie/ErrorHandling.fs"
 #load "code/common/storage/azure.fs"
 #load "code/common/storage/local.fs"
 #load "code/common/utils.fs"

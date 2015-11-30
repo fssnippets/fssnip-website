@@ -63,6 +63,10 @@
   </Target>
   -->
   <ItemGroup>
+    <Compile Include="paket-files\fsprojects\Chessie\src\Chessie\ErrorHandling.fs">
+      <Paket>True</Paket>
+      <Link>paket-files/ErrorHandling.fs</Link>
+    </Compile>
     <Compile Include="code\common\storage\azure.fs" />
     <Compile Include="code\common\storage\local.fs" />
     <Compile Include="code\common\utils.fs" />

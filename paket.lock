@@ -36,3 +36,7 @@ NUGET
       Microsoft.Data.Services.Client (>= 5.6.4) - framework: >= net40
       Newtonsoft.Json (>= 6.0.8) - framework: wpv8.0, >= net40
     Zlib.Portable (1.11.0) - framework: portable-net40+sl50+wp80+win80
+GITHUB
+  remote: fsprojects/Chessie
+  specs:
+    src/Chessie/ErrorHandling.fs (1f23b1caeb1f87e750abc96a25109376771dd090)
