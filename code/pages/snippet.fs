@@ -7,21 +7,23 @@ open Suave
 open Suave.Http
 open Suave.Http.Applicatives
 open Suave.Http.Successful
+open Suave.Types
 
 // -------------------------------------------------------------------------------------------------
 // Snippet details and raw view pages
 // -------------------------------------------------------------------------------------------------
 
-type Message = { Text : string }
+type Message = { Title : string ;  Text : string }
 
 type FormattedSnippet =
   { Html : string
     Details : Data.Snippet
     Revision : int }
-  
-let showInvalidSnippet text =
-  { Text =  text }
+
+let showInvalidSnippet title text =
+  { Title = title ; Text =  text }
   |> DotLiquid.page<Message> "message.html"
+  >>= setStatus HTTP_404 
 
 let showSnippet id r =
   let id' = demangleId id
@@ -34,9 +36,9 @@ let showSnippet id r =
             Details = Data.snippets |> Seq.find (fun s -> s.ID = id')
             Revision = rev }
           |> DotLiquid.page<FormattedSnippet> "snippet.html"
-      | None -> showInvalidSnippet <| sprintf "Can't find the version you are looking for. Go to <a href='http://fssnip.net/%s'> Latest" id 
+      | None -> showInvalidSnippet "404 - Can't find the requested version" (sprintf "Can't find the version you are looking for. Go to <a href='http://fssnip.net/%s'> Latest</a>" id) 
   | None ->
-    showInvalidSnippet <| sprintf "Can't find snippet <strong>http://fssnip.net/%s</strong> :( " id
+    showInvalidSnippet "404 - Can't find snippet" (sprintf "Can't find snippet <strong>http://fssnip.net/%s</strong> :( " id)
 
 let showRawSnippet id r =
   match Data.loadRawSnippet id r with

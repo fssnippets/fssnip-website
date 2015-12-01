@@ -5,6 +5,7 @@ open Suave.Http.Applicatives
 open Microsoft.FSharp.Reflection
 open Suave.Http
 open FSharp.CodeFormat
+open Suave.Types
 
 // -------------------------------------------------------------------------------------------------
 // Helpers for working with fssnip IDs, formatting F# code and for various Suave things
@@ -90,3 +91,6 @@ let readForm<'T> (form:list<string*string option>) =
   
 let invalidSnippetId id =
   RequestErrors.NOT_FOUND (sprintf "Snippet with id %s not found" id)
+  
+let setStatus s : WebPart = 
+  fun ctx -> { ctx with response = { ctx.response with status = s }} |> succeed
