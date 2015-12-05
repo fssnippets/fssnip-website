@@ -31,18 +31,12 @@ type InsertSnippetModel =
     { Session: string }
     with static member Create() = { Session = Guid.NewGuid().ToString() }
 
-let private parsePackages = function
-  | Some s when not (String.IsNullOrWhiteSpace(s)) -> 
-    s.Split([|","|], StringSplitOptions.RemoveEmptyEntries)
-    |> Array.map (fun s -> s.Trim())
-  | _ -> [| |]
-
 let insertSnippet ctx = async {
   if ctx.request.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
     let form = Utils.readForm<InsertForm> ctx.request.form
 
     // Assuming all input is valid (TODO issue #12)
-    let nugetReferences = parsePackages form.NugetPkgs
+    let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
 
     let id = Data.getNextId()
     let doc = Parser.parseScript form.Session form.Code nugetReferences
@@ -79,7 +73,7 @@ type Errors = JsonProvider<"""[ {"location":[1,1,10,10], "error":true, "message"
 
 let checkSnippet ctx = async {
   let form = Utils.readForm<InsertForm> ctx.request.form
-  let nugetReferences = parsePackages form.NugetPkgs
+  let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
   let doc = Parser.parseScript form.Session form.Code nugetReferences
   let json =
     JsonValue.Array

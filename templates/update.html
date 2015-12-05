@@ -12,8 +12,8 @@
 <div class="col-md-12">
 
   <h1>Update snippet '{{ model.Details.Title }}'</h1>
-  
-  <form class="form-horizontal" name="insert-form" id="insert-form" action="/{{ model.Details.Id | format_id }}/update" method="post">   
+
+  <form class="form-horizontal" name="insert-form" id="insert-form" action="/{{ model.Details.Id | format_id }}/update" method="post">
     <div class="form-group">
       <label for="title" class="col-sm-2 control-label">Title</label>
       <div class="col-sm-10">
@@ -88,6 +88,8 @@
         <button type="submit" id="submit" name="submit" value="Create" class="btn btn-success">Create</button>
       </div>
     </div>
+
+    <input type="hidden" name="session" value="{{ model.Session }}"></input>
   </form>
 
 </div>

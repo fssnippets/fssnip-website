@@ -42,13 +42,13 @@ let pathWithId pf f =
     else return None } )
 
 /// Creates a web part from a function (to enable lazy computation)
-let delay (f:unit -> Suave.Types.WebPart) ctx = 
+let delay (f:unit -> Suave.Types.WebPart) ctx =
   async { return! f () ctx }
 
-module Seq = 
+module Seq =
   /// Take the number of elements specified by `take`, then shuffle the
   /// rest of the items and then take just the `top` number of elements
-  let takeShuffled take top snips = 
+  let takeShuffled take top snips =
     let rnd = Random()
     snips
     |> Seq.take take
@@ -64,12 +64,12 @@ module Seq =
     snips |> Seq.map (fun s -> s, (f s) * 100 / max)
 
 
-let private convert (ty:System.Type) str = 
-  if ty = typeof<string option> then 
+let private convert (ty:System.Type) str =
+  if ty = typeof<string option> then
     box (if System.String.IsNullOrWhiteSpace(str) then None else Some str)
-  elif ty = typeof<bool> then 
+  elif ty = typeof<bool> then
     box (if str = "on" then true else false)
-  elif ty = typeof<string> then 
+  elif ty = typeof<string> then
     box str
   else failwithf "Could not covert '%s' to '%s'" str ty.Name
 
@@ -79,7 +79,7 @@ let private getDefaultValue (ty:System.Type) =
   else failwithf "Could not get value of type '%s'" ty.Name
 
 /// Read data from a form into an F# record
-let readForm<'T> (form:list<string*string option>) = 
+let readForm<'T> (form:list<string*string option>) =
   let lookup = dict [ for k, v in form -> k.ToLower(), v ]
   let values =
     [| for pi in FSharpType.GetRecordFields(typeof<'T>) ->
@@ -87,6 +87,13 @@ let readForm<'T> (form:list<string*string option>) =
          | true, Some v -> convert pi.PropertyType v
          | _ -> getDefaultValue pi.PropertyType |]
   FSharpValue.MakeRecord(typeof<'T>, values) :?> 'T
-  
+
 let invalidSnippetId id =
   RequestErrors.NOT_FOUND (sprintf "Snippet with id %s not found" id)
+
+/// Converts comma-separated string with NuGet package names to list of strings
+let parseNugetPackages = function
+  | Some s when not (String.IsNullOrWhiteSpace(s)) ->
+    s.Split([|","|], StringSplitOptions.RemoveEmptyEntries)
+  |> Array.map (fun s -> s.Trim())
+  | _ -> [| |]

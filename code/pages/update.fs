@@ -13,7 +13,8 @@ open FSharp.CodeFormat
 type RawSnippet =
   { Raw : string
     Details : Data.Snippet
-    Revision : int }
+    Revision : int
+    Session: string }
 
 type UpdateForm =
   { Title : string
@@ -22,7 +23,8 @@ type UpdateForm =
     Author : string option
     Link : string option
     Code : string
-    NugetPkgs : string option }
+    NugetPkgs : string option
+    Session : string }
 
 let formatAgent = CodeFormat.CreateAgent()
 
@@ -32,7 +34,8 @@ let showForm snippetInfo mangledId id' =
     let rev = snippetInfo.Versions - 1
     { Raw = snippet
       Details = Data.snippets |> Seq.find (fun s -> s.ID = id')
-      Revision = rev }
+      Revision = rev
+      Session = Guid.NewGuid().ToString() }
     |> DotLiquid.page<RawSnippet> "update.html"
   | None -> invalidSnippetId mangledId
 
@@ -40,30 +43,27 @@ let showForm snippetInfo mangledId id' =
 let handlePost snippetInfo requestForm mangledId id' =
   let form = Utils.readForm<UpdateForm> requestForm
 
-  let nugetReferences = 
-    match form.NugetPkgs with
-    | Some s when not (String.IsNullOrWhiteSpace(s)) -> s.Split(',')
-    | _ -> [| |]
-
+  let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
   // TODO: Download NuGet packages and pass "-r:..." args to the formatter! (issue #13)
-  let doc = Literate.ParseScriptString(form.Code, "/temp/Snippet.fsx", formatAgent)
+  let doc = Parser.parseScript form.Session form.Code nugetReferences
   let html = Literate.WriteHtml(doc, "fs", true, true)
+  Parser.completeSession form.Session
 
   // TODO: check password if there is one
   // TODO: if old snippet was hidden, new one should be too
   // TODO: handle concurrent updates gracefully
   match form with
-  | { Description = Some descr; Author = Some author; Link = Some link; 
+  | { Description = Some descr; Author = Some author; Link = Some link;
       Tags = Some tags } when not (String.IsNullOrWhiteSpace(tags)) ->
       let tags = tags.Split(',')
-      Data.insertSnippet 
-        { ID = id'; Title = form.Title; Comment = descr; 
+      Data.insertSnippet
+        { ID = id'; Title = form.Title; Comment = descr;
           Author = author; Link = link; Date = System.DateTime.UtcNow;
-          Likes = 0; Private = false; Passcode = ""; 
-          References = nugetReferences; Source = ""; Versions = snippetInfo.Versions + 1; 
+          Likes = 0; Private = false; Passcode = "";
+          References = nugetReferences; Source = ""; Versions = snippetInfo.Versions + 1;
           Tags = tags }
         form.Code html
-  | _ -> 
+  | _ ->
       failwith "Invalid input!"
   Redirection.FOUND ("/" + mangledId)
 
