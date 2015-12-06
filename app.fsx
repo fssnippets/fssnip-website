@@ -4,6 +4,7 @@
 #r "packages/DotLiquid/lib/NET45/DotLiquid.dll"
 #r "packages/Suave.DotLiquid/lib/net40/Suave.DotLiquid.dll"
 #r "packages/Paket.Core/lib/net45/Paket.Core.dll"
+#r "packages/FSharp.Compiler.Service/lib/net45/FSharp.Compiler.Service.dll"
 #load "packages/FSharp.Azure.StorageTypeProvider/StorageTypeProvider.fsx"
 #load "packages/FSharp.Formatting/FSharp.Formatting.fsx"
 open System
@@ -70,17 +71,17 @@ let app =
       Search.webPart
       Author.webPart
       Tag.webPart
-    
+
       // Snippet display, like, update & insert
       Snippet.webPart
       Like.webPart
       Update.webPart
       Insert.webPart
-      
+
       // REST API and RSS feeds
       Api.webPart
       Rss.webPart
-      
+
       // Static files and fallback case
       browseStaticFiles
       RequestErrors.NOT_FOUND "Found no handlers." ]

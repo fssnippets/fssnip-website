@@ -5,8 +5,11 @@ open System.IO
 open Paket
 open FSharp.Literate
 open FsSnip
+open Microsoft.FSharp.Compiler.SourceCodeServices
 
 let framework = DotNetFramework(FrameworkVersion.V4_5)
+
+let private checker = FSharpChecker.Create()
 
 let private restorePackages packages folder =
   if Array.isEmpty packages
@@ -22,6 +25,12 @@ let private restorePackages packages folder =
 
 let private workingFolderFor session = Path.Combine(Environment.CurrentDirectory, "temp", session)
 
+/// encloses string content in quotes
+let private encloseInQuotes prefix (line: string) =
+  if (line.StartsWith prefix && line.Contains " ")
+  then sprintf "%s\"%s\"" prefix (line.Substring prefix.Length)
+  else line
+
 /// Parses F# script file and download NuGet packages if required.
 let parseScript session content packages =
   let workingFolder = workingFolderFor session
@@ -29,13 +38,23 @@ let parseScript session content packages =
   if (not <| Directory.Exists workingFolder)
   then Directory.CreateDirectory workingFolder |> ignore
 
-  let references = 
+  let nugetReferences =
     restorePackages packages workingFolder
-    |> Seq.map (sprintf "--reference:\"%s\"")
-    |> String.concat " "
+    |> Seq.map (sprintf "-r:%s")
 
   let scriptFile = Path.Combine(workingFolder, "Script.fsx")
-  Literate.ParseScriptString(content, scriptFile, Utils.formatAgent, references)
+  let defaultOptions =
+    checker.GetProjectOptionsFromScript(scriptFile, content, DateTime.Now)
+    |> Async.RunSynchronously
+
+  let compilerOptions =
+    defaultOptions.OtherOptions
+    |> Seq.append nugetReferences
+    |> Seq.map (encloseInQuotes "-r:")
+    |> Seq.map (encloseInQuotes "--reference:")
+    |> String.concat " "
+
+  Literate.ParseScriptString(content, scriptFile, Utils.formatAgent, compilerOptions)
 
 /// Marks parsing session as complete - basically deletes working forlder for the given session
 let completeSession session =
@@ -43,5 +62,5 @@ let completeSession session =
   if Directory.Exists folder then
     try
       Directory.Delete(folder, true)
-    with 
+    with
       | e -> printfn "Failed to delete folder \"%s\": %O" folder e
