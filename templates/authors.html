@@ -3,6 +3,14 @@
   <title>All Authors | F# Snippets</title>
 {% endblock %}
 
+{% block customPageScripts %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+google.load("visualization", "1", { packages: ["corechart"] })
+{{ model.Graph.Script }}
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="row">
   <div class="col-md-12"><h2>Snippets by Author</h2></div>
@@ -10,6 +18,9 @@
 <div class="row">
 	<div class="col-md-12">
 		<p class="brief-listing">
+
+          <div id="{{ model.Graph.Id }}" style="width: 600px; height: 250px;"></div>
+
 		  {% for it in model.authors %}
 		  <a style="font-size:{{ it.Size }}%" href="/authors/{{ it.Link }}">{{ it.Text }}</a> ({{ it.Count }})
 		  {% endfor %}

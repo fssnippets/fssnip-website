@@ -7,6 +7,8 @@ open System
 open System.Web
 open FsSnip.Utils
 open FsSnip.Data
+open FsSnip.Graphs
+open XPlot.GoogleCharts
 
 // -------------------------------------------------------------------------------------------------
 // Tag page - domain model
@@ -25,19 +27,36 @@ type TagModel =
     Snippets : seq<Snippet> }
 
 type AllTagsModel =
-  { Taglinks: TagLinks}
+  { Taglinks: TagLinks
+    Graph: Graph }
 
 let getAllTags () = 
-    let links = 
+    let sorted = 
       publicSnippets
       |> Seq.collect (fun s -> s.Tags)
       |> Seq.countBy id
       |> Seq.sortBy (fun (_, c) -> -c)
+      |> Seq.cache
+
+    let links = 
+      sorted
       |> Seq.withSizeBy snd
       |> Seq.map (fun ((n,c),s) -> 
           { Text = n; Size = 80 + s; Count = c;
             Link = HttpUtility.UrlEncode(n) })
-    {Taglinks = links}
+
+    let image =
+        [ (sorted |> Seq.take 10) ]
+        |> Chart.Bar
+        |> Chart.WithOptions (Options(title = "Top 10 tags"))
+        |> Chart.WithLabels ["Count"]
+        |> Chart.WithLegend true
+        |> Chart.WithSize (600, 250)
+
+    { Taglinks = links
+      Graph = 
+       { Id = image.Id
+         Script = image.Js }}
 
 // -------------------------------------------------------------------------------------------------
 // Suave web parts
@@ -57,7 +76,7 @@ let showAll = delay (fun () ->
 
 // Composed web part to be included in the top-level route
 let webPart = 
-  choose   
+  choose
    [ path "/tags/" >>= showAll
      pathScan "/tags/%s" showSnippets ]
   

@@ -3,12 +3,24 @@
   <title>All Tags | F# Snippets</title>
 {% endblock %}
 
+{% block customPageScripts %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+google.load("visualization", "1", { packages: ["corechart"] })
+{{ model.Graph.Script }}
+</script>
+{% endblock %}
+
+
 {% block content %}
 <div class="row">
   	<div class="col-md-12"><h2>Snippets by Tag</h2></div>
 </div>
 <div class="row">
 	<div class="col-md-12">
+
+        <div id="{{ model.Graph.Id }}" style="width: 600px; height: 250px;"></div>
+
 		<p class="brief-listing">
 		  {% for it in model.TagLinks %}
 		  <a style="font-size:{{ it.Size }}%" href="/tags/{{ it.Link }}">{{ it.Text }}</a> ({{ it.Count }})
