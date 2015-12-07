@@ -7,6 +7,8 @@ open System
 open System.Web
 open FsSnip.Utils
 open FsSnip.Data
+open FsSnip.Graphs
+open XPlot.GoogleCharts
 
 // -------------------------------------------------------------------------------------------------
 // Author page - domain model
@@ -25,20 +27,37 @@ type AuthorModel =
     Snippets : seq<Snippet> }
 
 type AllAuthorsModel =
-  { Authors: AuthorLinks}
+  { Authors: AuthorLinks
+    Graph : Graph }
 
 
 let getAllAuthors () = 
-    let links = 
+    let sorted = 
       publicSnippets
       |> Seq.map (fun s -> s.Author)
       |> Seq.countBy id
       |> Seq.sortBy (fun (_, c) -> -c)
+      |> Seq.cache
+
+    let links = 
+      sorted
       |> Seq.withSizeBy snd
       |> Seq.map (fun ((n,c),s) -> 
           { Text = n; Size = 80 + s; Count = c;
             Link = HttpUtility.UrlEncode(n) })
-    { Authors = links }
+
+    let image =
+        [ (sorted |> Seq.take 10) ]
+        |> Chart.Bar
+        |> Chart.WithOptions (Options(title = "Top 10 authors"))
+        |> Chart.WithLabels ["Count"]
+        |> Chart.WithLegend true
+        |> Chart.WithSize (600, 250)
+
+    { Authors = links
+      Graph = 
+       { Id = image.Id
+         Script = image.Js }}
 
 // -------------------------------------------------------------------------------------------------
 // Suave web parts
@@ -58,7 +77,7 @@ let showAll = delay (fun () ->
   DotLiquid.page "authors.html" (getAllAuthors()))
 
 // Composed web part to be included in the top-level route
-let webPart =   
+let webPart =
   choose 
     [ path "/authors/" >>= showAll
       pathScan "/authors/%s" showSnippets ]
