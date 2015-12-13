@@ -5,6 +5,7 @@ $(document).ready(function () {
 });
 
 function addToLikeCount(id, elem) {
+    elem.text('Liking...');
     $.ajax({
         url: "/like/"+id, type: "POST"
     }).done(function (res) {
