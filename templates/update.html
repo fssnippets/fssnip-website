@@ -21,6 +21,15 @@
       </div>
     </div>
 
+    {% if model.Details.Passcode != "" -%}
+      <div class="form-group">
+          <label for="passcode" class="col-sm-2 control-label">Passcode</label>
+          <div class="col-sm-10">
+              <input type="password" class="form-control" id="passcode" name="passcode" placeholder="Password">
+          </div>
+      </div>
+    {% endif -%}
+
     <div id="public-details">
     <div class="form-group">
       <div class="col-sm-10 col-sm-offset-2">
@@ -85,7 +94,7 @@
 
     <div class="form-group" style="text-align:right;margin-top:20px">
       <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" id="submit" name="submit" value="Create" class="btn btn-success">Create</button>
+        <button type="submit" id="submit" name="submit" value="Update" class="btn btn-success">Update</button>
       </div>
     </div>
   </form>

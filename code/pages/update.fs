@@ -17,6 +17,7 @@ type RawSnippet =
 
 type UpdateForm =
   { Title : string
+    Passcode: string option
     Description : string option
     Tags : string option
     Author : string option
@@ -37,7 +38,7 @@ let showForm snippetInfo mangledId id' =
   | None -> invalidSnippetId mangledId
 
 // Assuming all input is valid (TODO issue #12)
-let handlePost snippetInfo requestForm mangledId id' =
+let handlePost (snippetInfo:Data.Snippet) requestForm mangledId id' =
   let form = Utils.readForm<UpdateForm> requestForm
 
   let nugetReferences = 
@@ -49,9 +50,20 @@ let handlePost snippetInfo requestForm mangledId id' =
   let doc = Literate.ParseScriptString(form.Code, "/temp/Snippet.fsx", formatAgent)
   let html = Literate.WriteHtml(doc, "fs", true, true)
 
-  // TODO: check password if there is one
+  // check password if there is one
+  match HasPasscode snippetInfo.Passcode, form.Passcode with
+  | Some prev, Some newP when prev = newP -> ignore
+  | Some prev, Some newP when prev <> newP  -> failwith "Passcodes do not match!"
+  | Some prev, None -> failwith "You forgot to enter your passcode!"
+  | None, None -> ignore
+  | _ -> failwith "Some other condition!"
+  |> ignore
   // TODO: if old snippet was hidden, new one should be too
   // TODO: handle concurrent updates gracefully
+  let passcode = 
+    match HasPasscode snippetInfo.Passcode  with
+    | Some passcode -> passcode
+    | _ -> ""
   match form with
   | { Description = Some descr; Author = Some author; Link = Some link; 
       Tags = Some tags } when not (String.IsNullOrWhiteSpace(tags)) ->
@@ -59,7 +71,7 @@ let handlePost snippetInfo requestForm mangledId id' =
       Data.insertSnippet 
         { ID = id'; Title = form.Title; Comment = descr; 
           Author = author; Link = link; Date = System.DateTime.UtcNow;
-          Likes = 0; Private = false; Passcode = ""; 
+          Likes = 0; Private = false; Passcode = passcode; 
           References = nugetReferences; Source = ""; Versions = snippetInfo.Versions + 1; 
           Tags = tags }
         form.Code html
