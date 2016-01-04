@@ -4,9 +4,8 @@ open FsSnip
 open FsSnip.Data
 open FsSnip.Utils
 open Suave
-open Suave.Http
-open Suave.Http.Applicatives
-open Suave.Http.Successful
+open Suave.Operators
+open Suave.Filters
 
 // -------------------------------------------------------------------------------------------------
 // Snippet details and raw view pages
@@ -36,7 +35,7 @@ let showSnippet id r =
 
 let showRawSnippet id r =
   match Data.loadRawSnippet id r with
-  | Some s -> Writers.setMimeType "text/plain" >>= OK s
+  | Some s -> Writers.setMimeType "text/plain" >=> Successful.OK s
   | None -> invalidSnippetId id
   
 // Web part to be included in the top-level route specification  

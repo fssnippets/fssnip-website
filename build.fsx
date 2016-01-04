@@ -13,7 +13,6 @@ open System
 open System.IO
 open Suave
 open Suave.Web
-open Suave.Types
 open Microsoft.FSharp.Compiler.Interactive.Shell
 
 // --------------------------------------------------------------------------------------
@@ -67,7 +66,7 @@ let getLocalServerConfig port =
   { defaultConfig with
       homeFolder = Some __SOURCE_DIRECTORY__
       logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Debug
-      bindings = [ HttpBinding.mk' HTTP  "127.0.0.1" port ] }
+      bindings = [ HttpBinding.mkSimple HTTP  "127.0.0.1" port ] }
 
 let reloadAppServer (changedFiles: string seq) =
   traceImportant <| sprintf "Changes in %s" (String.Join(",",changedFiles))

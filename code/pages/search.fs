@@ -1,11 +1,11 @@
 ﻿module FsSnip.Pages.Search
 
 open Suave
-open Suave.Http.Applicatives
 open System
 open System.Web
 open FsSnip.Utils
 open FsSnip.Data
+open Suave.Filters
 
 // -------------------------------------------------------------------------------------------------
 // Search results page - domain model

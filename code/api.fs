@@ -10,10 +10,8 @@ open FSharp.Literate
 open System.Text
 
 open Suave
-open Suave.Http
-open Suave.Http.Successful
-open Suave.Types
-open Suave.Http.Applicatives
+open Suave.Operators
+open Suave.Filters
 
 // -------------------------------------------------------------------------------------------------
 // REST API - Using JSON type provider to get strongly-typed representations of returned data
@@ -74,7 +72,7 @@ let getSnippet id =
                 details.ID, details.Title, details.Comment, details.Author, details.Link,
                 details.Date, details.Likes, Array.ofSeq details.References, details.Source, details.Versions,
                 formatted, Array.ofSeq details.Tags)            
-        Writers.setMimeType "application/json" >>= OK (json.JsonValue.ToString())
+        Writers.setMimeType "application/json" >=> Successful.OK (json.JsonValue.ToString())
     | None -> invalidSnippetId id
 
 let allPublicSnippets =
@@ -90,7 +88,7 @@ let allPublicSnippets =
             |> Array.ofSeq
             |> JsonValue.Array
         
-        Writers.setMimeType "application/json" >>= OK (json.ToString()))
+        Writers.setMimeType "application/json" >=> Successful.OK (json.ToString()))
 
 let putSnippet =
     request (fun r ->
@@ -114,7 +112,7 @@ let putSnippet =
 // Composed web part to be included in the top-level route
 let webPart = 
   choose 
-    [ GET >>= path "/api/1/snippet" >>=
+    [ GET >=> path "/api/1/snippet" >=>
         request (fun x -> cond (x.queryParam "all") (fun _ -> allPublicSnippets) never)
-      GET >>= pathWithId "/api/1/snippet/%s" getSnippet 
-      PUT >>= path "/api/1/snippet" >>= putSnippet ]
+      GET >=> pathWithId "/api/1/snippet/%s" getSnippet 
+      PUT >=> path "/api/1/snippet" >=> putSnippet ]

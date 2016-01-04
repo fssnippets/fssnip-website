@@ -10,12 +10,9 @@ open System.Web
 open System.IO
 open Suave
 open Suave.Web
-open Suave.Http
-open Suave.Types
+open Suave.Operators
+open Suave.Filters
 open FSharp.Data
-open Suave.Http.Applicatives
-open Suave.Http.Successful
-open Suave.Http.Writers
 open FSharp.Azure.StorageTypeProvider
 
 // -------------------------------------------------------------------------------------------------
