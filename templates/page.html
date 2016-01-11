@@ -8,10 +8,12 @@
 
   <!-- Rss Feed -->
   <link rel="alternate" type="application/rss+xml" title="Recent F# snippets" href="/rss" />
+
   <!-- Standard scripts and stylesheet imports -->
   <script src="/lib/jquery.js"></script>
   <link href="/lib/bootstrap.min.css" rel="stylesheet">
   <script src="/lib/bootstrap.min.js"></script>
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
 
   <!-- Standard page design and scripts -->
   <link href="/content/style.css" rel="stylesheet" />
@@ -36,9 +38,10 @@
       <div id="links" class="col-md-12 col-lg-10">
         <a href="/">Home</a>
           <a href="/pages/insert">Insert</a>
-
-          <!-- search form -->
-          <div id="search"><form id="searchForm"><input type="text" name="query" id="searchbox" placeholder="search..." /></form></div>
+          <div id="search"><form id="searchForm">
+            <input type="text" name="query" id="searchbox" placeholder="search..." />
+            <a href="javascript:document.getElementById('searchForm').submit()"<i class="fa fa-search"></i></a>
+          </form></div>
       </div>
       <div class="col-lg-1"></div>
     </div>
