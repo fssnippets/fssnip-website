@@ -3,8 +3,10 @@
 #r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
 #r "packages/DotLiquid/lib/NET45/DotLiquid.dll"
 #r "packages/Suave.DotLiquid/lib/net40/Suave.DotLiquid.dll"
+#if INTERACTIVE
 #load "packages/FSharp.Azure.StorageTypeProvider/StorageTypeProvider.fsx"
 #load "packages/FSharp.Formatting/FSharp.Formatting.fsx"
+#endif
 open System
 open System.Web
 open System.IO

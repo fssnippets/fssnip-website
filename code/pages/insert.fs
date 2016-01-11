@@ -22,7 +22,7 @@ type InsertForm =
     Description : string option
     Tags : string option
     Author : string option
-    Link : string option
+    Link : string
     Code : string
     NugetPkgs : string option }
 
@@ -48,7 +48,7 @@ let insertSnippet ctx = async {
             Passcode = defaultArg form.Passcode ""; 
             References = nugetReferences; Source = ""; Versions = 1; Tags = [| |] }
           form.Code html
-    | { Hidden = false; Description = Some descr; Author = Some author; Link = Some link; 
+    | { Hidden = false; Description = Some descr; Author = Some author; Link = link; 
         Tags = Some tags } when not (String.IsNullOrWhiteSpace(tags)) ->
         let tags = tags.Split(',')
         Data.insertSnippet 
@@ -71,11 +71,16 @@ type Errors = JsonProvider<"""[ {"location":[1,1,10,10], "error":true, "message"
 let checkSnippet ctx = async {
   use sr = new StreamReader(new MemoryStream(ctx.request.rawForm))
   let request = sr.ReadToEnd()
-  let doc = Literate.ParseScriptString(request, "/temp/Snippet.fsx", Utils.formatAgent)
   let json = 
-    JsonValue.Array
-      [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Errors ->
-         Errors.Root([| l1; c1; l2; c2 |], (kind = ErrorKind.Error), msg).JsonValue |]
+    try
+      let doc = Literate.ParseScriptString(request, "/temp/Snippet.fsx", Utils.formatAgent)
+      JsonValue.Array
+        [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Errors ->
+           Errors.Root([| l1; c1; l2; c2 |], (kind = ErrorKind.Error), msg).JsonValue |]
+    with e ->
+      JsonValue.Array
+        [| Errors.Root([| 0; 0; 0; 0 |], true, "Parsing the snippet failed.").JsonValue |]
+
 
   return! ctx |>
     ( Writers.setHeader "Cache-Control" "no-cache, no-store, must-revalidate"

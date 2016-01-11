@@ -15,9 +15,6 @@ $(document).ready(function () {
       author:{
           required:isRequired
         },
-      link:{
-          required:isRequired
-        },
       tags:{
           required:isRequired
         },
@@ -27,7 +24,6 @@ $(document).ready(function () {
       title: "Please enter the title",
       description: "Please enter the description",
       author: "Please enter the author",
-      link: "Please enter a link",
       tags: "Please enter at least one tag",
       code: "Please enter the code of the snippet"
       }
