@@ -34,6 +34,10 @@ let demangleId (str:string) =
       demangle (acc * alphabet.Length + v) xs
   demangle 0 (str |> List.ofSeq)
 
+let HasPasscode (p:string) =
+    let passcode = p.Replace('"', ' ')
+    if String.IsNullOrWhiteSpace(p) then None else Some p 
+
 /// Web part that succeeds when the specified string is a valid FsSnip ID
 let pathWithId pf f =
   pathScan pf (fun id ctx -> async {
