@@ -57,11 +57,13 @@ let reloadScript () =
 let currentApp = ref (fun _ -> async { return None })
 
 let rec findPort port =
-  let portIsTaken =
-    System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners()
-    |> Seq.exists (fun x -> x.Port = port)
-
-  if portIsTaken then findPort (port + 1) else port
+  try
+    let tcpListener = System.Net.Sockets.TcpListener(System.Net.IPAddress.Parse("127.0.0.1"), port)
+    tcpListener.Start()
+    tcpListener.Stop()
+    port
+  with :? System.Net.Sockets.SocketException as ex ->
+    findPort (port + 1)
 
 let getLocalServerConfig port =
   { defaultConfig with
