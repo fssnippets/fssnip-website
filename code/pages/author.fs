@@ -29,16 +29,16 @@ type AllAuthorsModel =
 
 
 let getAllAuthors () = 
-    let links = 
-      publicSnippets
-      |> Seq.map (fun s -> s.Author)
-      |> Seq.countBy id
-      |> Seq.sortBy (fun (_, c) -> -c)
-      |> Seq.withSizeBy snd
-      |> Seq.map (fun ((n,c),s) -> 
-          { Text = n; Size = 80 + s; Count = c;
-            Link = HttpUtility.UrlEncode(n) })
-    { Authors = links }
+  let links = 
+    publicSnippets
+    |> Seq.map (fun s -> s.Author)
+    |> Seq.countBy id
+    |> Seq.sortBy (fun (_, c) -> -c)
+    |> Seq.withSizeBy snd
+    |> Seq.map (fun ((n,c),s) -> 
+        { Text = n; Size = 80 + s; Count = c;
+          Link = HttpUtility.UrlEncode(n) })
+  { Authors = links }
 
 // -------------------------------------------------------------------------------------------------
 // Suave web parts
@@ -46,12 +46,11 @@ let getAllAuthors () =
 
 // Loading author page information (snippets by the given author)
 let showSnippets (author) = 
-    let a = System.Web.HttpUtility.UrlDecode author
-    let fromAuthor (s:Snippet) = 
-        s.Author.Equals(a, StringComparison.InvariantCultureIgnoreCase)
-    let ss = Seq.filter fromAuthor publicSnippets
-    DotLiquid.page "author.html" { Author = a
-                                   Snippets = ss }
+  let a = System.Web.HttpUtility.UrlDecode author
+  let fromAuthor (s:Snippet) = 
+    s.Author.Equals(a, StringComparison.InvariantCultureIgnoreCase)
+  let ss = Seq.filter fromAuthor publicSnippets
+  DotLiquid.page "author.html" { Author = a; Snippets = ss }
 
 // Loading author page information (all authors)
 let showAll = delay (fun () -> 

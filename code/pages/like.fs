@@ -10,12 +10,12 @@ open FsSnip.Utils
 // -------------------------------------------------------------------------------------------------
 
 let likeSnippet id r =
-    let id' = demangleId id
-    match Seq.tryFind (fun s -> s.ID = id') publicSnippets with
-    | Some snippetInfo -> 
-        let newLikes = Data.likeSnippet id' r
-        Successful.OK (newLikes.ToString())
-    | None -> invalidSnippetId (id'.ToString())
+  let id' = demangleId id
+  match Seq.tryFind (fun s -> s.ID = id') snippets with
+  | Some snippetInfo -> 
+      let newLikes = Data.likeSnippet id' r
+      Successful.OK (newLikes.ToString())
+  | None -> invalidSnippetId (id'.ToString())
     
 let webPart = 
   pathWithId "/like/%s" (fun id -> likeSnippet id Latest)    

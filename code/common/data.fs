@@ -25,8 +25,8 @@ let [<Literal>] Index = __SOURCE_DIRECTORY__ + "/../samples/index.json"
 type Index = JsonProvider<Index>
 
 type SnippetVersion =
-    | Latest
-    | Revision of int
+  | Latest
+  | Revision of int
 
 type Snippet =
   { ID : int; Title : string; Comment : string; Author : string;
@@ -67,7 +67,7 @@ let loadRawSnippet id revision =
   loadSnippetInternal "source" id revision 
 
 let getAllPublicSnippets () =
-    publicSnippets
+  publicSnippets
 
 let getNextId () = 
   let largest = snippets |> Seq.map (fun s -> s.ID) |> Seq.max
@@ -83,23 +83,24 @@ let insertSnippet newSnippet source formatted =
   Storage.writeFile (sprintf "formatted/%d/%d" newSnippet.ID version) formatted
   Storage.saveIndex json
 
-  let newSnippets, newPublicSnippets  = readSnippets ()
+  let newSnippets, newPublicSnippets = readSnippets ()
   snippets <- newSnippets
   publicSnippets <- newPublicSnippets
 
 let likeSnippet id revision =
-    let currentLikes = ref 0
-    let index = Index.Parse(Storage.readIndex())
-    let newSnippets = index.Snippets |> Array.map (fun snippet -> 
-        if snippet.Id = id then 
-            currentLikes := snippet.Likes + 1
-            Index.Snippet(snippet.Id, snippet.Title, snippet.Comment, snippet.Author, snippet.Link, snippet.Date, !currentLikes, snippet.IsPrivate,
-                snippet.Passcode, Array.ofSeq snippet.References, snippet.Source, snippet.Versions, Array.ofSeq snippet.Tags)
-            else snippet)
-    let json = Index.Root(newSnippets).JsonValue.ToString()
-    Storage.saveIndex json
+  let currentLikes = ref 0
+  let index = Index.Parse(Storage.readIndex())
+  let newSnippets = index.Snippets |> Array.map (fun snippet -> 
+    if snippet.Id = id then 
+      currentLikes := snippet.Likes + 1
+      Index.Snippet
+        ( snippet.Id, snippet.Title, snippet.Comment, snippet.Author, snippet.Link, snippet.Date, !currentLikes, snippet.IsPrivate,
+          snippet.Passcode, Array.ofSeq snippet.References, snippet.Source, snippet.Versions, Array.ofSeq snippet.Tags )
+    else snippet)
+  let json = Index.Root(newSnippets).JsonValue.ToString()
+  Storage.saveIndex json
 
-    let newSnippets, newPublicSnippets  = readSnippets ()
-    snippets <- newSnippets
-    publicSnippets <- newPublicSnippets
-    !currentLikes
+  let newSnippets, newPublicSnippets = readSnippets ()
+  snippets <- newSnippets
+  publicSnippets <- newPublicSnippets
+  !currentLikes

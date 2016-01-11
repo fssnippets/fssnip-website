@@ -81,7 +81,7 @@ let handlePost (snippetInfo:Data.Snippet) requestForm mangledId id' =
 
 let updateSnippet id ctx = async {
   let id' = demangleId id
-  match Seq.tryFind (fun s -> s.ID = id') publicSnippets with
+  match Seq.tryFind (fun s -> s.ID = id') snippets with
   | Some snippetInfo ->
     if ctx.request.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
       return! handlePost snippetInfo ctx.request.form id id' ctx

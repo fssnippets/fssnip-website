@@ -27,8 +27,8 @@ let getResults (query) =
 let showResults (query) = delay (fun () -> 
   let decodedQuery = FsSnip.Filters.urlDecode query
   let results = getResults decodedQuery |> Seq.toList
-  DotLiquid.page "search.html" { Query = decodedQuery
-                                 Results = results
-                                 Count = (List.length results) })
+  { Query = decodedQuery
+    Results = results
+    Count = (List.length results) } |> DotLiquid.page "search.html")
 
 let webPart = pathScan "/search/%s" showResults                                 
