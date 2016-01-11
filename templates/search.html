@@ -1,6 +1,6 @@
 {% extends "page.html" %}
 {% block head %}
-<title>Search: {{ model.Query }} | F# Snippets</title>
+<title>Search: {{ model.Query | escape }} | F# Snippets</title>
 {% endblock %}
 
 {% block customPageScripts %}

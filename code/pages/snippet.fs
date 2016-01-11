@@ -18,7 +18,9 @@ type FormattedSnippet =
     Revision : int }
 
 let invalidSnippetId id =
-  RequestErrors.NOT_FOUND id
+  id
+  |> DotLiquid.page<string> "notfound.html"
+  //RequestErrors.NOT_FOUND id
 
 let showSnippet id r =
   let id' = demangleId id
