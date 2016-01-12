@@ -18,6 +18,12 @@
         "filter",
         "recursion",
         "pattern matching"
+      ],
+      "enteredTags": [
+        "list",
+        "filter",
+        "recursion",
+        "pattern matching"
       ]
     },
     {
@@ -34,6 +40,13 @@
       "source": "http",
       "versions": 3,
       "tags": [
+        "list",
+        "map",
+        "recursion",
+        "pattern matching",
+        "continuation passing"
+      ],
+      "enteredTags": [
         "list",
         "map",
         "recursion",
