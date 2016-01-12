@@ -15,7 +15,7 @@ type Error =
   { Title : string
     Details : string }
 
-let reportError code title details ctx = 
-  { Title = title; Details = details }
-  |> DotLiquid.page "error. html" 
-  >>= Writers.setStatus code
+let reportError code title details = 
+  ( DotLiquid.page "error.html"
+     { Title = title; Details = details })
+  >=> Writers.setStatus code

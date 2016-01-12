@@ -31,12 +31,12 @@ let showSnippet id r =
           |> DotLiquid.page<FormattedSnippet> "snippet.html"
       | None -> showInvalidSnippet "Requested snippet version not found" (sprintf "Can't find the version you are looking for. See <a href='http://fssnip.net/%s'>the latest version</a> instead!" id) 
   | None ->
-      showInvalidSnippet "Snippet not found" (sprintf "The snippet '%d' that you were looking for was not found." id)
+      showInvalidSnippet "Snippet not found" (sprintf "The snippet '%s' that you were looking for was not found." id)
 
 let showRawSnippet id r =
   match Data.loadRawSnippet id r with
   | Some s -> Writers.setMimeType "text/plain" >=> Successful.OK s
-  | None -> showInvalidSnippet "Snippet not found" (sprintf "The snippet '%d' that you were looking for was not found." id)
+  | None -> showInvalidSnippet "Snippet not found" (sprintf "The snippet '%s' that you were looking for was not found." id)
   
 // Web part to be included in the top-level route specification  
 let webPart = 
