@@ -1,12 +1,12 @@
 module FsSnip.Pages.Tag
 
 open Suave
-open Suave.Http
-open Suave.Http.Applicatives
 open System
 open System.Web
 open FsSnip.Utils
 open FsSnip.Data
+open Suave.Filters
+open Suave.Operators
 
 // -------------------------------------------------------------------------------------------------
 // Tag page - domain model
@@ -57,6 +57,6 @@ let showAll = delay (fun () ->
 // Composed web part to be included in the top-level route
 let webPart = 
   choose   
-   [ path "/tags/" >>= showAll
+   [ path "/tags/" >=> showAll
      pathScan "/tags/%s" showSnippets ]
   

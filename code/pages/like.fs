@@ -1,9 +1,9 @@
 ﻿module FsSnip.Pages.Like
 
-open Suave.Http
 open FsSnip
 open FsSnip.Data
 open FsSnip.Utils
+open Suave
 
 // -------------------------------------------------------------------------------------------------
 // Incrementing the number of likes when called from the client-side

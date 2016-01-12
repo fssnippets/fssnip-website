@@ -3,10 +3,7 @@ module FsSnip.Pages.Insert
 open System
 open System.IO
 open Suave
-open Suave.Types
-open Suave.Http
-open Suave.Http.Applicatives
-open Suave.Http.Successful
+open Suave.Operators
 open FsSnip
 open FSharp.CodeFormat
 open FSharp.Literate
@@ -67,6 +64,8 @@ let insertSnippet ctx = async {
 
 
 open FSharp.Data
+open Suave.Filters
+
 type Errors = JsonProvider<"""[ {"location":[1,1,10,10], "error":true, "message":"sth"} ]""">
 
 let checkSnippet ctx = async {
@@ -85,12 +84,12 @@ let checkSnippet ctx = async {
 
   return! ctx |>
     ( Writers.setHeader "Cache-Control" "no-cache, no-store, must-revalidate"
-      >>= Writers.setHeader "Pragma" "no-cache"
-      >>= Writers.setHeader "Expires" "0"
-      >>= Writers.setMimeType "application/json"
-      >>= Successful.OK(json.ToString()) ) }
+      >=> Writers.setHeader "Pragma" "no-cache"
+      >=> Writers.setHeader "Expires" "0"
+      >=> Writers.setMimeType "application/json"
+      >=> Successful.OK(json.ToString()) ) }
       
 let webPart = 
   choose 
-   [ path "/pages/insert" >>= insertSnippet
-     path "/pages/insert/check" >>= checkSnippet ]
+   [ path "/pages/insert" >=> insertSnippet
+     path "/pages/insert/check" >=> checkSnippet ]

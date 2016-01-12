@@ -1,10 +1,11 @@
 module FsSnip.Utils
 
 open System
-open Suave.Http.Applicatives
 open Microsoft.FSharp.Reflection
 open Suave.Http
 open FSharp.CodeFormat
+open Suave.Filters
+open Suave
 
 // -------------------------------------------------------------------------------------------------
 // Helpers for working with fssnip IDs, formatting F# code and for various Suave things
@@ -46,7 +47,7 @@ let pathWithId pf f =
     else return None } )
 
 /// Creates a web part from a function (to enable lazy computation)
-let delay (f:unit -> Suave.Types.WebPart) ctx = 
+let delay (f:unit -> WebPart) ctx = 
   async { return! f () ctx }
 
 module Seq = 

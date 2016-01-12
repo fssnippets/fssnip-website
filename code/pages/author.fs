@@ -1,12 +1,12 @@
 module FsSnip.Pages.Author
 
 open Suave
-open Suave.Http
-open Suave.Http.Applicatives
 open System
 open System.Web
 open FsSnip.Utils
 open FsSnip.Data
+open Suave.Filters
+open Suave.Operators
 
 // -------------------------------------------------------------------------------------------------
 // Author page - domain model
@@ -59,5 +59,5 @@ let showAll = delay (fun () ->
 // Composed web part to be included in the top-level route
 let webPart =   
   choose 
-    [ path "/authors/" >>= showAll
+    [ path "/authors/" >=> showAll
       pathScan "/authors/%s" showSnippets ]

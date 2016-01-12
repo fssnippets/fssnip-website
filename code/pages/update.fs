@@ -2,8 +2,6 @@
 
 open System
 open Suave
-open Suave.Types
-open Suave.Http
 open FsSnip
 open FSharp.Literate
 open FsSnip.Data
