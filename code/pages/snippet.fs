@@ -17,7 +17,8 @@ type FormattedSnippet =
     Revision : int }
 
 let invalidSnippetId id =
-  id |> DotLiquid.page<string> "notfound.html"
+  Error.reportError HttpCode.HTTP_404 "Snippet not found" 
+    (sprintf "The snippet '%s' that you are looking for was not found." id)
 
 let showSnippet id r =
   let id' = demangleId id

@@ -70,6 +70,7 @@
     <Compile Include="code\common\data.fs" />
     <Compile Include="code\common\rssfeed.fs" />
     <Compile Include="code\pages\home.fs" />
+    <Compile Include="code\pages\error.fs" />
     <Compile Include="code\pages\insert.fs" />
     <Compile Include="code\pages\snippet.fs" />
     <Compile Include="code\pages\search.fs" />

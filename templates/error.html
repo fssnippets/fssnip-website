@@ -1,12 +1,12 @@
 {% extends "page.html" %}
 {% block head %}
-<title>Snippet {{ model | escape }} not found | F# Snippets</title>
+<title>{{ model.Title }} not found | F# Snippets</title>
 {% endblock %}
 
 {% block customPageScripts %}
-
 {% endblock %}
 
 {% block content %}
-<h1>Snippet {{ model | escape }} not found</h1>
+<h1>{{ model.Title }}</h1>
+<p>{{ model.Details }}</p>
 {% endblock %}
