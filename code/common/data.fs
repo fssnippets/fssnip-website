@@ -43,7 +43,7 @@ let private readSnippet (s:Index.Snippet) =
 let private saveSnippet (s:Snippet) =
   Index.Snippet
     ( s.ID, s.Title, s.Comment, s.Author, s.Link, s.Date, s.Likes, s.Private,
-      s.Passcode, Array.ofSeq s.References, s.Source, s.Versions, Array.ofSeq s.Tags )
+      s.Passcode, Array.ofSeq s.References, s.Source, s.Versions, Array.ofSeq s.Tags, Array.ofSeq s.Tags )
 
 let readSnippets () =
   let index = Index.Parse(Storage.readIndex ())
@@ -95,7 +95,7 @@ let likeSnippet id revision =
       currentLikes := snippet.Likes + 1
       Index.Snippet
         ( snippet.Id, snippet.Title, snippet.Comment, snippet.Author, snippet.Link, snippet.Date, !currentLikes, snippet.IsPrivate,
-          snippet.Passcode, Array.ofSeq snippet.References, snippet.Source, snippet.Versions, Array.ofSeq snippet.Tags )
+          snippet.Passcode, Array.ofSeq snippet.References, snippet.Source, snippet.Versions, Array.ofSeq snippet.Tags, Array.ofSeq snippet.EnteredTags )
     else snippet)
   let json = Index.Root(newSnippets).JsonValue.ToString()
   Storage.saveIndex json
