@@ -81,6 +81,25 @@
       </a>{% assign next=true %}{% endfor tag %}
     </td></tr>
   </table>
+  
+  <h3>Similar snippets</h3>
+  <div class="row">
+    <div class="content col-md-6">
+      <ul>
+        {% for item in model.Similar limit:2 %}
+        {% include "item.html" item:item %}
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="content col-md-6">
+      <ul>
+        {% for item in model.Similar limit:2 offset:2 %}
+        {% include "item.html" item:item %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  
 </div>
 </div>
 {% endblock %}

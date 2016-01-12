@@ -25,6 +25,12 @@ a, a:visited, a:link, a:hover {
   text-decoration:underline;
 }
 
+h2 .anchor {
+  color:black;
+  font-size:22px;
+  text-decoration:none;
+}
+
 /*********************************** Styles for the home page *************************************/
 
 .brief-listing {
@@ -92,6 +98,7 @@ a, a:visited, a:link, a:hover {
   display:block;
   margin-left:70px;
 }
+
 /*********************************** Headers and footers ******************************************/
 
 #heading {

@@ -14,7 +14,8 @@ open Suave.Filters
 type FormattedSnippet =
   { Html : string
     Details : Data.Snippet
-    Revision : int }
+    Revision : int
+    Similar : seq<Snippet> }
 
 let showInvalidSnippet = Error.reportError HttpCode.HTTP_404
 
@@ -25,9 +26,11 @@ let showSnippet id r =
       match Data.loadSnippet id r with
       | Some snippet ->
           let rev = match r with Latest -> snippetInfo.Versions - 1 | Revision r -> r
+          let similar = publicSnippets |> Seq.takeShuffled (Seq.length publicSnippets) 4
           { Html = snippet
             Details = Data.snippets |> Seq.find (fun s -> s.ID = id')
-            Revision = rev }
+            Revision = rev 
+            Similar = similar }
           |> DotLiquid.page<FormattedSnippet> "snippet.html"
       | None -> showInvalidSnippet "Requested snippet version not found" (sprintf "Can't find the version you are looking for. See <a href='http://fssnip.net/%s'>the latest version</a> instead!" id) 
   | None ->
