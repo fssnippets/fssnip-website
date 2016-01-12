@@ -93,7 +93,7 @@ let app =
 #else
 let cfg =
   { defaultConfig with
-      bindings = [ HttpBinding.mk' HTTP  "127.0.0.1" 8011 ]
+      bindings = [ HttpBinding.mkSimple HTTP  "127.0.0.1" 8011 ]
       homeFolder = Some __SOURCE_DIRECTORY__ }
 let _, server = startWebServerAsync cfg app
 Async.Start(server)

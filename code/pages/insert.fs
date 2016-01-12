@@ -17,7 +17,7 @@ type InsertForm =
     Title : string
     Passcode : string option
     Description : string option
-    Tags : string option
+    Tags : string[]
     Author : string option
     Link : string
     Code : string
@@ -47,8 +47,7 @@ let insertSnippet ctx = async {
           form.Code html
 
     | { Hidden = false; Description = Some descr; Author = Some author; Link = link; 
-        Tags = Some tags } when not (String.IsNullOrWhiteSpace(tags)) ->
-        let tags = tags.Split(',')
+        Tags = tags } when tags.Length > 0 ->
         Data.insertSnippet 
           { ID = id; Title = form.Title; Comment = descr; 
             Author = author; Link = link; Date = System.DateTime.UtcNow;
@@ -62,34 +61,50 @@ let insertSnippet ctx = async {
   else
     return! DotLiquid.page "insert.html" () ctx }
 
+// -------------------------------------------------------------------------------------------------
+// REST API for checking snippet and listing tags
+// -------------------------------------------------------------------------------------------------
 
 open FSharp.Data
 open Suave.Filters
 
-type Errors = JsonProvider<"""[ {"location":[1,1,10,10], "error":true, "message":"sth"} ]""">
+let disableCache = 
+  Writers.setHeader "Cache-Control" "no-cache, no-store, must-revalidate"
+  >=> Writers.setHeader "Pragma" "no-cache"
+  >=> Writers.setHeader "Expires" "0"
+  >=> Writers.setMimeType "application/json"
 
-let checkSnippet ctx = async {
-  use sr = new StreamReader(new MemoryStream(ctx.request.rawForm))
+type CheckResponse = JsonProvider<"""
+  { "errors": [ {"location":[1,1,10,10], "error":true, "message":"sth"} ],
+    "tags": [ "test", "demo" ] }""">
+
+let checkSnippet = request (fun request -> 
+  use sr = new StreamReader(new MemoryStream(request.rawForm))
   let request = sr.ReadToEnd()
-  let json = 
+  let errors, tags = 
     try
+      // Check the snippet and report errors
       let doc = Literate.ParseScriptString(request, "/temp/Snippet.fsx", Utils.formatAgent)
-      JsonValue.Array
+      let errors = 
         [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Errors ->
-           Errors.Root([| l1; c1; l2; c2 |], (kind = ErrorKind.Error), msg).JsonValue |]
+            CheckResponse.Error([| l1; c1; l2; c2 |], (kind = ErrorKind.Error), msg) |]
+
+      // Recommend tags based on the snippet contents
+      let tags = [| "pattern matching"; "test" |]
+      errors, tags
     with e ->
-      JsonValue.Array
-        [| Errors.Root([| 0; 0; 0; 0 |], true, "Parsing the snippet failed.").JsonValue |]
+      [| CheckResponse.Error([| 0; 0; 0; 0 |], true, "Parsing the snippet failed.") |], [| |]
 
+  ( disableCache
+    >=> Successful.OK(CheckResponse.Root(errors, tags).ToString()) ))
 
-  return! ctx |>
-    ( Writers.setHeader "Cache-Control" "no-cache, no-store, must-revalidate"
-      >=> Writers.setHeader "Pragma" "no-cache"
-      >=> Writers.setHeader "Expires" "0"
-      >=> Writers.setMimeType "application/json"
-      >=> Successful.OK(json.ToString()) ) }
-      
+let listTags = request (fun _ -> 
+    let tags = Data.getAllPublicSnippets() |> Seq.collect (fun snip -> snip.Tags) |> Seq.distinct
+    let json = JsonValue.Array [| for s in tags -> JsonValue.String s |]
+    disableCache >=> Successful.OK(json.ToString()) )
+     
 let webPart = 
   choose 
    [ path "/pages/insert" >=> insertSnippet
+     path "/pages/insert/taglist" >=> listTags
      path "/pages/insert/check" >=> checkSnippet ]
