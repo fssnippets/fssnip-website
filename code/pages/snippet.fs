@@ -16,9 +16,7 @@ type FormattedSnippet =
     Details : Data.Snippet
     Revision : int }
 
-let invalidSnippetId id =
-  Error.reportError HttpCode.HTTP_404 "Snippet not found" 
-    (sprintf "The snippet '%s' that you are looking for was not found." id)
+let showInvalidSnippet = Error.reportError HttpCode.HTTP_404
 
 let showSnippet id r =
   let id' = demangleId id
@@ -31,13 +29,14 @@ let showSnippet id r =
             Details = Data.snippets |> Seq.find (fun s -> s.ID = id')
             Revision = rev }
           |> DotLiquid.page<FormattedSnippet> "snippet.html"
-      | None -> invalidSnippetId id
-  | None -> invalidSnippetId id
+      | None -> showInvalidSnippet "Requested snippet version not found" (sprintf "Can't find the version you are looking for. See <a href='http://fssnip.net/%s'>the latest version</a> instead!" id) 
+  | None ->
+      showInvalidSnippet "Snippet not found" (sprintf "The snippet '%d' that you were looking for was not found." id)
 
 let showRawSnippet id r =
   match Data.loadRawSnippet id r with
   | Some s -> Writers.setMimeType "text/plain" >=> Successful.OK s
-  | None -> invalidSnippetId id
+  | None -> showInvalidSnippet "Snippet not found" (sprintf "The snippet '%d' that you were looking for was not found." id)
   
 // Web part to be included in the top-level route specification  
 let webPart = 
