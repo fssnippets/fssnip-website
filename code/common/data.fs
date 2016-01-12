@@ -54,7 +54,7 @@ let mutable snippets, publicSnippets = readSnippets ()
 
 let loadSnippetInternal folder id revision = 
   let id = demangleId id
-  publicSnippets
+  snippets
   |> Seq.tryFind (fun s -> s.ID = id) 
   |> Option.map (fun snippetInfo ->
       let r = match revision with Latest -> snippetInfo.Versions - 1 | Revision r -> r
