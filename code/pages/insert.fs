@@ -77,14 +77,16 @@ let disableCache =
 type CheckResponse = JsonProvider<"""
   { "errors": [ {"location":[1,1,10,10], "error":true, "message":"sth"} ],
     "tags": [ "test", "demo" ] }""">
+type CheckRequest = JsonProvider<"""
+  {"code":"let a = 10", "title":"Demo", "Description":"not much" }""">
 
 let checkSnippet = request (fun request -> 
   use sr = new StreamReader(new MemoryStream(request.rawForm))
-  let request = sr.ReadToEnd()
+  let request = CheckRequest.Parse(sr.ReadToEnd())
   let errors, tags = 
     try
       // Check the snippet and report errors
-      let doc = Literate.ParseScriptString(request, "/temp/Snippet.fsx", Utils.formatAgent)
+      let doc = Literate.ParseScriptString(request.Code, "/temp/Snippet.fsx", Utils.formatAgent)
       let errors = 
         [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Errors ->
             CheckResponse.Error([| l1; c1; l2; c2 |], (kind = ErrorKind.Error), msg) |]

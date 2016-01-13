@@ -20,9 +20,10 @@ $(document).ready(function () {
       var code = $('#code').val();
       if (code == previous) return;
       previous = code;
+      var request = { code:code, title:$("#title").val(), description:$("#description").val() };
       $.ajax({
-        url: "/pages/insert/check", data:code,
-        contentType: "text/plain", type: "POST", dataType: "JSON"
+        url: "/pages/insert/check", data:JSON.stringify(request),
+        contentType: "application/json", type: "POST", dataType: "JSON"
       }).done(function (res) {
         // Select the recommended tags for the snippet
         if (tagRecommendationOn && res.tags.length > 0) {
