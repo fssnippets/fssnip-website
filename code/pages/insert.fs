@@ -92,7 +92,7 @@ let checkSnippet = request (fun request ->
             CheckResponse.Error([| l1; c1; l2; c2 |], (kind = ErrorKind.Error), msg) |]
 
       // Recommend tags based on the snippet contents
-      let tags = [| "pattern matching"; "test" |]
+      let tags = [| |]
       errors, tags
     with e ->
       [| CheckResponse.Error([| 0; 0; 0; 0 |], true, "Parsing the snippet failed.") |], [| |]
@@ -100,7 +100,12 @@ let checkSnippet = request (fun request ->
     >=> Successful.OK(CheckResponse.Root(errors, tags).ToString()) ))
 
 let listTags = request (fun _ -> 
-    let tags = Data.getAllPublicSnippets() |> Seq.collect (fun snip -> snip.Tags) |> Seq.distinct
+    let tags = 
+      Data.getAllPublicSnippets() 
+      |> Seq.collect (fun snip -> snip.Tags) 
+      |> Seq.map (fun tag -> tag.Trim().ToLowerInvariant())
+      |> Seq.distinct
+      |> Seq.sort
     let json = JsonValue.Array [| for s in tags -> JsonValue.String s |]
     disableCache >=> Successful.OK(json.ToString()) )
      
