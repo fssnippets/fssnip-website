@@ -17,10 +17,19 @@ let private restorePackages packages folder =
   else
     Dependencies.Init folder
     let dependencies = Dependencies.Locate folder
-    packages |> Seq.iter dependencies.Add
+
+    // Because F# Data is already loaded from another location, we cannot put it in
+    // another place and load it from there - so we just use the currently loaded one
+    // hoping that it will be compatible with other dependencies...
+    for pkg in packages do 
+      if not(String.Equals(pkg, "FSharp.Data", StringComparison.InvariantCultureIgnoreCase)) then 
+        dependencies.Add(pkg)
 
     packages
-    |> Seq.collect(fun package -> dependencies.GetLibraries((None, package), framework))
+    |> Seq.collect(fun package -> 
+        if String.Equals(package, "FSharp.Data", StringComparison.InvariantCultureIgnoreCase) then 
+          seq [ __SOURCE_DIRECTORY__ + "/../../packages/FSharp.Data/lib/net40/FSharp.Data.dll" ]
+        else dependencies.GetLibraries((None, package), framework))
     |> Array.ofSeq
 
 let private workingFolderFor session = Path.Combine(Environment.CurrentDirectory, "temp", session)
