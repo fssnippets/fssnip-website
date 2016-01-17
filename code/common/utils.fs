@@ -86,6 +86,7 @@ let private convert (ty:System.Type) (strs:string[]) =
 let private getDefaultValue (ty:System.Type) =
   if ty.IsGenericType && ty.GetGenericTypeDefinition() = typedefof<option<_>> then null
   elif ty = typeof<bool> then box false
+  elif ty.IsArray then box (Array.CreateInstance(ty.GetElementType(), [| 0 |]))
   else failwithf "Could not get value of type '%s'" ty.Name
 
 /// Read data from a form into an F# record

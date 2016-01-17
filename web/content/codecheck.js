@@ -64,21 +64,21 @@ $(document).ready(function () {
 
 var chosenInitialized = false;
 
+function initChosen() {
+  chosenInitialized = true;
+  $("select").chosen({
+    create_option: true,
+    persistent_create_option: true,
+    skip_no_results: true 
+  });               
+  $('select').trigger("chosen:updated");
+}
 function switchHidden() {
   if ($('#hidden').is(':checked')) {
     $('.public-details').css('display', 'none');
   } else {
     $('.public-details').css('display', '');
-    if (!chosenInitialized) {
-      chosenInitialized = true;
-      $("select").chosen({
-        create_option: true,
-        persistent_create_option: true,
-        skip_no_results: true 
-      });               
-      $('select').append('<option value="foo">Bar</option>');
-      $('select').trigger("chosen:updated");
-    }
+    if (!chosenInitialized) initChosen();
   }
 }
 
@@ -87,5 +87,6 @@ $(document).ready(function() {
     res.forEach(function(tag) {
       $('select').append('<option value="' + tag + '">' + tag + '</option>');
     });
+    $('select').trigger("chosen:updated");
   });
 });

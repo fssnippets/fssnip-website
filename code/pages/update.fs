@@ -1,4 +1,5 @@
-﻿module FsSnip.Pages.Update
+﻿
+module FsSnip.Pages.Update
 
 open System
 open Suave
@@ -17,11 +18,11 @@ type RawSnippet =
 
 type UpdateForm =
   { Title : string
-    Passcode: string option
+    Passcode : string option
     Description : string option
-    Tags : string option
+    Tags : string[]
     Author : string option
-    Link : string option
+    Link : string
     Code : string
     NugetPkgs : string option
     Session : string }
@@ -65,9 +66,8 @@ let handlePost (snippetInfo:Data.Snippet) requestForm mangledId id' =
     | Some passcode -> passcode
     | _ -> ""
   match form with
-  | { Description = Some descr; Author = Some author; Link = Some link;
-      Tags = Some tags } when not (String.IsNullOrWhiteSpace(tags)) ->
-      let tags = tags.Split(',')
+  | { Description = Some descr; Author = Some author; Link = link;
+      Tags = tags } when tags.Length > 0 ->
       Data.insertSnippet
         { ID = id'; Title = form.Title; Comment = descr;
           Author = author; Link = link; Date = System.DateTime.UtcNow;
