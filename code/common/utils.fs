@@ -50,10 +50,10 @@ let pathWithId pf f =
 let delay (f:unit -> WebPart) ctx = 
   async { return! f () ctx }
 
-module Seq = 
+module Seq =
   /// Take the number of elements specified by `take`, then shuffle the
   /// rest of the items and then take just the `top` number of elements
-  let takeShuffled take top snips = 
+  let takeShuffled take top snips =
     let rnd = Random()
     snips
     |> Seq.take take
@@ -102,9 +102,10 @@ let readForm<'T> (form:list<string*string option>) =
          | true, vs -> convert pi.PropertyType (Array.ofSeq vs)
          | _ -> getDefaultValue pi.PropertyType |]
   FSharpValue.MakeRecord(typeof<'T>, values) :?> 'T
-  
-let invalidSnippetId id =
-  RequestErrors.NOT_FOUND (sprintf "Snippet with id %s not found" id)
-  
-let setStatus s : WebPart = 
-  fun ctx -> { ctx with response = { ctx.response with status = s }} |> succeed
+
+/// Converts comma-separated string with NuGet package names to list of strings
+let parseNugetPackages = function
+  | Some s when not (String.IsNullOrWhiteSpace(s)) ->
+    s.Split([|","|], StringSplitOptions.RemoveEmptyEntries)
+  |> Array.map (fun s -> s.Trim())
+  | _ -> [| |]

@@ -1,11 +1,13 @@
 NUGET
   remote: https://www.nuget.org/api/v2
   specs:
+    Chessie (0.2.2)
+      FSharp.Core
     DotLiquid (1.8.0)
-    FAKE (4.14.0)
+    FAKE (4.14.5)
     FSharp.Azure.StorageTypeProvider (1.4.1)
       WindowsAzure.Storage (>= 6.0.0)
-    FSharp.Compiler.Service (1.4.2)
+    FSharp.Compiler.Service (1.4.2.3)
     FSharp.Core (4.0.0.1)
     FSharp.Data (2.2.5)
       Zlib.Portable (>= 1.10.0) - framework: portable-net40+sl50+wp80+win80
@@ -21,7 +23,11 @@ NUGET
       System.Spatial (5.7.0)
     Microsoft.Data.Services.Client (5.7.0) - framework: >= net40
       Microsoft.Data.OData (5.7.0)
-    Newtonsoft.Json (8.0.2) - framework: >= net40, winv4.5, wpv8.1, wpv8.0
+    Newtonsoft.Json (8.0.2)
+    Paket.Core (2.44.4)
+      Chessie
+      FSharp.Core
+      Newtonsoft.Json
     Suave (1.0.0)
       FSharp.Core (>= 3.1.2.5)
     Suave.DotLiquid (1.0.0)

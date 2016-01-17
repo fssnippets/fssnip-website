@@ -3,6 +3,9 @@
 #r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
 #r "packages/DotLiquid/lib/NET45/DotLiquid.dll"
 #r "packages/Suave.DotLiquid/lib/net40/Suave.DotLiquid.dll"
+#r "packages/Chessie/lib/net40/Chessie.dll"
+#r "packages/Paket.Core/lib/net45/Paket.Core.dll"
+#r "packages/FSharp.Compiler.Service/lib/net45/FSharp.Compiler.Service.dll"
 #if INTERACTIVE
 #load "packages/FSharp.Azure.StorageTypeProvider/StorageTypeProvider.fsx"
 #load "packages/FSharp.Formatting/FSharp.Formatting.fsx"
@@ -27,11 +30,12 @@ open FSharp.Azure.StorageTypeProvider
 #load "code/common/filters.fs"
 #load "code/common/data.fs"
 #load "code/common/rssfeed.fs"
+#load "code/common/parser.fs"
 #load "code/pages/home.fs"
 #load "code/pages/error.fs"
 #load "code/pages/insert.fs"
-#load "code/pages/update.fs"
 #load "code/pages/snippet.fs"
+#load "code/pages/update.fs"
 #load "code/pages/search.fs"
 #load "code/pages/like.fs"
 #load "code/pages/author.fs"
@@ -68,17 +72,17 @@ let app =
       Search.webPart
       Author.webPart
       Tag.webPart
-    
+
       // Snippet display, like, update & insert
       Snippet.webPart
       Like.webPart
       Update.webPart
       Insert.webPart
-      
+
       // REST API and RSS feeds
       Api.webPart
       Rss.webPart
-      
+
       // Static files and fallback case
       browseStaticFiles
       RequestErrors.NOT_FOUND "Found no handlers." ]

@@ -4,7 +4,8 @@ nuget FAKE
 nuget Suave
 nuget Suave.DotLiquid
 nuget FSharp.Data
-nuget FSharp.Compiler.Service 1.4.2
+nuget FSharp.Compiler.Service
 nuget DotLiquid
 nuget FSharp.Formatting >= 2.10.3
 nuget FSharp.Azure.StorageTypeProvider
+nuget Paket.Core

@@ -73,7 +73,7 @@ let getSnippet id =
                 details.Date, details.Likes, Array.ofSeq details.References, details.Source, details.Versions,
                 formatted, Array.ofSeq details.Tags)            
         Writers.setMimeType "application/json" >=> Successful.OK (json.JsonValue.ToString())
-    | None -> invalidSnippetId id
+    | None -> RequestErrors.NOT_FOUND (sprintf "Snippet %s not found" id)
 
 let allPublicSnippets =
     delay (fun () ->

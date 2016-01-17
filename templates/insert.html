@@ -26,7 +26,7 @@
         <small>Hidden snippets will not be listed on the page. Uncheck this for generally useful snippets. If you specify 'Passcode' only you'll be able to create a new version.</small>
       </div>
     </div>
-    
+
     <div class="form-group">
       <label for="title" class="col-sm-2 control-label">Title</label>
       <div class="col-sm-10">
@@ -116,6 +116,8 @@
         <button type="submit" id="submit" name="submit" value="Create" class="btn btn-success">Create</button>
       </div>
     </div>
+
+    <input type="hidden" name="session" value="{{ model.Session }}"></input>
   </form>
 
 </div>

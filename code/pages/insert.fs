@@ -13,7 +13,7 @@ open FSharp.Literate
 // -------------------------------------------------------------------------------------------------
 
 type InsertForm =
-  { Hidden : bool 
+  { Hidden : bool
     Title : string
     Passcode : string option
     Description : string option
@@ -21,45 +21,47 @@ type InsertForm =
     Author : string option
     Link : string
     Code : string
-    NugetPkgs : string option }
+    NugetPkgs : string option
+    Session : string }
 
-let insertSnippet ctx = async { 
+type InsertSnippetModel =
+    { Session: string }
+    with static member Create() = { Session = Guid.NewGuid().ToString() }
+
+let insertSnippet ctx = async {
   if ctx.request.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
     let form = Utils.readForm<InsertForm> ctx.request.form
-    
-    // Assuming all input is valid (TODO issue #12)
-    let nugetReferences = 
-      match form.NugetPkgs with
-      | Some s when not (String.IsNullOrWhiteSpace(s)) -> s.Split(',')
-      | _ -> [| |]
 
-    // TODO: Download NuGet packages and pass "-r:..." args to the formatter! (issue #13)
-    let doc = Literate.ParseScriptString(form.Code, "/temp/Snippet.fsx", Utils.formatAgent)
-    let html = Literate.WriteHtml(doc, "fs", true, true)
+    // Assuming all input is valid (TODO issue #12)
+    let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
+
     let id = Data.getNextId()
+    let doc = Parser.parseScript form.Session form.Code nugetReferences
+    let html = Literate.WriteHtml(doc, "fs", true, true)
+    Parser.completeSession form.Session
+
     match form with
     | { Hidden = true } ->
-        Data.insertSnippet 
-          { ID = id; Title = form.Title; Comment = ""; Author = ""; 
-            Link = ""; Date = System.DateTime.UtcNow; Likes = 0; Private = true; 
-            Passcode = defaultArg form.Passcode ""; 
+        Data.insertSnippet
+          { ID = id; Title = form.Title; Comment = ""; Author = "";
+            Link = ""; Date = System.DateTime.UtcNow; Likes = 0; Private = true;
+            Passcode = defaultArg form.Passcode "";
             References = nugetReferences; Source = ""; Versions = 1; Tags = [| |] }
           form.Code html
-
     | { Hidden = false; Description = Some descr; Author = Some author; Link = link; 
         Tags = tags } when tags.Length > 0 ->
         Data.insertSnippet 
           { ID = id; Title = form.Title; Comment = descr; 
             Author = author; Link = link; Date = System.DateTime.UtcNow;
-            Likes = 0; Private = form.Hidden; Passcode = defaultArg form.Passcode ""; 
-            References = nugetReferences; Source = ""; Versions = 1; 
+            Likes = 0; Private = form.Hidden; Passcode = defaultArg form.Passcode "";
+            References = nugetReferences; Source = ""; Versions = 1;
             Tags = tags }
           form.Code html
-    | _ -> 
+    | _ ->
         failwith "Invalid input!"
     return! Redirection.FOUND ("/" + Utils.mangleId id) ctx
   else
-    return! DotLiquid.page "insert.html" () ctx }
+    return! DotLiquid.page "insert.html" (InsertSnippetModel.Create()) ctx }
 
 // -------------------------------------------------------------------------------------------------
 // REST API for checking snippet and listing tags
@@ -79,12 +81,12 @@ type CheckResponse = JsonProvider<"""
     "tags": [ "test", "demo" ] }""">
 
 let checkSnippet = request (fun request -> 
-  use sr = new StreamReader(new MemoryStream(request.rawForm))
-  let request = sr.ReadToEnd()
   let errors, tags = 
     try
       // Check the snippet and report errors
-      let doc = Literate.ParseScriptString(request, "/temp/Snippet.fsx", Utils.formatAgent)
+      let form = Utils.readForm<InsertForm> request.form
+      let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
+      let doc = Parser.parseScript form.Session form.Code nugetReferences
       let errors = 
         [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Errors ->
             CheckResponse.Error([| l1; c1; l2; c2 |], (kind = ErrorKind.Error), msg) |]
@@ -94,7 +96,6 @@ let checkSnippet = request (fun request ->
       errors, tags
     with e ->
       [| CheckResponse.Error([| 0; 0; 0; 0 |], true, "Parsing the snippet failed.") |], [| |]
-
   ( disableCache
     >=> Successful.OK(CheckResponse.Root(errors, tags).ToString()) ))
 

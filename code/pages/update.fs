@@ -6,12 +6,14 @@ open FsSnip
 open FSharp.Literate
 open FsSnip.Data
 open FsSnip.Utils
+open FsSnip.Snippet
 open FSharp.CodeFormat
 
 type RawSnippet =
   { Raw : string
     Details : Data.Snippet
-    Revision : int }
+    Revision : int
+    Session: string }
 
 type UpdateForm =
   { Title : string
@@ -21,7 +23,8 @@ type UpdateForm =
     Author : string option
     Link : string option
     Code : string
-    NugetPkgs : string option }
+    NugetPkgs : string option
+    Session : string }
 
 let formatAgent = CodeFormat.CreateAgent()
 
@@ -31,22 +34,21 @@ let showForm snippetInfo mangledId id' =
     let rev = snippetInfo.Versions - 1
     { Raw = snippet
       Details = Data.snippets |> Seq.find (fun s -> s.ID = id')
-      Revision = rev }
+      Revision = rev
+      Session = Guid.NewGuid().ToString() }
     |> DotLiquid.page<RawSnippet> "update.html"
-  | None -> invalidSnippetId mangledId
+  | None -> 
+        showInvalidSnippet "Snippet not found" (sprintf "The snippet '%s' that you were looking for was not found." mangledId)
 
 // Assuming all input is valid (TODO issue #12)
 let handlePost (snippetInfo:Data.Snippet) requestForm mangledId id' =
   let form = Utils.readForm<UpdateForm> requestForm
 
-  let nugetReferences = 
-    match form.NugetPkgs with
-    | Some s when not (String.IsNullOrWhiteSpace(s)) -> s.Split(',')
-    | _ -> [| |]
-
+  let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
   // TODO: Download NuGet packages and pass "-r:..." args to the formatter! (issue #13)
-  let doc = Literate.ParseScriptString(form.Code, "/temp/Snippet.fsx", formatAgent)
+  let doc = Parser.parseScript form.Session form.Code nugetReferences
   let html = Literate.WriteHtml(doc, "fs", true, true)
+  Parser.completeSession form.Session
 
   // check password if there is one
   match HasPasscode snippetInfo.Passcode, form.Passcode with
@@ -63,28 +65,28 @@ let handlePost (snippetInfo:Data.Snippet) requestForm mangledId id' =
     | Some passcode -> passcode
     | _ -> ""
   match form with
-  | { Description = Some descr; Author = Some author; Link = Some link; 
+  | { Description = Some descr; Author = Some author; Link = Some link;
       Tags = Some tags } when not (String.IsNullOrWhiteSpace(tags)) ->
       let tags = tags.Split(',')
-      Data.insertSnippet 
-        { ID = id'; Title = form.Title; Comment = descr; 
+      Data.insertSnippet
+        { ID = id'; Title = form.Title; Comment = descr;
           Author = author; Link = link; Date = System.DateTime.UtcNow;
           Likes = 0; Private = false; Passcode = passcode; 
-          References = nugetReferences; Source = ""; Versions = snippetInfo.Versions + 1; 
+          References = nugetReferences; Source = ""; Versions = snippetInfo.Versions + 1;
           Tags = tags }
         form.Code html
-  | _ -> 
+  | _ ->
       failwith "Invalid input!"
   Redirection.FOUND ("/" + mangledId)
 
-let updateSnippet id ctx = async {
+let updateSnippet id = request (fun req ->
   let id' = demangleId id
   match Seq.tryFind (fun s -> s.ID = id') snippets with
   | Some snippetInfo ->
-    if ctx.request.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
-      return! handlePost snippetInfo ctx.request.form id id' ctx
+    if req.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
+      handlePost snippetInfo req.form id id'
     else
-      return! showForm snippetInfo id id' ctx
-  | None -> return! invalidSnippetId id ctx }
+      showForm snippetInfo id id'
+  | None -> showInvalidSnippet "Snippet not found" (sprintf "The snippet '%s' that you were looking for was not found." id) )
 
 let webPart = pathWithId "/%s/update" updateSnippet

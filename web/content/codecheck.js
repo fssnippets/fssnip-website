@@ -2,7 +2,7 @@
 
 $(document).ready(function () {
   var timer;
-  var previous;
+  var previous = {code: "", packages: ""};
   var errors = false;
   var tagRecommendationOn = true;
   
@@ -14,15 +14,23 @@ $(document).ready(function () {
     if (errors && !confirm('Your snippet contains compilation errors. Are you sure you want to submit it?')) return false;
   });
 
-  $('#code').on('change keyup paste', function (e) {
+  $('#code, #nuget').on('change keyup paste', function (e) {
     clearTimeout(timer);
     timer = setTimeout(function (event) {
-      var code = $('#code').val();
-      if (code == previous) return;
-      previous = code;
+      var current = {
+          code: $('#code').val(),
+          packages: $('#nuget').val()
+      }
+
+      if ((current.code == previous.code && current.packages == previous.packages) ||
+          current.code == "") {
+          return;
+      }
+
+      previous = current;
+      var content = $("#insert-form").serialize();
       $.ajax({
-        url: "/pages/insert/check", data:code,
-        contentType: "text/plain", type: "POST", dataType: "JSON"
+        url: "/pages/insert/check", data:content, type: "POST"
       }).done(function (res) {
         // Select the recommended tags for the snippet
         if (tagRecommendationOn && res.tags.length > 0) {
