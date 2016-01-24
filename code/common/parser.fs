@@ -3,6 +3,7 @@
 open System
 open System.IO
 open Paket
+open FsSnip
 open FSharp.Literate
 open Microsoft.FSharp.Compiler.SourceCodeServices
 
