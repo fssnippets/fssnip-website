@@ -4,7 +4,6 @@ open System
 open System.IO
 open Paket
 open FSharp.Literate
-open FsSnip
 open Microsoft.FSharp.Compiler.SourceCodeServices
 
 let framework = DotNetFramework(FrameworkVersion.V4_5)
