@@ -99,7 +99,7 @@ let putSnippet =
             let doc = Parser.parseScript session json.Code json.Nugetpkgs
             let html = Literate.WriteHtml(doc, "fs", true, true)
             Data.insertSnippet 
-              { ID = id; Title = json.Title; Comment = ""; Author = json.Author; 
+              { ID = id; Title = json.Title; Comment = json.Description; Author = json.Author; 
                 Link = json.Link; Date = System.DateTime.UtcNow; Likes = 0; Private = false; 
                 Passcode = ""; References = json.Nugetpkgs; Source = json.Source; Versions = 1; Tags = json.Tags }
                 json.Code html
