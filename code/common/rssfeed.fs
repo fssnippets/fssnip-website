@@ -39,41 +39,33 @@ let attribute prefix localName value =
 // Take an item and return the XML
 let getItem (item: RssItem) = 
     Element("item", [],"",
-        [ 
-        Element("title", [attribute "xmlns" "cf" "http://www.microsoft.com/schemas/rss/core/2005"; attribute "cf" "type" "text"], item.Title,[])
+      [ Element("title", [attribute "xmlns" "cf" "http://www.microsoft.com/schemas/rss/core/2005"; attribute "cf" "type" "text"], item.Title,[])
         Element("link", [],item.Link,[])
         Element("pubDate", [],item.PubDate,[])
         Element("author", [],item.Author,[])
-        Element("description", [attribute "xmlns" "cf" "http://www.microsoft.com/schemas/rss/core/2005"; attribute "cf" "type" "text"], item.Description,[])
-        ])
+        Element("description", [attribute "xmlns" "cf" "http://www.microsoft.com/schemas/rss/core/2005"; attribute "cf" "type" "text"], item.Description,[]) ])
 
 // Take a list of items and return the channel
 let getChannel title link description language (items: seq<Xml>) =
     let channelAttributes =
-        [
-        attribute "xmlns" "cfi" "http://www.microsoft.com/schemas/rss/core/2005/internal"
-        attribute "xmlns" "lastdownloaderror" "None"
-        ]
+      [ attribute "xmlns" "cfi" "http://www.microsoft.com/schemas/rss/core/2005/internal"
+        attribute "xmlns" "lastdownloaderror" "None"]
     let channelElements = 
-        [
-        Element("title", [attribute "xmlns" "cf" "http://www.microsoft.com/schemas/rss/core/2005"; attribute "cf" "type" "text"],title,[])
+      [ Element("title", [attribute "xmlns" "cf" "http://www.microsoft.com/schemas/rss/core/2005"; attribute "cf" "type" "text"],title,[])
         Element("link", [],link,[])
         Element("description", [attribute "xmlns" "cf" "http://www.microsoft.com/schemas/rss/core/2005"; attribute "cf" "type" "text"],description,[])
-        Element("dc:language", [],language,[])
-        ]
+        Element("dc:language", [],language,[]) ]
     Element("channel", channelAttributes, "", (Seq.append channelElements items))
 
-//Take a channel and return the Rss xml
+// Take a channel and return the Rss xml
 let getRss channel = 
   let rssAttributes = 
-    [
-    attribute null "version" "2.0"
-    attribute "xmlns" "atom" "http://www.w3.org/2005/Atom"
-    attribute "xmlns" "cf" "http://www.microsoft.com/schemas/rss/core/2005"
-    attribute "xmlns" "dc" "http://purl.org/dc/elements/1.1/"
-    attribute "xmlns" "slash" "http://purl.org/rss/1.0/modules/slash/"
-    attribute "xmlns" "wfw" "http://wellformedweb.org/CommentAPI/"
-    ]
+    [ attribute null "version" "2.0"
+      attribute "xmlns" "atom" "http://www.w3.org/2005/Atom"
+      attribute "xmlns" "cf" "http://www.microsoft.com/schemas/rss/core/2005"
+      attribute "xmlns" "dc" "http://purl.org/dc/elements/1.1/"
+      attribute "xmlns" "slash" "http://purl.org/rss/1.0/modules/slash/"
+      attribute "xmlns" "wfw" "http://wellformedweb.org/CommentAPI/" ]
   Element("rss", rssAttributes, "", [channel])
 
 // take the channel config and item list and return the string output in valid XML format

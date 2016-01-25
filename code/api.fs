@@ -95,7 +95,8 @@ let putSnippet =
         try
             let json = PutSnippetJson.Parse(Encoding.UTF8.GetString r.rawForm)
             let id = Data.getNextId()
-            let doc = Literate.ParseScriptString(json.Code, "/temp/Snippet.fsx", Utils.formatAgent)
+            let session = (System.Guid.NewGuid().ToString())
+            let doc = Parser.parseScript session json.Code json.Nugetpkgs
             let html = Literate.WriteHtml(doc, "fs", true, true)
             Data.insertSnippet 
               { ID = id; Title = json.Title; Comment = ""; Author = json.Author; 
@@ -104,9 +105,10 @@ let putSnippet =
                 json.Code html
             let mangledId = Utils.mangleId id
             let response = PutSnippetResponseJson.Root("created", mangledId, "http://fssnip.net/" + mangledId)
+            Parser.completeSession session
             Successful.CREATED <| response.JsonValue.ToString()
-        with
-        | ex -> RequestErrors.BAD_REQUEST <| (JsonValue.Record [| ("error", JsonValue.String ex.Message) |]).ToString()
+        with ex -> 
+            RequestErrors.BAD_REQUEST <| (JsonValue.Record [| ("error", JsonValue.String ex.Message) |]).ToString()
 )
 
 // Composed web part to be included in the top-level route

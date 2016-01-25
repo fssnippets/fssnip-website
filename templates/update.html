@@ -32,13 +32,8 @@
           </div>
       </div>
     {% endif -%}
-
-    <div class="public-details">
-    <div class="form-group">
-      <div class="col-sm-10 col-sm-offset-2">
-        <small>Public F# snippets will be listed on the web site. The purpose of public snippets is to create a repository of useful snippets that people can easily find, view and use in their code. To make this possible, please add more information about the snippet such as a brief description, tags and your name.</small>
-      </div>
-    </div>
+    
+    <div class="public-details" {% if model.Details.Private -%}style="display:none"{% endif -%}>
     <div class="form-group">
       <label for="description" class="col-sm-2 control-label">Description</label>
       <div class="col-sm-10">
@@ -47,7 +42,6 @@
     </div>
     </div>
 
-
     <div class="form-group">
       <label for="code" class="col-sm-2 control-label">Source code</label>
       <div class="col-sm-10">
@@ -55,7 +49,7 @@
       </div>
     </div>
     
-    <div class="public-details">
+    <div class="public-details" {% if model.Details.Private -%}style="display:none"{% endif -%}>
     <div class="form-group">
       <label for="tags" class="col-sm-2 control-label">Tags</label>
       <div class="col-sm-10 tags-wrapper">
@@ -101,6 +95,11 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10" id="errors">
       </div>
+      <div class="col-sm-offset-2 col-sm-10">
+        {% if model.Error != '' %}
+          <div class="alert alert-danger" role="alert"><strong>Snippet was not updated!</strong> {{ model.Error }}</div>
+        {% endif %}
+      </div>
     </div>
 
     <div class="form-group" style="text-align:right;margin-top:20px">
@@ -110,6 +109,7 @@
     </div>
 
     <input type="hidden" name="session" value="{{ model.Session }}"></input>
+    <input type="hidden" name="hidden" id="hidden" value="{{ model.Details.Private }}"></input>
   </form>
 
 </div>

@@ -13,7 +13,7 @@
       "references": ["Nada"],
       "source": "http",
       "versions": 1,
-      "tags": [
+      "displayTags": [
         "list",
         "filter",
         "recursion",
@@ -39,7 +39,7 @@
       "references": [],
       "source": "http",
       "versions": 3,
-      "tags": [
+      "displayTags": [
         "list",
         "map",
         "recursion",

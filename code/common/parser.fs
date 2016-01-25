@@ -5,10 +5,16 @@ open System.IO
 open Paket
 open FsSnip
 open FSharp.Literate
+open FSharp.CodeFormat
 open Microsoft.FSharp.Compiler.SourceCodeServices
 
-let framework = DotNetFramework(FrameworkVersion.V4_5)
+// -------------------------------------------------------------------------------------------------
+// Parse & format documents - restores packages using Paket and invokes
+// the F# Compiler checker with the appropriate references
+// -------------------------------------------------------------------------------------------------
 
+let private framework = DotNetFramework(FrameworkVersion.V4_5)
+let private formatAgent = CodeFormat.CreateAgent()
 let private checker = FSharpChecker.Create()
 
 let private restorePackages packages folder =
@@ -31,11 +37,14 @@ let private restorePackages packages folder =
           Some(pkg)
         with _ -> None)
 
+    // Silently ignore all packages that could not be installed
     addedPackages
     |> Seq.collect(fun package -> 
-        if String.Equals(package, "FSharp.Data", StringComparison.InvariantCultureIgnoreCase) then 
-          seq [ __SOURCE_DIRECTORY__ + "/../../packages/FSharp.Data/lib/net40/FSharp.Data.dll" ]
-        else dependencies.GetLibraries((None, package), framework))
+        try
+          if String.Equals(package, "FSharp.Data", StringComparison.InvariantCultureIgnoreCase) then 
+            seq [ __SOURCE_DIRECTORY__ + "/../../packages/FSharp.Data/lib/net40/FSharp.Data.dll" ]
+          else dependencies.GetLibraries((None, package), framework)
+        with _ -> seq [] )
     |> Array.ofSeq
 
 let private workingFolderFor session = Path.Combine(Environment.CurrentDirectory, "temp", session)
@@ -69,7 +78,7 @@ let parseScript session content packages =
     |> Seq.map (encloseInQuotes "--reference:")
     |> String.concat " "
 
-  Literate.ParseScriptString(content, scriptFile, Utils.formatAgent, compilerOptions)
+  Literate.ParseScriptString(content, scriptFile, formatAgent, compilerOptions)
 
 /// Marks parsing session as complete - basically deletes working forlder for the given session
 let completeSession session =

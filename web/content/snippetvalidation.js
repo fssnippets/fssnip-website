@@ -1,9 +1,11 @@
 $(document).ready(function () {
   
   function isRequired(element){
-    var hid=$('#hidden');
-    var hiddenExists=hid.length===1; //update form doesn't have the hidden field, but validation has to occur regardless of that.
-    return !hiddenExists || !hid.is(":checked");
+    var hid = $('#hidden');
+    // On insert page, #hidden is checkbox
+    if (hid.attr("type") == "checkbox") return !(hid.is(":checked"));
+    // On update page, #hidden is 'hidden' with bool value
+    else return !($("#hidden").val() == "true");
   }
 
   $('#insert-form').validate({
@@ -28,5 +30,4 @@ $(document).ready(function () {
       code: "Please enter the code of the snippet"
       }
   });
-
 });

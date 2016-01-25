@@ -32,9 +32,12 @@ let showSnippet id r =
             Revision = rev 
             Similar = similar }
           |> DotLiquid.page<FormattedSnippet> "snippet.html"
-      | None -> showInvalidSnippet "Requested snippet version not found" (sprintf "Can't find the version you are looking for. See <a href='http://fssnip.net/%s'>the latest version</a> instead!" id) 
+      | None -> 
+          showInvalidSnippet "Requested snippet version not found" 
+            (sprintf "Can't find the version you are looking for. See <a href='http://fssnip.net/%s'>the latest version</a> instead!" id) 
   | None ->
-      showInvalidSnippet "Snippet not found" (sprintf "The snippet '%s' that you were looking for was not found." id)
+      showInvalidSnippet "Snippet not found" 
+        (sprintf "The snippet '%s' that you were looking for was not found." id)
 
 let showRawSnippet id r =
   match Data.loadRawSnippet id r with

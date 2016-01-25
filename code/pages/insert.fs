@@ -26,13 +26,11 @@ type InsertForm =
 
 type InsertSnippetModel =
     { Session: string }
-    with static member Create() = { Session = Guid.NewGuid().ToString() }
+    static member Create() = { Session = Guid.NewGuid().ToString() }
 
 let insertSnippet ctx = async {
   if ctx.request.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
     let form = Utils.readForm<InsertForm> ctx.request.form
-
-    // Assuming all input is valid (TODO issue #12)
     let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
 
     let id = Data.getNextId()
@@ -45,21 +43,28 @@ let insertSnippet ctx = async {
         Data.insertSnippet
           { ID = id; Title = form.Title; Comment = ""; Author = "";
             Link = ""; Date = System.DateTime.UtcNow; Likes = 0; Private = true;
-            Passcode = defaultArg form.Passcode "";
+            Passcode = Utils.sha1Hash (defaultArg form.Passcode "");
             References = nugetReferences; Source = ""; Versions = 1; Tags = [| |] }
           form.Code html
+        return! Redirection.FOUND ("/" + Utils.mangleId id) ctx
+
     | { Hidden = false; Description = Some descr; Author = Some author; Link = link; 
         Tags = tags } when tags.Length > 0 ->
         Data.insertSnippet 
           { ID = id; Title = form.Title; Comment = descr; 
             Author = author; Link = link; Date = System.DateTime.UtcNow;
-            Likes = 0; Private = form.Hidden; Passcode = defaultArg form.Passcode "";
+            Likes = 0; Private = form.Hidden; Passcode = Utils.sha1Hash (defaultArg form.Passcode "");
             References = nugetReferences; Source = ""; Versions = 1;
             Tags = tags }
           form.Code html
+        return! Redirection.FOUND ("/" + Utils.mangleId id) ctx
+
     | _ ->
-        failwith "Invalid input!"
-    return! Redirection.FOUND ("/" + Utils.mangleId id) ctx
+        let details = 
+          "Some of the inputs for the snippet were not valid, but the client-side checking"+
+          " did not catch that. Please consider opening a bug issue!"
+        return! Error.reportError HTTP_400 "Inserting snippet failed!" details ctx
+
   else
     return! DotLiquid.page "insert.html" (InsertSnippetModel.Create()) ctx }
 

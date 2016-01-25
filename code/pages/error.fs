@@ -15,7 +15,7 @@ type Error =
   { Title : string
     Details : string }
 
-let reportError code title details = 
+let reportError code title details : WebPart = 
   ( DotLiquid.page "error.html"
      { Title = title; Details = details })
   >=> Writers.setStatus code

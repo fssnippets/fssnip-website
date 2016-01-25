@@ -9,6 +9,10 @@ open FsSnip.Filters
 open Suave.Operators
 open Suave.Filters
 
+// -------------------------------------------------------------------------------------------------
+// Generates RSS feed - this is exposed as /pages/Rss too (for compatibility with old version)
+// -------------------------------------------------------------------------------------------------
+
 let getRss = delay (fun () ->
   let rssOutput = 
     publicSnippets

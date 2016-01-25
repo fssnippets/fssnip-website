@@ -38,7 +38,7 @@ let private readSnippet (s:Index.Snippet) =
   { ID = s.Id; Title = s.Title; Comment = s.Comment; Author = s.Author;
     Link = s.Link; Date = s.Date; Likes = s.Likes; Private = s.IsPrivate;
     Passcode = s.Passcode; References = s.References; Source = s.Source;
-    Versions = s.Versions; Tags = s.Tags }
+    Versions = s.Versions; Tags = s.DisplayTags }
 
 let private saveSnippet (s:Snippet) =
   Index.Snippet
@@ -73,9 +73,10 @@ let getNextId () =
   let largest = snippets |> Seq.map (fun s -> s.ID) |> Seq.max
   largest + 1
 
+
 let insertSnippet newSnippet source formatted =
   let index = Index.Parse(Storage.readIndex())
-  let oldVersion, otherSnippets = index.Snippets |> Array.partition (fun snippet -> snippet.Id = newSnippet.ID)
+  let _, otherSnippets = index.Snippets |> Array.partition (fun snippet -> snippet.Id = newSnippet.ID)
   let json = Index.Root(Array.append otherSnippets [| saveSnippet newSnippet |]).JsonValue.ToString()
 
   let version = newSnippet.Versions - 1
@@ -87,6 +88,7 @@ let insertSnippet newSnippet source formatted =
   snippets <- newSnippets
   publicSnippets <- newPublicSnippets
 
+
 let likeSnippet id revision =
   let currentLikes = ref 0
   let index = Index.Parse(Storage.readIndex())
@@ -94,8 +96,9 @@ let likeSnippet id revision =
     if snippet.Id = id then 
       currentLikes := snippet.Likes + 1
       Index.Snippet
-        ( snippet.Id, snippet.Title, snippet.Comment, snippet.Author, snippet.Link, snippet.Date, !currentLikes, snippet.IsPrivate,
-          snippet.Passcode, Array.ofSeq snippet.References, snippet.Source, snippet.Versions, Array.ofSeq snippet.Tags, Array.ofSeq snippet.EnteredTags )
+        ( snippet.Id, snippet.Title, snippet.Comment, snippet.Author, snippet.Link, snippet.Date, 
+          !currentLikes, snippet.IsPrivate, snippet.Passcode, Array.ofSeq snippet.References, 
+          snippet.Source, snippet.Versions, Array.ofSeq snippet.DisplayTags, Array.ofSeq snippet.EnteredTags )
     else snippet)
   let json = Index.Root(newSnippets).JsonValue.ToString()
   Storage.saveIndex json

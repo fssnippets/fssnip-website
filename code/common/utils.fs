@@ -6,13 +6,12 @@ open FSharp.CodeFormat
 open Suave
 open Suave.Http
 open Suave.Filters
+open System.Text
+open System.Security.Cryptography
 
 // -------------------------------------------------------------------------------------------------
 // Helpers for working with fssnip IDs, formatting F# code and for various Suave things
 // -------------------------------------------------------------------------------------------------
-
-// Global instance of code formatting agent from F# Formatting
-let formatAgent = CodeFormat.CreateAgent()
 
 // This is the alphabet used in the IDs
 let alphabet = [ '0' .. '9' ] @ [ 'a' .. 'z' ] @ [ 'A' .. 'Z' ] |> Array.ofList
@@ -35,16 +34,24 @@ let demangleId (str:string) =
       demangle (acc * alphabet.Length + v) xs
   demangle 0 (str |> List.ofSeq)
 
-let HasPasscode (p:string) =
-    let passcode = p.Replace('"', ' ')
-    if String.IsNullOrWhiteSpace(p) then None else Some p 
-
 /// Web part that succeeds when the specified string is a valid FsSnip ID
 let pathWithId pf f =
   pathScan pf (fun id ctx -> async {
     if Seq.forall (alphabetMap.ContainsKey) id then
       return! f id ctx
     else return None } )
+
+let private sha = new SHA1Cng()
+
+/// Returns SHA1 hash of a given string formatted as Base64 string
+let sha1Hash (password:string) = 
+  if String.IsNullOrEmpty password then ""
+  else Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(password)))
+
+/// Returns None if the passcode is empty or Some with the hash
+let tryGetHashedPasscode (p:string) =
+  if String.IsNullOrWhiteSpace(p) then None 
+  else Some(sha1Hash p)
 
 /// Creates a web part from a function (to enable lazy computation)
 let delay (f:unit -> WebPart) ctx = 
@@ -68,7 +75,8 @@ module Seq =
     let max = snips |> Seq.map f |> Seq.max
     snips |> Seq.map (fun s -> s, (f s) * 100 / max)
 
-
+/// Converts an array of string values to the specified type (for use when parsing form data)
+/// (supports `string option`, `bool`, `string` and `string[]` at the moment) 
 let private convert (ty:System.Type) (strs:string[]) = 
   let single() = 
     if strs.Length = 1 then strs.[0]
@@ -83,6 +91,7 @@ let private convert (ty:System.Type) (strs:string[]) =
     box (strs)
   else failwithf "Could not covert '%A' to '%s'" strs ty.Name
 
+/// Returns a default value when the type has a sensible default or throws
 let private getDefaultValue (ty:System.Type) =
   if ty.IsGenericType && ty.GetGenericTypeDefinition() = typedefof<option<_>> then null
   elif ty = typeof<bool> then box false
