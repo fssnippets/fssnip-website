@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /pages/Update/
+Disallow: /*/update
+Disallow: /embed/
+Host: fssnip.net
