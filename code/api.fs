@@ -75,20 +75,20 @@ let getSnippet id =
         Writers.setMimeType "application/json" >=> Successful.OK (json.JsonValue.ToString())
     | None -> RequestErrors.NOT_FOUND (sprintf "Snippet %s not found" id)
 
-let allPublicSnippets =
-    delay (fun () ->
-        let snippets = getAllPublicSnippets()
-        let json =
-            snippets
-            |> Seq.map (fun x ->
-                AllSnippetsJson.Root(
-                    x.ID, x.Title, x.Comment, x.Author, x.Link, x.Date, x.Likes, Array.ofSeq x.References,
-                    x.Source, x.Versions, Array.ofSeq x.Tags))
-            |> Seq.map (fun x -> x.JsonValue)
-            |> Array.ofSeq
-            |> JsonValue.Array
-        
-        Writers.setMimeType "application/json" >=> Successful.OK (json.ToString()))
+let getPublicSnippets = request (fun request ->
+    let all = request.queryParam "all" = Choice1Of2 "true"
+    let snippets = getAllPublicSnippets()
+    let snippets = if all then snippets else snippets |> Seq.take 20
+    let json =
+        snippets
+        |> Seq.map (fun x ->
+            AllSnippetsJson.Root(
+                x.ID, x.Title, x.Comment, x.Author, x.Link, x.Date, x.Likes, Array.ofSeq x.References,
+                x.Source, x.Versions, Array.ofSeq x.Tags))
+        |> Seq.map (fun x -> x.JsonValue)
+        |> Array.ofSeq
+        |> JsonValue.Array        
+    Writers.setMimeType "application/json" >=> Successful.OK (json.ToString()))
 
 let putSnippet =
     request (fun r ->
@@ -114,7 +114,10 @@ let putSnippet =
 // Composed web part to be included in the top-level route
 let webPart = 
   choose 
-    [ GET >=> path "/api/1/snippet" >=>
-        request (fun x -> cond (x.queryParam "all") (fun _ -> allPublicSnippets) never)
+    [ Filters.clientHost "api.fssnip.net" >=>
+        choose [ path "/1/snippet" >=> getPublicSnippets
+                 pathWithId "/1/snippet/%s" getSnippet 
+                 path "/1/snippet" >=> putSnippet ]
+      GET >=> path "/api/1/snippet" >=> getPublicSnippets
       GET >=> pathWithId "/api/1/snippet/%s" getSnippet 
       PUT >=> path "/api/1/snippet" >=> putSnippet ]
