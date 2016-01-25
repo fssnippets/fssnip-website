@@ -14,8 +14,8 @@ open Microsoft.FSharp.Compiler.SourceCodeServices
 // -------------------------------------------------------------------------------------------------
 
 let private framework = DotNetFramework(FrameworkVersion.V4_5)
-let private formatAgent = CodeFormat.CreateAgent()
-let private checker = FSharpChecker.Create()
+let private formatAgent = lazy CodeFormat.CreateAgent()
+let private checker = lazy FSharpChecker.Create()
 
 let private restorePackages packages folder =
   if Array.isEmpty packages
@@ -68,7 +68,7 @@ let parseScript session content packages =
 
   let scriptFile = Path.Combine(workingFolder, "Script.fsx")
   let defaultOptions =
-    checker.GetProjectOptionsFromScript(scriptFile, content, DateTime.Now)
+    checker.Value.GetProjectOptionsFromScript(scriptFile, content, DateTime.Now)
     |> Async.RunSynchronously
 
   let compilerOptions =
@@ -78,7 +78,7 @@ let parseScript session content packages =
     |> Seq.map (encloseInQuotes "--reference:")
     |> String.concat " "
 
-  Literate.ParseScriptString(content, scriptFile, formatAgent, compilerOptions)
+  Literate.ParseScriptString(content, scriptFile, formatAgent.Value, compilerOptions)
 
 /// Marks parsing session as complete - basically deletes working forlder for the given session
 let completeSession session =
