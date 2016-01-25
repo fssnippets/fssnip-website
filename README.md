@@ -1,14 +1,13 @@
-F# Snippets web site
-====================
+F# Snippets - Web site
+======================
 
-This is a work-in-progress project to build a new version of the [www.fssnip.net](http://www.fssnip.net)
-web site. The project has some basic structure, but there is still a lot of work that needs to
-be done, so I'm looking for contributors!
+This is a new version of the [www.fssnip.net](http://www.fssnip.net) web site. The project 
+implements most of the old functionality, but there is still a lot of room for improvements
+and it is also a great way to get started with F# and Suave!
 
- * There is a [list of issues on GitHub](https://github.com/tpetricek/FsSnip.Website/issues) with
+ * There is a [list of issues on GitHub](https://github.com/fssnippets/fssnip-website/issues) with
    various work items. Many of them not too hard and so this might be a fun way to contribute to
-   your first open-source F# project! Start with the [priority issues](https://github.com/tpetricek/FsSnip.Website/labels/status-priority)
-   which need to be solved before we can switch to the new version!
+   your first open-source F# project! 
 
  * To discuss the project, join the `#fsharp` channel on [functionalprogramming.slack.com](https://functionalprogramming.slack.com).
    To join the Slack team, go to [fpchat.com](http://fpchat.com/). Feel free to ping me on
@@ -18,9 +17,8 @@ Running web site locally
 ------------------------
 
 There is one manual step you need to do before you can run the web site locally, which is to
-download sample data. To do this, download `data.zip` from [this web
-page](https://onedrive.live.com/redir?resid=6DDFF5260C96E30A!353353&authkey=!AHzZGTts-f3AFdk&ithint=file%2czip)
-and extract the contents into `data` (so that you have `data/index.json`) in your root.
+download sample data. To do this, download [the data dump](https://github.com/fssnippets/fssnip-data/archive/master.zip)
+from the `fssnip-data` project and extract the contents into `data` (so that you have `data/index.json`) in your root.
 
 Once you're done with this, you can run `build.sh` (on Mac/Linux) or `build.cmd` (on Windows) to
 run the web site. There is also a Visual Studio solution which can be started with <kbd>F5</kbd>,
