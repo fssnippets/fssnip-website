@@ -115,9 +115,9 @@ let putSnippet =
 let webPart = 
   choose 
     [ Filters.clientHost "api.fssnip.net" >=>
-        choose [ path "/1/snippet" >=> getPublicSnippets
-                 pathWithId "/1/snippet/%s" getSnippet 
-                 path "/1/snippet" >=> putSnippet ]
+        choose [ GET >=> path "/1/snippet" >=> getPublicSnippets
+                 GET >=> pathWithId "/1/snippet/%s" getSnippet 
+                 PUT >=> path "/1/snippet" >=> putSnippet ]
       GET >=> path "/api/1/snippet" >=> getPublicSnippets
       GET >=> pathWithId "/api/1/snippet/%s" getSnippet 
       PUT >=> path "/api/1/snippet" >=> putSnippet ]
