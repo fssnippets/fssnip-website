@@ -1,89 +1,108 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width" />
-  {% block head %}
-  {% endblock %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" /> {% block head %} {% endblock %}
+    <!--Style Sheets always on top - Vendor-->
+    <link href="/lib/bootstrap.min.css" rel="stylesheet"> <!--As it is tought to find fallback for css. It is loaded from local only-->
+    <!--Standard page design-->
+    <link href="/content/style.css" rel="stylesheet" />
+    <link href="/content/snippets.css" rel="stylesheet" />
+    <link href="/lib/chosen.css" rel="stylesheet">
 
-  <!-- Rss Feed -->
-  <link rel="alternate" type="application/rss+xml" title="Recent F# snippets" href="/rss" />
+    <link href="/favicon.ico" rel="icon" />
 
-  <!-- Standard scripts and stylesheet imports -->
-  <script src="/lib/jquery.js"></script>
-  <link href="/lib/bootstrap.min.css" rel="stylesheet">
-  <script src="/lib/bootstrap.min.js"></script>
-  <script src="/lib/chosen.jquery.min.js"></script>
-  <link href="/lib/chosen.css" rel="stylesheet">
+    <!-- Rss Feed -->
+    <link rel="alternate" type="application/rss+xml" title="Recent F# snippets" href="/rss" />
 
-  <!-- Standard page design and scripts -->
-  <link href="/content/style.css" rel="stylesheet" />
-  <link href="/content/snippets.css" rel="stylesheet" />
-  <script src="/content/tips.js"></script>
-  <script src="/content/search.js"></script>
-  {% block customPageScripts %}
-  {% endblock %}
-  <link href="/favicon.ico" rel="icon" />
+    
+
 </head>
+
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-1"></div>
-      <div id="heading" class="col-md-12 col-lg-10">
-        <img src="/img/fswebsnippets.png" />
-      </div>
-      <div class="col-lg-1"></div>
-    </div>
-    <div class="row">
-      <div class="col-lg-1"></div>
-      <div id="links" class="col-md-12 col-lg-10">
-        <a href="/">Home</a>
-          <a href="/pages/insert">Insert</a>
-          <div id="search"><form id="searchForm">
-            <input type="text" name="query" id="searchbox" placeholder="search..." />
-            <a href="javascript:document.getElementById('searchForm').submit()"><span class="glyphicon glyphicon-search"></span></a>
-          </form></div>
-      </div>
-      <div class="col-lg-1"></div>
-    </div>
-    <div class="row">
-      <div class="col-lg-1"></div>
-      <div class="container main content col-md-12 col-lg-10">
-        {% block content %}
-        {% endblock %}
-      </div>
-      <div class="col-lg-1"></div>
-    </div>
-    <div class="row">
-      <div class="col-lg-1"></div>
-      <div class="col-lg-10 footer">
+    <div class="container">
         <div class="row">
-          <div class="col-sm-4">
-            <p>
-              This web site is created using <a href="http://www.fsharp.org">F#</a>
-              and <a href="http://suave.io/">Suave</a> web server. It is hosted on
-              <a href="http://www.hanselman.com/blog/RunningSuaveioAndFWithFAKEInAzureWebAppsWithGitAndTheDeployButton.aspx">Azure</a>
-              and the source code is on <a href="https://github.com/tpetricek/FsSnip.Website">GitHub</a>.
-              Contributions are welcome!
-            </p>
-          </div>
-          <div class="col-sm-4">
-            <p>The first version of <a href="http://www.fssnip.net">fssnip.net</a> has been created by
-              <a href="https://twitter.com/tomaspetricek">@tomaspetricek</a> back <a href="http://tomasp.net/blog/fssnip-website.aspx/">in 2010</a>.
-              This web site is a new, open-source and contribution-friendly version.
-            </p>
-          </div>
-          <div class="col-sm-4">
-            <ul>
-              <li>Check out the <a href="https://github.com/tpetricek/FsSnip.Website">source code</a> and contribute!</li>
-              <li>See the list of <a href="https://github.com/tpetricek/FsSnip.Website/issues">issues and suggestions</a></li>
-              <li>The syntax highlighting uses <a href="http://tpetricek.github.io/FSharp.Formatting/">F# Formatting</a></li>
-            </ul>
-          </div>
+            <div class="col-lg-1"></div>
+            <div id="heading" class="col-md-12 col-lg-10">
+                <img src="/img/fswebsnippets.png" />
+            </div>
+            <div class="col-lg-1"></div>
         </div>
-      </div>
-      <div class="col-lg-1"></div>
+        <div class="row">
+            <div class="col-lg-1"></div>
+            <div id="links" class="col-md-12 col-lg-10">
+                <a href="/">Home</a>
+                <a href="/pages/insert">Insert</a>
+                <div id="search">
+                    <form id="searchForm">
+                        <input type="text" name="query" id="searchbox" placeholder="search..." />
+                        <a href="javascript:document.getElementById('searchForm').submit()"><span class="glyphicon glyphicon-search"></span></a>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="container main content col-md-12 col-lg-10">
+                {% block content %} {% endblock %}
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-10 footer">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p>
+                            This web site is created using <a href="http://www.fsharp.org">F#</a> and <a href="http://suave.io/">Suave</a>                            web server. It is hosted on
+                            <a href="http://www.hanselman.com/blog/RunningSuaveioAndFWithFAKEInAzureWebAppsWithGitAndTheDeployButton.aspx">Azure</a>                            and the source code is on <a href="https://github.com/tpetricek/FsSnip.Website">GitHub</a>. Contributions
+                            are welcome!
+                        </p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p>The first version of <a href="http://www.fssnip.net">fssnip.net</a> has been created by
+                            <a href="https://twitter.com/tomaspetricek">@tomaspetricek</a> back <a href="http://tomasp.net/blog/fssnip-website.aspx/">in 2010</a>.
+                            This web site is a new, open-source and contribution-friendly version.
+                        </p>
+                    </div>
+                    <div class="col-sm-4">
+                        <ul>
+                            <li>Check out the <a href="https://github.com/tpetricek/FsSnip.Website">source code</a> and contribute!</li>
+                            <li>See the list of <a href="https://github.com/tpetricek/FsSnip.Website/issues">issues and suggestions</a></li>
+                            <li>The syntax highlighting uses <a href="http://tpetricek.github.io/FSharp.Formatting/">F# Formatting</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
     </div>
-  </div>
+    <!--All js at bottom of page so it will not block page loading-->
+    <div>
+        <!-- Standard scripts and stylesheet imports -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script>
+        window.jQuery || document.write('<script src="/lib/jquery-2.2.0.min.js"><\/script>')
+    </script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+    crossorigin="anonymous"></script>
+    <script>
+        if ((typeof $().emulateTransitionEnd == 'function') === false)  {
+                document.write('<script src="/lib/bootstrap.min.js"><\/script>');
+            }
+    </script>
+    <script src="/lib/chosen.jquery.min.js"></script>
+    
+
+    <!-- Standard page design and scripts -->
+
+    <script src="/content/tips.min.js"></script>
+    <script src="/content/search.min.js"></script>
+    {% block customPageScripts %} {% endblock %}
+    </div>
 </body>
+
 </html>
