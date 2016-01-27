@@ -18,13 +18,16 @@ NUGET
     FSharpVSPowerTools.Core (2.2.0)
       FSharp.Compiler.Service (>= 1.4.2.0)
     Microsoft.Azure.KeyVault.Core (1.0.0) - framework: >= net40, wpv8.0
-    Microsoft.Data.Edm (5.7.0) - framework: >= net40, winv4.5, wpv8.0
-    Microsoft.Data.OData (5.7.0) - framework: >= net40, winv4.5, wpv8.0
+    Microsoft.Data.Edm (5.7.0) - framework: >= net40, winv4.5, wpv8.1, wpv8.0
+    Microsoft.Data.OData (5.7.0) - framework: >= net40, winv4.5, wpv8.1, wpv8.0
       Microsoft.Data.Edm (5.7.0)
       System.Spatial (5.7.0)
     Microsoft.Data.Services.Client (5.7.0) - framework: >= net40
       Microsoft.Data.OData (5.7.0)
     Newtonsoft.Json (8.0.2)
+    Node.js (5.3.0)
+    Npm.js (2.13.1)
+      Node.js (>= 0.12.7)
     Paket.Core (2.44.4)
       Chessie
       FSharp.Core
@@ -35,10 +38,10 @@ NUGET
       DotLiquid (>= 1.8.0)
       FSharp.Core (>= 3.1.2.5)
       Suave (>= 1.0.0)
-    System.Spatial (5.7.0) - framework: >= net40, winv4.5, wpv8.0
+    System.Spatial (5.7.0) - framework: >= net40, winv4.5, wpv8.1, wpv8.0
     WindowsAzure.Storage (6.2.0)
       Microsoft.Azure.KeyVault.Core (>= 1.0.0) - framework: >= net40, wpv8.0
-      Microsoft.Data.OData (>= 5.6.4) - framework: >= net40, winv4.5, wpv8.0
+      Microsoft.Data.OData (>= 5.6.4) - framework: >= net40, winv4.5, wpv8.1, wpv8.0
       Microsoft.Data.Services.Client (>= 5.6.4) - framework: >= net40
-      Newtonsoft.Json (>= 6.0.8) - framework: >= net40, winv4.5, wpv8.0
+      Newtonsoft.Json (>= 6.0.8) - framework: >= net40, winv4.5, wpv8.1, wpv8.0
     Zlib.Portable (1.11.0) - framework: portable-net40+sl50+wp80+win80

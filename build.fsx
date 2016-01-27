@@ -40,6 +40,10 @@ let reportFsiError (e:exn) =
 
 let reloadScript () =
   try
+    traceImportant "Minifying JS script"
+    Run "JS"
+    
+    //Reload application
     traceImportant "Reloading app.fsx script..."
     let appFsx = __SOURCE_DIRECTORY__ @@ "app.fsx"
     fsiSession.EvalInteraction(sprintf "#load @\"%s\"" appFsx)
@@ -90,10 +94,11 @@ Target "run" (fun _ ->
   // Watch for changes & reload when app.fsx changes
   let sources = 
     { BaseDirectory = __SOURCE_DIRECTORY__
-      Includes = [ "**/*.fsx"; "**/*.fs" ; "**/*.fsproj" ]; 
+      Includes = [ "**/*.fsx"; "**/*.fs" ; "**/*.fsproj"; "web/content/app/*.js" ]; 
       Excludes = [] }
       
   use watcher = sources |> WatchChanges (Seq.map (fun x -> x.FullPath) >> reloadAppServer)
+  
   traceImportant "Waiting for app.fsx edits. Press any key to stop."
 
   System.Threading.Thread.Sleep(System.Threading.Timeout.Infinite)
@@ -163,5 +168,20 @@ Target "deploy" (fun _ ->
   CleanDir wwwrootDirectory
   CopyRecursive sourceDirectory wwwrootDirectory false |> ignore
 )
+
+
+// -------------------------------------------------------------------------------------
+// Minifying JS for better performance 
+// This is using built in NPMHelper and other things are getting done by node js
+// -------------------------------------------------------------------------------------
+Target "JS" (fun _ -> 
+    trace "Node js web compilation thing"
+    Fake.NpmHelper.Npm(fun p -> 
+        { p with Command = NpmHelper.Install NpmHelper.Standard
+                 WorkingDirectory = "." })
+    Fake.NpmHelper.Npm(fun p -> 
+        { p with Command = Fake.NpmHelper.Run "build"
+                 WorkingDirectory = "." })
+    )
 
 RunTargetOrDefault "run"

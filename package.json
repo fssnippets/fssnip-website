@@ -1,0 +1,23 @@
+{
+  "name": "fssnip",
+  "version": "1.0.0",
+  "description": "F# Snippets - Web site\r ======================",
+  "main": "index.js",
+  "scripts": {
+    "build:js": "node node_modules/uglifyjs-folder/cli.js web/content/app/ -eo web/content/dist/",
+    "build": "npm run build:js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fssnippets/fssnip-website.git"
+  },
+  "author": "Tomas Petricek",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fssnippets/fssnip-website/issues"
+  },
+  "homepage": "https://github.com/fssnippets/fssnip-website#readme",
+  "devDependencies": {
+    "uglifyjs-folder": "^0.2.1"
+  }
+}
