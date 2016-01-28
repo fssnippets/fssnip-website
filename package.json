@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build:js": "node node_modules/uglifyjs-folder/cli.js web/content/app/ -eo web/content/dist/",
-    "build": "npm run build:js"
+    "build": "packages\\Npm.js\\tools\\npm.cmd run build:js"
   },
   "repository": {
     "type": "git",
