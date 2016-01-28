@@ -4,7 +4,7 @@
   "description": "F# Snippets - Web site\r ======================",
   "main": "index.js",
   "scripts": {
-    "build:js": "node node_modules/uglifyjs-folder/cli.js web/content/app/ -eo web/content/dist/",
+    "build:js": "packages\\Node.js\\node.exe node_modules/uglifyjs-folder/cli.js web/content/app/ -eo web/content/dist/",
     "build": "packages\\Npm.js\\tools\\npm.cmd run build:js"
   },
   "repository": {
