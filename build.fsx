@@ -163,6 +163,8 @@ Target "stop" (fun _ ->
 // --------------------------------------------------------------------------------------
 
 Target "deploy" (fun _ ->
+  run "JS" //run minifying script before copying. 
+
   let sourceDirectory = __SOURCE_DIRECTORY__
   let wwwrootDirectory = __SOURCE_DIRECTORY__ @@ "../wwwroot"
   CleanDir wwwrootDirectory
