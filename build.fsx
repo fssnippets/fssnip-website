@@ -41,7 +41,7 @@ let reportFsiError (e:exn) =
 let reloadScript () =
   try
     traceImportant "Minifying JS script"
-    Run "JS"
+    Run "minify"
     
     //Reload application
     traceImportant "Reloading app.fsx script..."
@@ -163,6 +163,8 @@ Target "stop" (fun _ ->
 // --------------------------------------------------------------------------------------
 
 Target "deploy" (fun _ ->
+  //run minifying script before copying. 
+
   let sourceDirectory = __SOURCE_DIRECTORY__
   let wwwrootDirectory = __SOURCE_DIRECTORY__ @@ "../wwwroot"
   CleanDir wwwrootDirectory
@@ -170,11 +172,13 @@ Target "deploy" (fun _ ->
 )
 
 
+
 // -------------------------------------------------------------------------------------
 // Minifying JS for better performance 
 // This is using built in NPMHelper and other things are getting done by node js
+// In future it will include CSS minify also
 // -------------------------------------------------------------------------------------
-Target "JS" (fun _ -> 
+Target "minify" (fun _ -> 
     trace "Node js web compilation thing"
     Fake.NpmHelper.Npm(fun p -> 
         { p with Command = NpmHelper.Install NpmHelper.Standard
@@ -184,4 +188,6 @@ Target "JS" (fun _ ->
                  WorkingDirectory = "." })
     )
 
+//deploy is dependent on minify.
+"minify" ==> "deploy"
 RunTargetOrDefault "run"
