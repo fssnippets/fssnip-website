@@ -69,7 +69,6 @@ let browseStaticFiles ctx = async {
 let app =
   choose
     [ // Home page, search and author & tag listings
-      (path "/testing123" >=> (Successful.OK (Environment.GetEnvironmentVariable("RECAPTCHA_SECRET"))))
       Home.webPart
       Search.webPart
       Author.webPart
