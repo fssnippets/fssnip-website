@@ -72,6 +72,7 @@
     <Compile Include="code\common\parser.fs" />
     <Compile Include="code\pages\home.fs" />
     <Compile Include="code\pages\error.fs" />
+    <Compile Include="code\pages\recaptcha.fs" />
     <Compile Include="code\pages\insert.fs" />
     <Compile Include="code\pages\snippet.fs" />
     <Compile Include="code\pages\search.fs" />

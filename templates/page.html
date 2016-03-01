@@ -3,21 +3,19 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" /> {% block head %} {% endblock %}
+    <meta name="viewport" content="width=device-width" /> 
+    {% block head %} 
+    {% endblock %}
     <!--Style Sheets always on top - Vendor-->
     <link href="/lib/bootstrap.min.css" rel="stylesheet"> <!--As it is tought to find fallback for css. It is loaded from local only-->
     <!--Standard page design-->
     <link href="/content/style.css" rel="stylesheet" />
     <link href="/content/snippets.css" rel="stylesheet" />
     <link href="/lib/chosen.css" rel="stylesheet">
-
     <link href="/favicon.ico" rel="icon" />
 
     <!-- Rss Feed -->
     <link rel="alternate" type="application/rss+xml" title="Recent F# snippets" href="/rss" />
-
-    
-
 </head>
 
 <body>
@@ -79,26 +77,23 @@
             <div class="col-lg-1"></div>
         </div>
     </div>
+
     <!--All js at bottom of page so it will not block page loading-->
     <div>
-        <!-- Standard scripts and stylesheet imports -->
+    <script src="https://www.google.com/recaptcha/api.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script>
         window.jQuery || document.write('<script src="/lib/jquery-2.2.0.min.js"><\/script>')
     </script>
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
-    crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script>
-        if ((typeof $().emulateTransitionEnd == 'function') === false)  {
-                document.write('<script src="/lib/bootstrap.min.js"><\/script>');
-            }
+        if ((typeof $().emulateTransitionEnd == 'function') === false) {
+            document.write('<script src="/lib/bootstrap.min.js"><\/script>');
+        }
     </script>
     <script src="/lib/chosen.jquery.min.js"></script>
-    
 
     <!-- Standard page design and scripts -->
-
     <script src="/content/dist/tips.min.js"></script>
     <script src="/content/dist/search.min.js"></script>
     {% block customPageScripts %} {% endblock %}

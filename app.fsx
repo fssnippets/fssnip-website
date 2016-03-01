@@ -33,6 +33,7 @@ open FSharp.Azure.StorageTypeProvider
 #load "code/common/parser.fs"
 #load "code/pages/home.fs"
 #load "code/pages/error.fs"
+#load "code/pages/recaptcha.fs"
 #load "code/pages/insert.fs"
 #load "code/pages/snippet.fs"
 #load "code/pages/update.fs"
@@ -85,6 +86,7 @@ let app =
 
       // Static files and fallback case
       browseStaticFiles
+      (path "/testing123" >=> (Successful.OK (Environment.GetEnvironmentVariable("RECAPTCHA_SECRET"))))
       RequestErrors.NOT_FOUND "Found no handlers." ]
 
 // -------------------------------------------------------------------------------------------------

@@ -30,6 +30,13 @@ type InsertSnippetModel =
 
 let insertSnippet ctx = async {
   if ctx.request.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
+    // Give up early if the reCAPTCHA was not correct
+    let! valid = Recaptcha.validateRecaptcha ctx.request.form
+    if not valid then
+        return! Recaptcha.recaptchaError ctx
+    else
+
+    // Parse the inputs and the F# source file
     let form = Utils.readForm<InsertForm> ctx.request.form
     let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
 
@@ -38,7 +45,8 @@ let insertSnippet ctx = async {
     let html = Literate.WriteHtml(doc, "fs", true, true)
     Parser.completeSession form.Session
 
-    match form with
+    // Insert as private or public, depending on the check box
+    match form with    
     | { Hidden = true } ->
         Data.insertSnippet
           { ID = id; Title = form.Title; Comment = ""; Author = "";
@@ -66,7 +74,7 @@ let insertSnippet ctx = async {
         return! Error.reportError HTTP_400 "Inserting snippet failed!" details ctx
 
   else
-    return! DotLiquid.page "insert.html" (InsertSnippetModel.Create()) ctx }
+    return! DotLiquid.page "insert.html" (InsertSnippetModel.Create()) ctx } 
 
 // -------------------------------------------------------------------------------------------------
 // REST API for checking snippet and listing tags

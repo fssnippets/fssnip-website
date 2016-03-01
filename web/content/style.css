@@ -98,6 +98,13 @@ h2 .anchor {
   display:block;
   margin-left:70px;
 }
+.g-recaptcha {
+  float:right;
+  margin:0px 0px 20px 0px;
+}
+.submit-group {
+  text-align: right;
+}
 
 /*********************************** Headers and footers ******************************************/
 

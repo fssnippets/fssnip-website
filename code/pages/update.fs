@@ -49,10 +49,15 @@ let showForm snippetInfo source mangledId error =
 
 
 /// Handle a post request with updated snippet data - update the DB or show error
-let handlePost (snippetInfo:Data.Snippet) requestForm mangledId id =
+let handlePost (snippetInfo:Data.Snippet) ctx mangledId id = async {
 
   // Parse the snippet & format it
-  let form = Utils.readForm<UpdateForm> requestForm
+  let form = Utils.readForm<UpdateForm> ctx.request.form
+  let! valid = Recaptcha.validateRecaptcha ctx.request.form
+  if not valid then 
+      return! Recaptcha.recaptchaError ctx
+  else
+
   let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
   let doc = Parser.parseScript form.Session form.Code nugetReferences
   let html = Literate.WriteHtml(doc, "fs", true, true)
@@ -68,9 +73,9 @@ let handlePost (snippetInfo:Data.Snippet) requestForm mangledId id =
   let existingPass = snippetInfo.Passcode
   let enteredPass = form.Passcode |> Option.bind tryGetHashedPasscode 
   match existingPass, enteredPass with
-  | p1, Some p2 when p1 <> p2 -> showForm newSnippetInfo (Some form.Code) mangledId "The entered password did not match!"
-  | p1, None when not (String.IsNullOrEmpty p1) -> showForm newSnippetInfo (Some form.Code) mangledId "This snippet is password-protected. Please enter a password!"
-  | p1, Some _ when String.IsNullOrEmpty p1 -> showForm newSnippetInfo (Some form.Code) mangledId "This snippet is not password-protected. Password is not needed!"
+  | p1, Some p2 when p1 <> p2 -> return! showForm newSnippetInfo (Some form.Code) mangledId "The entered password did not match!" ctx
+  | p1, None when not (String.IsNullOrEmpty p1) -> return! showForm newSnippetInfo (Some form.Code) mangledId "This snippet is password-protected. Please enter a password!" ctx
+  | p1, Some _ when String.IsNullOrEmpty p1 -> return! showForm newSnippetInfo (Some form.Code) mangledId "This snippet is not password-protected. Password is not needed!" ctx
   | _ ->
 
   // Check that snippet is private or has all required data
@@ -78,20 +83,22 @@ let handlePost (snippetInfo:Data.Snippet) requestForm mangledId id =
   | false, { Description = Some _; Author = Some _ }, false  
   | true, _, _ ->
       Data.insertSnippet newSnippetInfo form.Code html
-      Redirection.FOUND ("/" + mangledId)
+      return! Redirection.FOUND ("/" + mangledId) ctx
   | _ ->
-      showForm snippetInfo (Some form.Code) mangledId "Some of the inputs were not valid."
+      return! showForm snippetInfo (Some form.Code) mangledId "Some of the inputs were not valid." ctx }
 
 
 /// Generate the form (on the first visit) or insert snippet (on a subsequent visit)
-let updateSnippet mangledId = request (fun req ->
+let updateSnippet mangledId ctx = async {
   let id = demangleId mangledId
   match Seq.tryFind (fun s -> s.ID = id) snippets with
   | Some snippetInfo ->
-    if req.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
-      handlePost snippetInfo req.form mangledId id
+    if ctx.request.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
+      return! handlePost snippetInfo ctx mangledId id
     else
-      showForm snippetInfo None mangledId ""
-  | None -> showInvalidSnippet "Snippet not found" (sprintf "The snippet '%s' that you were looking for was not found." mangledId) )
+      return! showForm snippetInfo None mangledId "" ctx 
+  | None -> 
+      let details = (sprintf "The snippet '%s' that you were looking for was not found." mangledId)
+      return! showInvalidSnippet "Snippet not found" details ctx }
 
 let webPart = pathWithId "/%s/update" updateSnippet
