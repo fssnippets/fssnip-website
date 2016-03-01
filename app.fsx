@@ -69,6 +69,7 @@ let browseStaticFiles ctx = async {
 let app =
   choose
     [ // Home page, search and author & tag listings
+      (path "/testing123" >=> (Successful.OK (Environment.GetEnvironmentVariable("RECAPTCHA_SECRET"))))
       Home.webPart
       Search.webPart
       Author.webPart
@@ -86,7 +87,6 @@ let app =
 
       // Static files and fallback case
       browseStaticFiles
-      (path "/testing123" >=> (Successful.OK (Environment.GetEnvironmentVariable("RECAPTCHA_SECRET"))))
       RequestErrors.NOT_FOUND "Found no handlers." ]
 
 // -------------------------------------------------------------------------------------------------
