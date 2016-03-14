@@ -1,6 +1,8 @@
 {% extends "page.html" %}
 {% block head %}
   <title>{{ model.Details.Title }} | F# Snippets</title>
+  {% assign next=false %}
+  <meta name="keywords" content="{% for tag in model.Details.Tags %}{% if next %}, {% endif %}{{ tag }}{% assign next=true %}{% endfor tag %}" />
 {% endblock %}
 
 {% block customPageScripts %}
