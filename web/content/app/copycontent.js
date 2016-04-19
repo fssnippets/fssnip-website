@@ -7,7 +7,7 @@ $(document).ready(function () {
 
     if (doc.body.createTextRange) {
       try
-      {        
+      {
         range = document.body.createTextRange();
         range.moveToElementText(element);
         range.select();
@@ -36,9 +36,10 @@ $(document).ready(function () {
       dialog.find('.modal-dialog').addClass('modal-lg');
       dialog.find('.modal-title').text('Snippet Source');
       var snippetSourceUrl = document.location.href.replace(document.location.pathname, '/raw/') + snippetId;
+
       $.get(snippetSourceUrl, function (data) {
         dialog.find('.modal-body-inner')
-          .html('<div id="selectMe"><pre>'+ data +'</pre></div>')
+          .html('<div id="selectMe"><pre><code>' + data.replace('<','&lt;').replace('>','&gt;') + '</code></pre></div>')
           .css('max-height', $(window).height() * 0.7)
           .css('overflow-y', 'auto');
         $("#selectMe").selectText();
