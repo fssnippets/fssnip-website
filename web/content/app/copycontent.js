@@ -39,12 +39,15 @@ $(document).ready(function () {
 
       $.get(snippetSourceUrl, function (data) {
         dialog.find('.modal-body-inner')
-          .html('<div id="selectMe"><pre><code>' + data.replace('<','&lt;').replace('>','&gt;') + '</code></pre></div>')
+          .html('<div id="selectMe"><pre></pre></div>')
+          .find('#selectMe pre')
+          .text(data)
           .css('max-height', $(window).height() * 0.7)
           .css('overflow-y', 'auto');
+          
         $("#selectMe").selectText();
       });
-    }
+  }
 
     var dismissDialogHandler = function () {
       dialog.modal('hide');
