@@ -3,12 +3,13 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" /> 
-    {% block head %} 
-    {% endblock %}
+    <meta name="viewport" content="width=device-width" /> {% block head %} {% endblock %}
     <!--Style Sheets always on top - Vendor-->
-    <link href="/lib/bootstrap.min.css" rel="stylesheet"> <!--As it is tought to find fallback for css. It is loaded from local only-->
+    <link href="/lib/bootstrap.min.css" rel="stylesheet">
+    <!--As it is tought to find fallback for css. It is loaded from local only-->
     <!--Standard page design-->
+    <link rel="stylesheet" href="/lib/bootstrap-material-design.min.css">
+    <link rel="stylesheet" href="/lib/ripples.min.css">
     <link href="/content/style.css" rel="stylesheet" />
     <link href="/content/snippets.css" rel="stylesheet" />
     <link href="/lib/chosen.css" rel="stylesheet">
@@ -19,8 +20,45 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="row">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+                    aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+                <a class="navbar-brand" href="#">
+                    <img src="/img/fswebsnippets.png" alt="FsSnippets" />
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home 
+                        <!--<span class="sr-only">(current)</span>-->
+                        </a>
+                    </li>
+                    <li><a href="/pages/insert">Insert</a></li>
+                </ul>
+                <form id="searchForm" class="navbar-form navbar-right" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="query" id="searchbox" placeholder="Search..." />
+                    </div>
+                    <a href="javascript:document.getElementById('searchForm').submit()"><span class="glyphicon glyphicon-search"></span></a>
+
+                </form>
+
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+    <!--<div class="row">
             <div class="col-lg-1"></div>
             <div id="heading" class="col-md-12 col-lg-10">
                 <img src="/img/fswebsnippets.png" />
@@ -40,7 +78,8 @@
                 </div>
             </div>
             <div class="col-lg-1"></div>
-        </div>
+        </div>-->
+    <div class="container-fluid">
         <div class="row">
             <div class="col-lg-1"></div>
             <div class="container main content col-md-12 col-lg-10">
@@ -80,33 +119,47 @@
 
     <!--All js at bottom of page so it will not block page loading-->
     <div>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     
       ga('create', 'UA-1561220-4', 'auto');
       ga('send', 'pageview');
-    
-    </script>      
-    <script src="https://www.google.com/recaptcha/api.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-    <script>
-        window.jQuery || document.write('<script src="/lib/jquery-2.2.0.min.js"><\/script>')
-    </script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    <script>
-        if ((typeof $().emulateTransitionEnd == 'function') === false) {
+        </script>
+        <script src="https://www.google.com/recaptcha/api.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script>
+            window.jQuery || document.write('<script src="/lib/jquery-2.2.0.min.js"><\/script>')
+        </script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+            crossorigin="anonymous"></script>
+        <script>
+            if ((typeof $().emulateTransitionEnd == 'function') === false) {
             document.write('<script src="/lib/bootstrap.min.js"><\/script>');
         }
-    </script>
-    <script src="/lib/chosen.jquery.min.js"></script>
+        </script>
+        <script src="/lib/chosen.jquery.min.js"></script>
+        <script src="/lib/material.min.js"></script>
+        <script src="/lib/ripples.min.js"></script>
+        <!-- Standard page design and scripts -->
+        <script src="/content/dist/tips.min.js"></script>
+        <script src="/content/dist/search.min.js"></script>
+        {% block customPageScripts %} {% endblock %}
+        <script>
+            $(document).ready(function(){
+            $.material.init();
+            var url = window.location;
+            // Will only work if string in href matches with location
+            $('ul.nav a[href="'+ url +'"]').parent().addClass('active');
 
-    <!-- Standard page design and scripts -->
-    <script src="/content/dist/tips.min.js"></script>
-    <script src="/content/dist/search.min.js"></script>
-    {% block customPageScripts %} {% endblock %}
+            // Will also work for relative and absolute hrefs
+            $('ul.nav a').filter(function() {
+            return this.href == url;
+            }).parent().addClass('active');
+        });
+        </script>
     </div>
 </body>
 
