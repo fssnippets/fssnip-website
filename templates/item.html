@@ -2,7 +2,9 @@
   <h3><a href="/{{ item.ID | format_id }}">{{ item.Title }}</a></h3>
   <p>{{ item.Comment }}</p>
   <span class="likeCount">{{ item.Likes }}</span> people like this<br />
-  <a href="javascript:;" class="likeLink" data-snippetid="{{ item.ID | format_id }}">Like the snippet!</a>
-  <p><strong>Posted:</strong> {{ item.Date | nice_date }} by 
-  <a href="/authors/{{ item.Author | url_encode }}">{{ item.Author }}</a>
+  <a href="javascript:;" class="likeLink" data-snippetid="{{ item.ID | format_id }}">
+   Like the snippet!
+  </a>
+  <p><strong>Posted:</strong> {{ item.Date | nice_date }} by
+    <a href="/authors/{{ item.Author | url_encode }}">{{ item.Author }}</a>
 </li>
