@@ -119,8 +119,8 @@ let putSnippet =
             RequestErrors.BAD_REQUEST <| (JsonValue.Record [| ("error", JsonValue.String ex.Message) |]).ToString()
 )
 
-let accept (str:string) = request (fun r ctx -> 
-    if r.headers |> Seq.exists (fun (h, v) -> h.ToLower() = "accept" && v = str) then async.Return(Some ctx)
+let contentType (str:string) = request (fun r ctx -> 
+    if r.headers |> Seq.exists (fun (h, v) -> h.ToLower() = "content-type" && v = str) then async.Return(Some ctx)
     else async.Return(None) )
 
 let formatSnippets = request (fun r ->    
@@ -157,5 +157,5 @@ let webPart =
       apis ] 
 
 let acceptWebPart = 
-  accept "application/vnd.fssnip-v1+json" >=> 
+  contentType "application/vnd.fssnip-v1+json" >=> 
     POST >=> path "/api/format" >=> formatSnippets 
