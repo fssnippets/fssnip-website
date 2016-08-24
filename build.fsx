@@ -22,6 +22,8 @@ open Microsoft.FSharp.Compiler.Interactive.Shell
 // The loaded WebPart is then hosted at localhost:8083.
 // --------------------------------------------------------------------------------------
 
+System.Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
+
 let sbOut = new Text.StringBuilder()
 let sbErr = new Text.StringBuilder()
 
@@ -97,97 +99,68 @@ Target "run" (fun _ ->
       Includes = [ "**/*.fsx"; "**/*.fs" ; "**/*.fsproj"; "web/content/app/*.js" ]; 
       Excludes = [] }
       
-  use watcher = sources |> WatchChanges (Seq.map (fun x -> x.FullPath) >> reloadAppServer)
-  
+  use watcher = sources |> WatchChanges (Seq.map (fun x -> x.FullPath) >> reloadAppServer)  
   traceImportant "Waiting for app.fsx edits. Press any key to stop."
-
-  System.Threading.Thread.Sleep(System.Threading.Timeout.Infinite)
+  Console.ReadLine() |> ignore
 )
 
-// --------------------------------------------------------------------------------------
-// Targets for running build script in background (for Atom)
-// --------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+// Minifying JS for better performance 
+// This is using built in NPMHelper and other things are getting done by node js
+// -------------------------------------------------------------------------------------
 
-open System.Diagnostics
-
-let runningFileLog = __SOURCE_DIRECTORY__ @@ "build.log"
-let runningFile = __SOURCE_DIRECTORY__ @@ "build.running"
-
-Target "spawn" (fun _ ->
-  if File.Exists(runningFile) then
-    failwith "The build is already running!"
-
-  let ps =
-    ProcessStartInfo
-      ( WorkingDirectory = __SOURCE_DIRECTORY__,
-        FileName = __SOURCE_DIRECTORY__  @@ "packages/FAKE/tools/FAKE.exe",
-        Arguments = "run --fsiargs build.fsx",
-        RedirectStandardOutput = true,
-        RedirectStandardError = true,
-        UseShellExecute = false )
-  use fs = new FileStream(runningFileLog, FileMode.Create, FileAccess.ReadWrite, FileShare.Read)
-  use sw = new StreamWriter(fs)
-  let p = Process.Start(ps)
-  p.ErrorDataReceived.Add(fun data -> printfn "%s" data.Data; sw.WriteLine(data.Data); sw.Flush())
-  p.OutputDataReceived.Add(fun data -> printfn "%s" data.Data; sw.WriteLine(data.Data); sw.Flush())
-  p.EnableRaisingEvents <- true
-  p.BeginOutputReadLine()
-  p.BeginErrorReadLine()
-
-  File.WriteAllText(runningFile, string p.Id)
-  while File.Exists(runningFile) do
-    System.Threading.Thread.Sleep(500)  
-  p.Kill()
-)
-
-Target "attach" (fun _ ->
-  if not (File.Exists(runningFile)) then
-    failwith "The build is not running!"
-  use fs = new FileStream(runningFileLog, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
-  use sr = new StreamReader(fs)
-  while File.Exists(runningFile) do
-    let msg = sr.ReadLine()
-    if not (String.IsNullOrEmpty(msg)) then
-      printfn "%s" msg 
-    else System.Threading.Thread.Sleep(500)
-)
-
-Target "stop" (fun _ ->
-  if not (File.Exists(runningFile)) then
-    failwith "The build is not running!"
-  File.Delete(runningFile)
+Target "minify" (fun _ -> 
+  trace "Node js web compilation thing"
+  Fake.NpmHelper.Npm(fun p -> 
+      { p with Command = NpmHelper.Install NpmHelper.Standard
+               WorkingDirectory = "." })
+  Fake.NpmHelper.Npm(fun p -> 
+      { p with Command = Fake.NpmHelper.Run "build"
+               WorkingDirectory = "." })
 )
 
 // --------------------------------------------------------------------------------------
 // Minimal Azure deploy script - just overwrite old files with new ones
 // --------------------------------------------------------------------------------------
 
-Target "deploy" (fun _ ->
-  //run minifying script before copying. 
-
-  let sourceDirectory = __SOURCE_DIRECTORY__
-  let wwwrootDirectory = __SOURCE_DIRECTORY__ @@ "../wwwroot"
-  CleanDir wwwrootDirectory
-  CopyRecursive sourceDirectory wwwrootDirectory false |> ignore
+Target "clean" (fun _ ->
+  CleanDirs ["bin"]
 )
 
+Target "build" (fun _ ->
+  [ "FsSnip.WebSite.sln" ]
+  |> MSBuildRelease "" "Rebuild"
+  |> Log ""
+)
 
+let newName prefix f = 
+  Seq.initInfinite (sprintf "%s_%d" prefix) |> Seq.skipWhile (f >> not) |> Seq.head
 
-// -------------------------------------------------------------------------------------
-// Minifying JS for better performance 
-// This is using built in NPMHelper and other things are getting done by node js
-// In future it will include CSS minify also
-// -------------------------------------------------------------------------------------
-Target "minify" (fun _ -> 
-    trace "Node js web compilation thing"
-    Fake.NpmHelper.Npm(fun p -> 
-        { p with Command = NpmHelper.Install NpmHelper.Standard
-                 WorkingDirectory = "." })
-    Fake.NpmHelper.Npm(fun p -> 
-        { p with Command = Fake.NpmHelper.Run "build"
-                 WorkingDirectory = "." })
-    )
+Target "deploy" (fun _ ->
+  // Pick a subfolder that does not exist
+  let wwwroot = "../wwwroot"
+  let subdir = newName "deploy" (fun sub -> not (Directory.Exists(wwwroot </> sub)))
+  
+  // Deploy everything into new empty folder
+  let deployroot = wwwroot </> subdir
+  CleanDir deployroot
+  CleanDir (deployroot </> "bin")
+  CleanDir (deployroot </> "templates")
+  CleanDir (deployroot </> "web")
+  CopyRecursive "bin" (deployroot </> "bin") false |> ignore
+  CopyRecursive "templates" (deployroot </> "templates") false |> ignore
+  CopyRecursive "web" (deployroot </> "web") false |> ignore
+  
+  let config = File.ReadAllText("web.config").Replace("%DEPLOY_SUBDIRECTORY%", subdir)
+  File.WriteAllText(wwwroot </> "web.config", config)
 
-//deploy is dependent on minify.
+  // Try to delete previous folders, but ignore failures
+  for dir in Directory.GetDirectories(wwwroot) do
+    if Path.GetFileName(dir) <> subdir then 
+      try CleanDir dir; DeleteDir dir with _ -> ()
+)
+
 "minify" ==> "deploy"
+"clean" ==> "build" ==> "deploy"
+
 RunTargetOrDefault "run"

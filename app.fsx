@@ -52,13 +52,18 @@ open FsSnip.Pages
 // Server entry-point and routing
 // -------------------------------------------------------------------------------------------------
 
+// Home directory is directory of 'app.fsx' (in FSI) or compiled app (in Azure)
+let homeDir = 
+  if System.Reflection.Assembly.GetExecutingAssembly().IsDynamic then __SOURCE_DIRECTORY__ else
+    let binDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+    Path.GetFullPath(Path.Combine(binDir, ".."))
+
 // Configure DotLiquid templates & register filters (in 'filters.fs')
 [ for t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes() do
     if t.Name = "Filters" && not (t.FullName.StartsWith "<") then yield t ]
 |> Seq.last
 |> DotLiquid.registerFiltersByType
-
-DotLiquid.setTemplatesDir (__SOURCE_DIRECTORY__ + "/templates")
+DotLiquid.setTemplatesDir (homeDir + "/templates")
 
 /// Browse static files in the 'web' subfolder
 let browseStaticFiles ctx = async {
@@ -94,14 +99,19 @@ let app =
 // run with debugger in VS or XS. This runs the code below.
 // -------------------------------------------------------------------------------------------------
 
+// When port was specified, we start the app (in Azure), 
+// otherwise we do nothing (it is hosted by 'build.fsx')
 #if INTERACTIVE
 #else
-let cfg =
-  { defaultConfig with
-      bindings = [ HttpBinding.mkSimple HTTP  "127.0.0.1" 8011 ]
-      homeFolder = Some __SOURCE_DIRECTORY__ }
-let _, server = startWebServerAsync cfg app
-Async.Start(server)
-System.Diagnostics.Process.Start("http://localhost:8011")
-System.Console.ReadLine() |> ignore
+match System.Environment.GetCommandLineArgs() |> Seq.tryPick (fun s ->
+    if s.StartsWith("port=") then Some(int(s.Substring("port=".Length)))
+    else None ) with
+| Some port ->
+    let serverConfig =
+      { Web.defaultConfig with
+          logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Warn
+          homeFolder = Some homeDir
+          bindings = [ HttpBinding.mkSimple HTTP "127.0.0.1" port ] }
+    Web.startWebServer serverConfig app
+| _ -> ()
 #endif

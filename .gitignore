@@ -8,7 +8,7 @@ bin/
 *.svclog
 temp
 web/content/dist
-
+.fake
 
 #!! ERROR:  is undefined. Use list command to see defined gitignore types !!#
 

@@ -8,7 +8,7 @@
     <ProjectGuid>767a05d0-6a54-4486-88bb-9282e72eec8f</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>FsSnip</RootNamespace>
-    <AssemblyName>FsSnip</AssemblyName>
+    <AssemblyName>fssnip</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
@@ -21,23 +21,27 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <Tailcalls>false</Tailcalls>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Debug\FsSnip.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
+    <StartArguments>port=8087</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Release\FsSnip.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
+    <StartArguments>port=8087</StartArguments>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -562,4 +566,8 @@
       </ItemGroup>
     </When>
   </Choose>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="packages\FSharp.Data\lib\net40\FSharp.Data.DesignTime.dll" DestinationFolder="$(ProjectDir)bin" />
+    <Copy SourceFiles="packages\FSharp.Data\lib\net40\FSharp.Data.DesignTime.pdb" DestinationFolder="$(ProjectDir)bin" />
+  </Target>
 </Project>

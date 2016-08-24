@@ -17,6 +17,16 @@ let private framework = DotNetFramework(FrameworkVersion.V4_5)
 let private formatAgent = lazy CodeFormat.CreateAgent()
 let private checker = lazy FSharpChecker.Create()
 
+let private fsharpDataDirectory = 
+  if System.Reflection.Assembly.GetExecutingAssembly().IsDynamic then   
+    // Loaded from packages directory when running in FSI
+    __SOURCE_DIRECTORY__ + "/../../packages/FSharp.Data/lib/net40/FSharp.Data.dll"
+  else
+    // Loaded from the current bin directory in Azure
+    let binDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+    Path.Combine(binDir, "FSharp.Data.dll")
+
+
 let private restorePackages packages folder =
   if Array.isEmpty packages
   then [| |]
@@ -42,7 +52,7 @@ let private restorePackages packages folder =
     |> Seq.collect(fun package -> 
         try
           if String.Equals(package, "FSharp.Data", StringComparison.InvariantCultureIgnoreCase) then 
-            seq [ __SOURCE_DIRECTORY__ + "/../../packages/FSharp.Data/lib/net40/FSharp.Data.dll" ]
+            seq [ fsharpDataDirectory ]
           else dependencies.GetLibraries((None, package), framework)
         with _ -> seq [] )
     |> Array.ofSeq
