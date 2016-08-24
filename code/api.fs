@@ -158,4 +158,4 @@ let webPart =
 
 let acceptWebPart = 
   accept "application/vnd.fssnip-v1+json" >=> 
-    POST >=> path "/format" >=> formatSnippets 
+    POST >=> path "/api/format" >=> formatSnippets 
