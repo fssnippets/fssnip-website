@@ -4,10 +4,11 @@ open FsSnip
 open FsSnip.Data
 open FsSnip.Utils
 
+open System
+open System.Text
 open FSharp.Data
 open FSharp.CodeFormat
 open FSharp.Literate
-open System.Text
 
 open Suave
 open Suave.Operators
@@ -52,10 +53,17 @@ let [<Literal>] PutSnippetExample =
     """{ "title": "Hello", "author": "Tomas Petricek", "description": "Hello world",
     "code": "Fun.cube", "tags": [ "test" ], "public": true, "link": "http://tomasp.net",
     "nugetpkgs": ["na"], "source": "fun3d" }"""
-    
+
+let [<Literal>] FormatSnippetExamples = 
+    """[ {"snippets": [ "let x = 1", "x + 1" ], "packages":["FSharp.Data"] },
+         {"snippets": [ "let x = 1", "x + 1" ], "packages":["FSharp.Data"], "prefix":"fs" },
+         {"snippets": [ "let x = 1", "x + 1" ], "packages":["FSharp.Data"], "lineNumbers":false } ]"""
+
 type GetSnippetJson = JsonProvider<GetSnippetExample>
 type AllSnippetsJson = JsonProvider<AllSnippetsExample>
 type PutSnippetJson = JsonProvider<PutSnippetExample>
+type FormatSnippetJson = JsonProvider<FormatSnippetExamples, SampleIsList=true>
+type FormatSnippetResult = JsonProvider<"""{ "snippets":["html", "more html"], "tips":"divs" }""">
 type PutSnippetResponseJson = JsonProvider<"""{ "status": "created", "id": "sY", "url": "http://fssnip.net/sY" }""">
 
 // -------------------------------------------------------------------------------------------------
@@ -111,13 +119,43 @@ let putSnippet =
             RequestErrors.BAD_REQUEST <| (JsonValue.Record [| ("error", JsonValue.String ex.Message) |]).ToString()
 )
 
+let accept (str:string) = request (fun r ctx -> 
+    if r.headers |> Seq.exists (fun (h, v) -> h.ToLower() = "accept" && v = str) then async.Return(Some ctx)
+    else async.Return(None) )
+
+let formatSnippets = request (fun r ->    
+    let request = 
+      try 
+          let r = FormatSnippetJson.Parse(Encoding.UTF8.GetString r.rawForm)
+          Some(r.Snippets, r.Packages, defaultArg r.LineNumbers true, defaultArg r.Prefix "fs")
+      with _ -> None 
+    match request with 
+    | None -> RequestErrors.BAD_REQUEST "Incorrectly formatted JSON"
+    | Some(snippets, packages, lineNumbers, prefix) ->
+        let session = Guid.NewGuid().ToString()
+        let snippets = snippets |> String.concat ("\n(** " + session + " *)\n")
+        let doc = Parser.parseScript session snippets packages
+        let html = Literate.WriteHtml(doc, prefix, lineNumbers)
+        let indexOfTips = html.IndexOf("<div class=\"tip\"")
+        let html, tips = 
+            if indexOfTips = -1 then html, ""
+            else html.Substring(0, indexOfTips), html.Substring(indexOfTips)
+        let formatted = html.Split([| "<p>" + session + "</p>" |], StringSplitOptions.None)
+        let res = FormatSnippetResult.Root(formatted, tips).ToString()
+        Successful.OK res )
+
 // Composed web part to be included in the top-level route
+let apis = 
+  choose [ 
+    GET >=> path "/1/snippet" >=> getPublicSnippets
+    GET >=> pathWithId "/1/snippet/%s" getSnippet 
+    PUT >=> path "/1/snippet" >=> putSnippet ]
+
 let webPart = 
   choose 
-    [ Filters.clientHost "api.fssnip.net" >=>
-        choose [ GET >=> path "/1/snippet" >=> getPublicSnippets
-                 GET >=> pathWithId "/1/snippet/%s" getSnippet 
-                 PUT >=> path "/1/snippet" >=> putSnippet ]
-      GET >=> path "/api/1/snippet" >=> getPublicSnippets
-      GET >=> pathWithId "/api/1/snippet/%s" getSnippet 
-      PUT >=> path "/api/1/snippet" >=> putSnippet ]
+    [ clientHost "api.fssnip.net" >=> apis
+      apis ] 
+
+let acceptWebPart = 
+  accept "application/vnd.fssnip-v1+json" >=> 
+    POST >=> path "/format" >=> formatSnippets 

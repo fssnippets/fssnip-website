@@ -73,7 +73,10 @@ let browseStaticFiles ctx = async {
 // Handles routing for the server
 let app =
   choose
-    [ // Home page, search and author & tag listings
+    [ // API parts that check for specific Accept header
+      Api.acceptWebPart
+
+      // Home page, search and author & tag listings
       Home.webPart
       Search.webPart
       Author.webPart
