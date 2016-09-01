@@ -38,7 +38,7 @@ let private readSnippet (s:Index.Snippet) =
   { ID = s.Id; Title = s.Title; Comment = s.Comment; Author = s.Author;
     Link = s.Link; Date = s.Date; Likes = s.Likes; Private = s.IsPrivate;
     Passcode = s.Passcode; References = s.References; Source = s.Source;
-    Versions = s.Versions; Tags = s.DisplayTags }
+    Versions = s.Versions; Tags = (s.DisplayTags |> Array.map(fun t -> t.ToLowerInvariant())) }
 
 let private saveSnippet (s:Snippet) =
   Index.Snippet

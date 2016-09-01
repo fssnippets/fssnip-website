@@ -63,7 +63,7 @@ let insertSnippet ctx = async {
             Author = author; Link = link; Date = System.DateTime.UtcNow;
             Likes = 0; Private = form.Hidden; Passcode = Utils.sha1Hash (defaultArg form.Passcode "");
             References = nugetReferences; Source = ""; Versions = 1;
-            Tags = tags }
+            Tags = tags |> Array.map(fun t -> t.ToLowerInvariant()) }
           form.Code html
         return! Redirection.FOUND ("/" + Utils.mangleId id) ctx
 
