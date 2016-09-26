@@ -10,6 +10,9 @@ open System
 let formatId (id:int) =
   mangleId id
 
+let cleanTitle (title:string) = 
+  generateCleanTitle title
+
 let urlEncode (url:string) =
   System.Web.HttpUtility.UrlEncode(url)
 

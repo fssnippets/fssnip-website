@@ -49,6 +49,7 @@ let webPart =
   choose 
     [ pathScan "/%s/%d" (fun (id, r) -> showSnippet id (Revision r))
       pathWithId "/%s" (fun id -> showSnippet id Latest)
+      pathScan "/%s/title/%s" (fun (id, title) -> showSnippet id Latest)
       pathScan "/raw/%s/%d" (fun (id, r) -> showRawSnippet id (Revision r))
       pathWithId "/raw/%s" (fun id -> showRawSnippet id Latest) ]
   

@@ -57,6 +57,13 @@ let tryGetHashedPasscode (p:string) =
 let delay (f:unit -> WebPart) ctx = 
   async { return! f () ctx }
 
+/// Cleanup url for title: "concurrent memoization" -> concurrent-memoization
+let generateCleanTitle title = 
+    System.Web.HttpUtility.UrlEncode(
+        System.Text.RegularExpressions.Regex.Replace(
+            System.Text.RegularExpressions.Regex.Replace(title, "[^a-zA-Z0-9 ]", ""), 
+            " +", "-"))
+
 module Seq =
   /// Take the number of elements specified by `take`, then shuffle the
   /// rest of the items and then take just the `top` number of elements
