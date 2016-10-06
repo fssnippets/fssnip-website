@@ -1,4 +1,5 @@
 module FsSnip.Pages.Insert
+#load "../packages.fsx" "../common/common.fsx" "recaptcha.fsx"
 
 open System
 open System.IO

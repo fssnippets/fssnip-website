@@ -1,4 +1,5 @@
 module FsSnip.Utils
+#load "../packages.fsx"
 
 open System
 open Microsoft.FSharp.Reflection

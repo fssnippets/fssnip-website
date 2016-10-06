@@ -1,4 +1,5 @@
 ﻿module FsSnip.Pages.Update
+#load "../packages.fsx" "../common/common.fsx" "snippet.fsx"
 
 open System
 open Suave

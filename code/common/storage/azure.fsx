@@ -1,4 +1,5 @@
 module FsSnip.Storage.Azure
+#load "../../packages.fsx"
 
 open System
 open System.IO

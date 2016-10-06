@@ -1,4 +1,5 @@
 module FsSnip.Filters
+#load "../packages.fsx" "utils.fsx"
 
 open FsSnip.Utils
 open System

@@ -1,4 +1,5 @@
 module FsSnip.Pages.Home
+#load "../packages.fsx" "../common/common.fsx"
 
 open Suave
 open System

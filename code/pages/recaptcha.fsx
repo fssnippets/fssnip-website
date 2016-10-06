@@ -1,4 +1,5 @@
 module FsSnip.Recaptcha
+#load "../packages.fsx" "../common/common.fsx" "error.fsx"
 
 open Suave
 open System

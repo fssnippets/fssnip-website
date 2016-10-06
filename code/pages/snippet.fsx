@@ -1,4 +1,5 @@
 module FsSnip.Snippet
+#load "../packages.fsx" "../common/common.fsx" "error.fsx"
 
 open FsSnip
 open FsSnip.Data

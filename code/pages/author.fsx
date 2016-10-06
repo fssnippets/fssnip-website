@@ -1,4 +1,5 @@
-module FsSnip.Pages.Tag
+module FsSnip.Pages.Author
+#load "../packages.fsx" "../common/common.fsx"
 
 open Suave
 open System
@@ -9,54 +10,55 @@ open Suave.Filters
 open Suave.Operators
 
 // -------------------------------------------------------------------------------------------------
-// Tag page - domain model
+// Author page - domain model
 // -------------------------------------------------------------------------------------------------
 
-type TagLink = 
+type AuthorLink = 
   { Text : string
     Link : string
     Size : int 
     Count : int }
 
-type TagLinks = seq<TagLink>
+type AuthorLinks = seq<AuthorLink>
 
-type TagModel =
-  { Tag : string
+type AuthorModel =
+  { Author : string
     Snippets : seq<Snippet> }
 
-type AllTagsModel =
-  { Taglinks: TagLinks}
+type AllAuthorsModel =
+  { Authors: AuthorLinks}
 
-let getAllTags () = 
+
+let getAllAuthors () = 
   let links = 
     publicSnippets
-    |> Seq.collect (fun s -> s.Tags)
+    |> Seq.map (fun s -> s.Author)
     |> Seq.countBy id
     |> Seq.sortBy (fun (_, c) -> -c)
     |> Seq.withSizeBy snd
     |> Seq.map (fun ((n,c),s) -> 
         { Text = n; Size = 80 + s; Count = c;
           Link = HttpUtility.UrlEncode(n) })
-  { Taglinks = links }
+  { Authors = links }
 
 // -------------------------------------------------------------------------------------------------
 // Suave web parts
 // -------------------------------------------------------------------------------------------------
 
-// Loading tag page information (snippets by the given tag)
-let showSnippets (tag) = 
-  let t = System.Web.HttpUtility.UrlDecode tag
-  let hasTag s = Seq.exists (fun t' -> t.Equals(t', StringComparison.InvariantCultureIgnoreCase)) s.Tags
-  let ss = Seq.filter hasTag publicSnippets
-  DotLiquid.page "tag.html" { Tag = t; Snippets = ss }
+// Loading author page information (snippets by the given author)
+let showSnippets (author) = 
+  let a = System.Web.HttpUtility.UrlDecode author
+  let fromAuthor (s:Snippet) = 
+    s.Author.Equals(a, StringComparison.InvariantCultureIgnoreCase)
+  let ss = Seq.filter fromAuthor publicSnippets
+  DotLiquid.page "author.html" { Author = a; Snippets = ss }
 
-// Loading tag page information (all tags)
+// Loading author page information (all authors)
 let showAll = delay (fun () -> 
-  DotLiquid.page "tags.html" (getAllTags()))
+  DotLiquid.page "authors.html" (getAllAuthors()))
 
 // Composed web part to be included in the top-level route
-let webPart = 
-  choose   
-   [ path "/tags/" >=> showAll
-     pathScan "/tags/%s" showSnippets ]
-  
+let webPart =   
+  choose 
+    [ path "/authors/" >=> showAll
+      pathScan "/authors/%s" showSnippets ]

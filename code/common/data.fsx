@@ -1,4 +1,5 @@
 module FsSnip.Data
+#load "storage/azure.fsx" "storage/local.fsx" "utils.fsx" "../packages.fsx"
 
 open System
 open System.IO

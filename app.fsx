@@ -1,51 +1,11 @@
-#r "System.Xml.Linq.dll"
-#r "packages/Suave/lib/net40/Suave.dll"
-#r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
-#r "packages/DotLiquid/lib/NET45/DotLiquid.dll"
-#r "packages/Suave.DotLiquid/lib/net40/Suave.DotLiquid.dll"
-#r "packages/Chessie/lib/net40/Chessie.dll"
-#r "packages/Paket.Core/lib/net45/Paket.Core.dll"
-#r "packages/FSharp.Compiler.Service/lib/net45/FSharp.Compiler.Service.dll"
-#if INTERACTIVE
-#load "packages/FSharp.Azure.StorageTypeProvider/StorageTypeProvider.fsx"
-#load "packages/FSharp.Formatting/FSharp.Formatting.fsx"
-#endif
-open System
-open System.Web
-open System.IO
+#r "System.Web.dll"
+#load "code/packages.fsx" "code/common/common.fsx" "code/pages/pages.fsx" "code/api.fsx"
 open Suave
 open Suave.Web
 open Suave.Operators
 open Suave.Filters
-open FSharp.Data
-open FSharp.Azure.StorageTypeProvider
-
-// -------------------------------------------------------------------------------------------------
-// Loading the FsSnip.WebSite project files
-// -------------------------------------------------------------------------------------------------
-
-#load "code/common/storage/azure.fs"
-#load "code/common/storage/local.fs"
-#load "code/common/utils.fs"
-#load "code/common/filters.fs"
-#load "code/common/data.fs"
-#load "code/common/rssfeed.fs"
-#load "code/common/parser.fs"
-#load "code/pages/home.fs"
-#load "code/pages/error.fs"
-#load "code/pages/recaptcha.fs"
-#load "code/pages/insert.fs"
-#load "code/pages/snippet.fs"
-#load "code/pages/update.fs"
-#load "code/pages/search.fs"
-#load "code/pages/like.fs"
-#load "code/pages/author.fs"
-#load "code/pages/tag.fs"
-#load "code/pages/rss.fs"
-#load "code/api.fs"
+open System.IO
 open FsSnip
-open FsSnip.Data
-open FsSnip.Utils
 open FsSnip.Pages
 
 // -------------------------------------------------------------------------------------------------

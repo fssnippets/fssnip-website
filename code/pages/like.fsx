@@ -1,4 +1,5 @@
 ﻿module FsSnip.Pages.Like
+#load "../packages.fsx" "../common/common.fsx" "snippet.fsx"
 
 open Suave
 open FsSnip

@@ -1,9 +1,9 @@
 ﻿module FsSnip.Parser
+#load "../packages.fsx"
 
 open System
 open System.IO
 open Paket
-open FsSnip
 open FSharp.Literate
 open FSharp.CodeFormat
 open Microsoft.FSharp.Compiler.SourceCodeServices
