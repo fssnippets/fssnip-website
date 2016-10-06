@@ -128,9 +128,13 @@ Target "clean" (fun _ ->
 )
 
 Target "build" (fun _ ->
-  [ "FsSnip.WebSite.sln" ]
-  |> MSBuildRelease "" "Rebuild"
-  |> Log ""
+  let err = 
+    [ "app.fsx" ]
+    |> FscHelper.compile [
+      FscHelper.Out "bin/fssnip.exe"
+      FscHelper.Target FscHelper.TargetType.Exe
+      FscHelper.Standalone ]
+  if err <> 0 then failwithf "F# compiler returned %i" err
 )
 
 let newName prefix f = 
