@@ -1,7 +1,10 @@
+function search() {
+    var searchBox = $('#searchbox')[0];
+    window.location.href = '/search/' + searchBox.value;
+    return false;
+}
+
 $(document).ready(function () {
-    $('#searchForm').submit(function (e) {
-		    var searchBox = $('#searchbox')[0];
-        window.location.href = '/search/' + searchBox.value;
-		    return false;
-    });
+    $('#searchForm').submit(search);
+    $('#searchbutton').click(search);
 });
