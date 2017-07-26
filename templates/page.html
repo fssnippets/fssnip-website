@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" /> 
-    {% block head %} 
+    <meta name="viewport" content="width=device-width" />
+    {% block head %}
     {% endblock %}
     <!--Style Sheets always on top - Vendor-->
     <link href="/lib/bootstrap.min.css" rel="stylesheet"> <!--As it is tought to find fallback for css. It is loaded from local only-->
@@ -35,7 +35,7 @@
                 <div id="search">
                     <form id="searchForm">
                         <input type="text" name="query" id="searchbox" placeholder="search..." />
-                        <a href="javascript:document.getElementById('searchForm').submit()"><span class="glyphicon glyphicon-search"></span></a>
+                        <a id="searchbutton"><span class="glyphicon glyphicon-search"></span></a>
                     </form>
                 </div>
             </div>
@@ -85,11 +85,11 @@
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-    
+
       ga('create', 'UA-1561220-4', 'auto');
       ga('send', 'pageview');
-    
-    </script>      
+
+    </script>
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script>
