@@ -9,7 +9,7 @@ and it is also a great way to get started with F# and Suave!
    various work items. Many of them not too hard and so this might be a fun way to contribute to
    your first open-source F# project! 
 
- * To discuss the Project, register at [Slack](http://foundation.fsharp.org/join) and visit the #gernal channel, for more infos see the [Slack Guide](http://fsharp.org/guides/slack/). 
+ * To discuss the Project, register at [Slack](http://foundation.fsharp.org/join) and visit the `#general` channel, for more infos see the [Slack Guide](http://fsharp.org/guides/slack/). 
 * Feel free to ping me on Twitter at [@tomaspetricek](https://twitter.com/tomaspetricek).
 
 Running web site locally
