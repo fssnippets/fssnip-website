@@ -20,11 +20,17 @@ let urlDecode (input:string) =
   System.Web.HttpUtility.UrlDecode(input)
 
 let niceDate (dt:DateTime) =
+  let print (elapsed:float) timeUnit =
+    // truncate to int
+    let count = int elapsed
+    // pluralize (conveniently, all of our units are pluralized with "s")
+    let suffix = if count = 1 then "" else "s"
+    sprintf "%d %s%s ago" count timeUnit suffix
   let ts = DateTime.UtcNow - dt
-  if ts.TotalSeconds < 60.0 then sprintf "%d secs ago" (int ts.TotalSeconds)
-  elif ts.TotalMinutes < 60.0 then sprintf "%d mins ago" (int ts.TotalMinutes)
-  elif ts.TotalHours < 24.0 then sprintf "%d hours ago" (int ts.TotalHours)
-  elif ts.TotalHours < 48.0 then sprintf "yesterday"
-  elif ts.TotalDays < 30.0 then sprintf "%d days ago" (int ts.TotalDays)
-  elif ts.TotalDays < 365.0 then sprintf "%d months ago" (int ts.TotalDays / 30)
-  else sprintf "%d years ago" (int ts.TotalDays / 365)
+  if ts.TotalSeconds < 60.0 then print ts.TotalSeconds "second"
+  elif ts.TotalMinutes < 60.0 then print ts.TotalMinutes "minute"
+  elif ts.TotalHours < 24.0 then print ts.TotalHours "hour"
+  elif ts.TotalHours < 48.0 then "yesterday"
+  elif ts.TotalDays < 30.0 then print ts.TotalDays "day"
+  elif ts.TotalDays < 365.0 then print (ts.TotalDays / 30.0) "month"
+  else print (ts.TotalDays / 365.0) "year"
