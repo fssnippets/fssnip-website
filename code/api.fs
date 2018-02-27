@@ -78,7 +78,8 @@ let getSnippet id =
         let json =
             GetSnippetJson.Root(
                 details.ID, details.Title, details.Comment, details.Author, details.Link,
-                details.Date, details.Likes, Array.ofSeq details.References, details.Source, details.Versions,
+                details.Date, details.Likes, Array.ofSeq details.References, 
+                (if details.Source.IndexOf("using System;") > -1 then "// Non-usable." else details.Source), details.Versions,
                 formatted, Array.ofSeq details.Tags)            
         Writers.setMimeType "application/json" >=> Successful.OK (json.JsonValue.ToString())
     | None -> RequestErrors.NOT_FOUND (sprintf "Snippet %s not found" id)
@@ -102,6 +103,8 @@ let putSnippet =
     request (fun r ->
         try
             let json = PutSnippetJson.Parse(Encoding.UTF8.GetString r.rawForm)
+            if json.Code.IndexOf("using System;") > -1 then
+                raise (NullReferenceException "Cannot insert anti-pattern.")
             let id = Data.getNextId()
             let session = (System.Guid.NewGuid().ToString())
             let doc = Parser.parseScript session json.Code json.Nugetpkgs
