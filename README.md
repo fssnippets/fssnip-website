@@ -15,9 +15,11 @@ and it is also a great way to get started with F# and Suave!
 Running web site locally
 ------------------------
 
-There is one manual step you need to do before you can run the web site locally, which is to
+There are just a couple of manual step you need to do before you can run the web site locally, which is to
 download sample data. To do this, download [the data dump](https://github.com/fssnippets/fssnip-data/archive/master.zip)
 from the `fssnip-data` project and extract the contents into `data` (so that you have `data/index.json`) in your root.
+
+First, you need to install Mono. Mono is a software platform designed to allow developers to easily create cross platform applications part of the .NET Foundation. Download it from the [mono website](https://www.mono-project.com/download/stable/).
 
 Once you're done with this, you can run `build.sh` (on Mac/Linux) or `build.cmd` (on Windows) to
 run the web site. There is also a Visual Studio solution which can be started with <kbd>F5</kbd>,
