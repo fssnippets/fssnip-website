@@ -6,7 +6,7 @@ open Paket
 open FsSnip
 open FSharp.Literate
 open FSharp.CodeFormat
-open Microsoft.FSharp.Compiler.SourceCodeServices
+open FSharp.Compiler.SourceCodeServices
 
 // -------------------------------------------------------------------------------------------------
 // Parse & format documents - restores packages using Paket and invokes
@@ -80,6 +80,7 @@ let parseScript session content packages =
   let defaultOptions =
     checker.Value.GetProjectOptionsFromScript(scriptFile, content, DateTime.Now)
     |> Async.RunSynchronously
+    |> fst
 
   let compilerOptions =
     defaultOptions.OtherOptions
