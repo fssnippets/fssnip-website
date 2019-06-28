@@ -1,15 +1,19 @@
-redirects:on
+redirects:force
 source https://nuget.org/api/v2
+framework: net451
 
 nuget FSharp.Core ~> 4.0.0
-nuget FAKE ~> 4.0
+nuget FAKE ~> 4.14.5
 nuget Suave ~> 1.0.0
 nuget Suave.DotLiquid ~> 1.0.0
 nuget FSharp.Data ~> 2.2.5
 nuget FSharp.Compiler.Service ~> 1.4.2.3
 nuget DotLiquid ~> 1.8.0
 nuget FSharp.Formatting ~> 2.13.2
-nuget FSharp.Azure.StorageTypeProvider
+nuget FSharp.Azure.StorageTypeProvider ~> 1.4.1
 nuget Paket.Core ~> 2.44.0
 nuget Node.js ~> 5.3.0
 nuget Npm.js ~> 2.13.1
+nuget Chessie ~> 0.2.2
+nuget Newtonsoft.Json ~> 8.0.2
+nuget WindowsAzure.Storage ~> 6.2

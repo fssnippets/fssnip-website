@@ -1,33 +1,33 @@
-REDIRECTS: ON
+REDIRECTS: FORCE
+RESTRICTION: == net451
 NUGET
   remote: https://www.nuget.org/api/v2
     Chessie (0.2.2)
       FSharp.Core
     DotLiquid (1.8)
-    FAKE (4.14.5)
+    FAKE (4.14.9)
     FSharp.Azure.StorageTypeProvider (1.4.1)
       WindowsAzure.Storage (>= 6.0)
     FSharp.Compiler.Service (1.4.2.3)
     FSharp.Core (4.0.0.1)
     FSharp.Data (2.2.5)
-      Zlib.Portable (>= 1.10) - restriction: >= portable-net40+sl5+win8+wp8
-    FSharp.Formatting (2.13.2)
+    FSharp.Formatting (2.13.5)
       FSharp.Compiler.Service (>= 1.4.2 < 1.5)
       FSharpVSPowerTools.Core (>= 2.2 < 2.3)
     FSharpVSPowerTools.Core (2.2)
       FSharp.Compiler.Service (>= 1.4.2)
-    Microsoft.Azure.KeyVault.Core (1.0) - restriction: || (== wp8) (>= net40)
-    Microsoft.Data.Edm (5.7) - restriction: || (== win8) (== wp8) (== wp81) (>= net40)
-    Microsoft.Data.OData (5.7) - restriction: || (== win8) (== wp8) (== wp81) (>= net40)
-      Microsoft.Data.Edm (5.7)
-      System.Spatial (5.7)
-    Microsoft.Data.Services.Client (5.7) - restriction: >= net40
-      Microsoft.Data.OData (5.7)
-    Newtonsoft.Json (8.0.2)
+    Microsoft.Azure.KeyVault.Core (3.0.3)
+    Microsoft.Data.Edm (5.8.4)
+    Microsoft.Data.OData (5.8.4)
+      Microsoft.Data.Edm (5.8.4)
+      System.Spatial (5.8.4)
+    Microsoft.Data.Services.Client (5.8.4)
+      Microsoft.Data.OData (5.8.4)
+    Newtonsoft.Json (8.0.3)
     Node.js (5.3)
     Npm.js (2.13.1)
       Node.js (>= 0.12.7)
-    Paket.Core (2.44.4)
+    Paket.Core (2.44.6)
       Chessie
       FSharp.Core
       Newtonsoft.Json
@@ -37,10 +37,9 @@ NUGET
       DotLiquid (>= 1.8)
       FSharp.Core (>= 3.1.2.5)
       Suave (>= 1.0)
-    System.Spatial (5.7) - restriction: || (== win8) (== wp8) (== wp81) (>= net40)
+    System.Spatial (5.8.4)
     WindowsAzure.Storage (6.2)
-      Microsoft.Azure.KeyVault.Core (>= 1.0) - restriction: || (== wp8) (>= net40)
-      Microsoft.Data.OData (>= 5.6.4) - restriction: || (== win8) (== wp8) (== wp81) (>= net40)
-      Microsoft.Data.Services.Client (>= 5.6.4) - restriction: >= net40
-      Newtonsoft.Json (>= 6.0.8) - restriction: || (== win8) (== wp8) (== wp81) (>= net40)
-    Zlib.Portable (1.11) - restriction: >= portable-net40+sl5+win8+wp8
+      Microsoft.Azure.KeyVault.Core (>= 1.0)
+      Microsoft.Data.OData (>= 5.6.4)
+      Microsoft.Data.Services.Client (>= 5.6.4)
+      Newtonsoft.Json (>= 6.0.8)
