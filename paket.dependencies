@@ -1,14 +1,20 @@
-redirects:on
+redirects:force
 source https://nuget.org/api/v2
+framework: net461
 
-nuget FAKE
-nuget Suave
-nuget Suave.DotLiquid
-nuget FSharp.Data
-nuget FSharp.Compiler.Service
-nuget DotLiquid
-nuget FSharp.Formatting >= 2.10.3
-nuget FSharp.Azure.StorageTypeProvider
-nuget Paket.Core
-nuget Node.js
-nuget Npm.js
+nuget FSharp.Core ~> 4.5.0
+nuget FSharp.Formatting ~> 3.1.0
+nuget FSharp.Compiler.Service ~> 27.0.1
+nuget FAKE ~> 5.8.4
+
+nuget Suave ~> 1.0.0
+nuget Suave.DotLiquid ~> 1.0.0
+nuget FSharp.Data ~> 2.2.5
+nuget DotLiquid ~> 1.8.0
+nuget FSharp.Azure.StorageTypeProvider ~> 1.4.1
+nuget Paket.Core ~> 2.44.0
+nuget Node.js ~> 5.3.0
+nuget Npm.js ~> 2.13.1
+nuget Chessie ~> 0.2.2
+nuget Newtonsoft.Json ~> 8.0.2
+nuget WindowsAzure.Storage ~> 6.2
