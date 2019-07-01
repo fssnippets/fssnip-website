@@ -13,7 +13,7 @@ open System
 open System.IO
 open Suave
 open Suave.Web
-open FSharp.Compiler.Interactive.Shell
+open Microsoft.FSharp.Compiler.Interactive.Shell
 
 // --------------------------------------------------------------------------------------
 // The following uses FileSystemWatcher to look for changes in 'app.fsx'. When
