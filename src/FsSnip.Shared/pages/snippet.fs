@@ -31,7 +31,7 @@ let showSnippet id r =
             Details = Data.snippets |> Seq.find (fun s -> s.ID = id')
             Revision = rev 
             Similar = similar }
-          |> DotLiquid.page<FormattedSnippet> "snippet.html"
+          |> DotLiquid.page "snippet.html"
       | None -> 
           showInvalidSnippet "Requested snippet version not found" 
             (sprintf "Can't find the version you are looking for. See <a href='http://fssnip.net/%s'>the latest version</a> instead!" id) 

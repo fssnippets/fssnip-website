@@ -59,7 +59,7 @@ let delay (f:unit -> WebPart) ctx =
 
 /// Cleanup url for title: "concurrent memoization" -> concurrent-memoization
 let generateCleanTitle title = 
-    System.Web.HttpUtility.UrlEncode(
+    System.Net.WebUtility.UrlEncode(
         System.Text.RegularExpressions.Regex.Replace(
             System.Text.RegularExpressions.Regex.Replace(title, "[^a-zA-Z0-9 ]", ""), 
             " +", "-"))

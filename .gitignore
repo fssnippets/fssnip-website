@@ -9,6 +9,8 @@ bin/
 temp
 web/content/dist
 .fake
+node_modules/
+paket-files/
 
 #!! ERROR:  is undefined. Use list command to see defined gitignore types !!#
 

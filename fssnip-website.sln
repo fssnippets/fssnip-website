@@ -1,0 +1,125 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29724.152
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsSnip.Shared", "src\FsSnip.Shared\FsSnip.Shared.fsproj", "{07A2B287-BF86-4447-BC5C-E62B233B741B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{061D619A-D77E-4991-883F-3F6AD2D8C131}"
+	ProjectSection(SolutionItems) = preProject
+		.paket\Paket.Restore.targets = .paket\Paket.Restore.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{75968D53-A06F-4209-AEDA-3A15DC1BC40B}"
+	ProjectSection(SolutionItems) = preProject
+		.deployment = .deployment
+		.gitignore = .gitignore
+		app.azure.fsx = app.azure.fsx
+		app.fsx = app.fsx
+		app.heroku.fsx = app.heroku.fsx
+		build.cmd = build.cmd
+		build.fsx = build.fsx
+		build.sh = build.sh
+		docker.fsx = docker.fsx
+		Dockerfile = Dockerfile
+		package-lock.json = package-lock.json
+		package.json = package.json
+		paket.dependencies = paket.dependencies
+		paket.lock = paket.lock
+		Procfile = Procfile
+		README.md = README.md
+		web.config = web.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C45EA974-ECB6-42F1-9B80-D62B0B2C36CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{4054B677-55CB-46F9-B4A4-A3DF50F3AD15}"
+	ProjectSection(SolutionItems) = preProject
+		templates\author.html = templates\author.html
+		templates\authors.html = templates\authors.html
+		templates\error.html = templates\error.html
+		templates\home.html = templates\home.html
+		templates\insert.html = templates\insert.html
+		templates\item.html = templates\item.html
+		templates\list.html = templates\list.html
+		templates\page.html = templates\page.html
+		templates\search.html = templates\search.html
+		templates\snippet.html = templates\snippet.html
+		templates\tag.html = templates\tag.html
+		templates\tags.html = templates\tags.html
+		templates\update.html = templates\update.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{F595082D-083B-4993-9424-FB28B51B35EA}"
+	ProjectSection(SolutionItems) = preProject
+		web\favicon.ico = web\favicon.ico
+		web\robots.txt = web\robots.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{9795D1A4-87B8-4CD3-A30B-98B4D214FD82}"
+	ProjectSection(SolutionItems) = preProject
+		web\content\snippets.css = web\content\snippets.css
+		web\content\style.css = web\content\style.css
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{D66F0FC0-60E9-435F-B52D-FA7FBF8158B8}"
+	ProjectSection(SolutionItems) = preProject
+		web\content\app\codecheck.js = web\content\app\codecheck.js
+		web\content\app\copycontent.js = web\content\app\copycontent.js
+		web\content\app\likes.js = web\content\app\likes.js
+		web\content\app\search.js = web\content\app\search.js
+		web\content\app\snippetvalidation.js = web\content\app\snippetvalidation.js
+		web\content\app\tips.js = web\content\app\tips.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "fonts", "fonts", "{B7AC9857-9D18-401F-BBFD-F705CDABC310}"
+	ProjectSection(SolutionItems) = preProject
+		web\fonts\glyphicons-halflings-regular.eot = web\fonts\glyphicons-halflings-regular.eot
+		web\fonts\glyphicons-halflings-regular.svg = web\fonts\glyphicons-halflings-regular.svg
+		web\fonts\glyphicons-halflings-regular.ttf = web\fonts\glyphicons-halflings-regular.ttf
+		web\fonts\glyphicons-halflings-regular.woff = web\fonts\glyphicons-halflings-regular.woff
+		web\fonts\glyphicons-halflings-regular.woff2 = web\fonts\glyphicons-halflings-regular.woff2
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{C2787165-F759-4B79-9B54-BFCA51A98A15}"
+	ProjectSection(SolutionItems) = preProject
+		web\img\fswebsnippets.png = web\img\fswebsnippets.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{98DA3D1F-3B65-4C2D-A141-B1C3F402FC4F}"
+	ProjectSection(SolutionItems) = preProject
+		web\lib\bootstrap.min.css = web\lib\bootstrap.min.css
+		web\lib\bootstrap.min.js = web\lib\bootstrap.min.js
+		web\lib\chosen-sprite.png = web\lib\chosen-sprite.png
+		web\lib\chosen-sprite@2x.png = web\lib\chosen-sprite@2x.png
+		web\lib\chosen.css = web\lib\chosen.css
+		web\lib\chosen.jquery.min.js = web\lib\chosen.jquery.min.js
+		web\lib\jquery-2.2.0.min.js = web\lib\jquery-2.2.0.min.js
+		web\lib\jquery.validate.min.js = web\lib\jquery.validate.min.js
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07A2B287-BF86-4447-BC5C-E62B233B741B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07A2B287-BF86-4447-BC5C-E62B233B741B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07A2B287-BF86-4447-BC5C-E62B233B741B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07A2B287-BF86-4447-BC5C-E62B233B741B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{07A2B287-BF86-4447-BC5C-E62B233B741B} = {C45EA974-ECB6-42F1-9B80-D62B0B2C36CA}
+		{9795D1A4-87B8-4CD3-A30B-98B4D214FD82} = {F595082D-083B-4993-9424-FB28B51B35EA}
+		{D66F0FC0-60E9-435F-B52D-FA7FBF8158B8} = {9795D1A4-87B8-4CD3-A30B-98B4D214FD82}
+		{B7AC9857-9D18-401F-BBFD-F705CDABC310} = {F595082D-083B-4993-9424-FB28B51B35EA}
+		{C2787165-F759-4B79-9B54-BFCA51A98A15} = {F595082D-083B-4993-9424-FB28B51B35EA}
+		{98DA3D1F-3B65-4C2D-A141-B1C3F402FC4F} = {F595082D-083B-4993-9424-FB28B51B35EA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FFC04CED-F008-486B-8052-4E45E9CF58BE}
+	EndGlobalSection
+EndGlobal
