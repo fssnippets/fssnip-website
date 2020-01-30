@@ -42,7 +42,7 @@ let showForm snippetInfo source mangledId error =
         Revision = rev
         Session = Guid.NewGuid().ToString() 
         Error = error }
-      |> DotLiquid.page<RawSnippet> "update.html"
+      |> DotLiquid.page "update.html"
   | None, None -> 
       showInvalidSnippet "Snippet not found" 
         (sprintf "The snippet '%s' that you were looking for was not found." mangledId)

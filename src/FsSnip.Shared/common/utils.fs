@@ -41,7 +41,7 @@ let pathWithId pf f =
       return! f id ctx
     else return None } )
 
-let private sha = new SHA1Cng()
+let private sha = new SHA1Managed()
 
 /// Returns SHA1 hash of a given string formatted as Base64 string
 let sha1Hash (password:string) = 

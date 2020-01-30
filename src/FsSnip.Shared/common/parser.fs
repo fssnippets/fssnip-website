@@ -13,7 +13,7 @@ open Microsoft.FSharp.Compiler.SourceCodeServices
 // the F# Compiler checker with the appropriate references
 // -------------------------------------------------------------------------------------------------
 
-let private framework = DotNetFramework(FrameworkVersion.V4_5)
+let private framework = TargetProfile.SinglePlatform (FrameworkIdentifier.DotNetFramework FrameworkVersion.V4_5)
 let private formatAgent = lazy CodeFormat.CreateAgent()
 let private checker = lazy FSharpChecker.Create()
 
@@ -53,14 +53,14 @@ let private restorePackages packages folder =
         try
           if String.Equals(package, "FSharp.Data", StringComparison.InvariantCultureIgnoreCase) then 
             seq [ fsharpDataDirectory ]
-          else dependencies.GetLibraries((None, package), framework)
+          else dependencies.GetLibraries(None, package, framework) |> Seq.map (fun l -> l.Path)
         with _ -> seq [] )
     |> Array.ofSeq
 
 let private workingFolderFor session = Path.Combine(Environment.CurrentDirectory, "temp", session)
 
 /// encloses string content in quotes
-let private encloseInQuotes prefix (line: string) =
+let private encloseInQuotes (prefix : string) (line: string) =
   if (line.StartsWith prefix && line.Contains " ")
   then sprintf "%s\"%s\"" prefix (line.Substring prefix.Length)
   else line
