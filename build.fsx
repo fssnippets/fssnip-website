@@ -1,5 +1,8 @@
 #r "paket: groupref build //"
 #load "./.fake/build.fsx/intellisense.fsx"
+#if !NETCOREAPP
+#r "System.IO.Compression.FileSystem.dll"
+#endif
 
 open Fake.Core
 open Fake.Core.TargetOperators
@@ -32,6 +35,17 @@ Target.create "minify" (fun _ ->
 
 Target.create "clean" (fun _ ->
   Shell.cleanDirs [publishDirectory]
+)
+
+let dataDumpLocation = System.Uri "https://github.com/fssnippets/fssnip-data/archive/master.zip"
+
+Target.create "download-data-dump" (fun _ ->
+    Directory.delete "data"
+    let tmpfile = Path.ChangeExtension(Path.GetTempFileName(), ".zip")
+    use client = new System.Net.WebClient()
+    client.DownloadFile(dataDumpLocation, tmpfile)
+    System.IO.Compression.ZipFile.ExtractToDirectory(tmpfile, ".")
+    Directory.Move("fssnip-data-master", "data")
 )
 
 Target.create "run" (fun _ ->
@@ -77,6 +91,7 @@ Target.create "deploy" (fun _ ->
 )
 
 "minify"
+=?> ("download-data-dump", not (File.Exists "data/index.json"))
 ==> "run"
 
 "clean"
