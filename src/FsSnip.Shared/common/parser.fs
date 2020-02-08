@@ -18,15 +18,10 @@ let private framework = TargetProfile.SinglePlatform (FrameworkIdentifier.DotNet
 let private formatAgent = lazy CodeFormat.CreateAgent()
 let private checker = lazy FSharpChecker.Create()
 
-let private fsharpDataDirectory = 
-  if System.Reflection.Assembly.GetExecutingAssembly().IsDynamic then   
-    // Loaded from packages directory when running in FSI
-    __SOURCE_DIRECTORY__ + "/../../packages/FSharp.Data/lib/net40/FSharp.Data.dll"
-  else
-    // Loaded from the current bin directory in Azure
-    let binDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
-    Path.Combine(binDir, "FSharp.Data.dll")
-
+let private defaultOptions = lazy(
+  checker.Value.GetProjectOptionsFromScript("foo.fsx", SourceText.ofString "module Foo", assumeDotNetFramework = false)
+  |> Async.RunSynchronously
+  |> fst)
 
 let private restorePackages packages folder =
   if Array.isEmpty packages
@@ -43,8 +38,7 @@ let private restorePackages packages folder =
     let addedPackages = 
       packages |> Array.choose (fun pkg ->
         try
-          if not(String.Equals(pkg, "FSharp.Data", StringComparison.InvariantCultureIgnoreCase)) then 
-            dependencies.Add(pkg)
+          dependencies.Add(pkg)
           Some(pkg)
         with _ -> None)
 
@@ -52,8 +46,6 @@ let private restorePackages packages folder =
     addedPackages
     |> Seq.collect(fun package -> 
         try dependencies.GetLibraries(None, package, framework) |> Seq.map (fun l -> l.Path)
-          //if String.Equals(package, "FSharp.Data", StringComparison.InvariantCultureIgnoreCase) then 
-          //  seq [ fsharpDataDirectory ]
         with _ -> seq [] )
     |> Array.ofSeq
 
@@ -77,13 +69,9 @@ let parseScript session (content : string) packages =
     |> Seq.map (sprintf "-r:%s")
 
   let scriptFile = Path.Combine(workingFolder, "Script.fsx")
-  let defaultOptions =
-    checker.Value.GetProjectOptionsFromScript(scriptFile, SourceText.ofString content, loadedTimeStamp = DateTime.Now)
-    |> Async.RunSynchronously
-    |> fst
 
   let compilerOptions =
-    defaultOptions.OtherOptions
+    defaultOptions.Value.OtherOptions
     |> Seq.append nugetReferences
     |> Seq.map (encloseInQuotes "-r:")
     |> Seq.map (encloseInQuotes "--reference:")
