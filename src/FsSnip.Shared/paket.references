@@ -2,6 +2,6 @@ Suave
 Suave.DotLiquid
 FSharp.Data
 DotLiquid
-FSharp.Formatting
+FSharp.Literate
 Paket.Core
 WindowsAzure.Storage

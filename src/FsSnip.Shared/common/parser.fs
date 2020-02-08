@@ -6,14 +6,15 @@ open Paket
 open FsSnip
 open FSharp.Literate
 open FSharp.CodeFormat
-open Microsoft.FSharp.Compiler.SourceCodeServices
+open FSharp.Compiler.SourceCodeServices
+open FSharp.Compiler.Text
 
 // -------------------------------------------------------------------------------------------------
 // Parse & format documents - restores packages using Paket and invokes
 // the F# Compiler checker with the appropriate references
 // -------------------------------------------------------------------------------------------------
 
-let private framework = TargetProfile.SinglePlatform (FrameworkIdentifier.DotNetFramework FrameworkVersion.V4_5)
+let private framework = TargetProfile.SinglePlatform (FrameworkIdentifier.DotNetCoreApp DotNetCoreAppVersion.V3_1)
 let private formatAgent = lazy CodeFormat.CreateAgent()
 let private checker = lazy FSharpChecker.Create()
 
@@ -50,10 +51,9 @@ let private restorePackages packages folder =
     // Silently ignore all packages that could not be installed
     addedPackages
     |> Seq.collect(fun package -> 
-        try
-          if String.Equals(package, "FSharp.Data", StringComparison.InvariantCultureIgnoreCase) then 
-            seq [ fsharpDataDirectory ]
-          else dependencies.GetLibraries(None, package, framework) |> Seq.map (fun l -> l.Path)
+        try dependencies.GetLibraries(None, package, framework) |> Seq.map (fun l -> l.Path)
+          //if String.Equals(package, "FSharp.Data", StringComparison.InvariantCultureIgnoreCase) then 
+          //  seq [ fsharpDataDirectory ]
         with _ -> seq [] )
     |> Array.ofSeq
 
@@ -66,7 +66,7 @@ let private encloseInQuotes (prefix : string) (line: string) =
   else line
 
 /// Parses F# script file and download NuGet packages if required.
-let parseScript session content packages =
+let parseScript session (content : string) packages =
   let workingFolder = workingFolderFor session
 
   if (not <| Directory.Exists workingFolder)
@@ -78,8 +78,9 @@ let parseScript session content packages =
 
   let scriptFile = Path.Combine(workingFolder, "Script.fsx")
   let defaultOptions =
-    checker.Value.GetProjectOptionsFromScript(scriptFile, content, DateTime.Now)
+    checker.Value.GetProjectOptionsFromScript(scriptFile, SourceText.ofString content, loadedTimeStamp = DateTime.Now)
     |> Async.RunSynchronously
+    |> fst
 
   let compilerOptions =
     defaultOptions.OtherOptions
