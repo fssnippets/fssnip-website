@@ -9,14 +9,18 @@
 
 open Fake.Core
 open Fake.Core.TargetOperators
+open Fake.IO
+open Fake.IO.FileSystemOperators
 open Fake.DotNet
 open Fake.JavaScript
 
 open System
 open System.IO
 
-let config = DotNet.BuildConfiguration.Release
-let project = "src/FsSnip.Shared"
+let project = "src/FsSnip.Website"
+let publishDirectory = "artifacts"
+let config = DotNet.BuildConfiguration.fromEnvironVarOrDefault "Configuration" DotNet.BuildConfiguration.Release
+let runtime = Environment.environVarOrNone "Runtime"
 
 // --------------------------------------------------------------------------------------
 // The following uses FileSystemWatcher to look for changes in 'app.fsx'. When
@@ -116,22 +120,11 @@ Target.create "minify" (fun _ ->
   Trace.trace "Node js web compilation thing"
   Npm.install (fun p -> { p with WorkingDirectory = __SOURCE_DIRECTORY__ })
   Npm.exec "run-script build" (fun p -> { p with WorkingDirectory = __SOURCE_DIRECTORY__ })
-  //Npm. (fun p -> { p with WorkingDirectory = __SOURCE_DIRECTORY__ })
-  //Fake.NpmHelper.Npm(fun p -> 
-  //    { p with Command = NpmHelper.Install NpmHelper.Standard
-  //             WorkingDirectory = "." })
-  //Fake.NpmHelper.Npm(fun p -> 
-  //    { p with Command = Fake.NpmHelper.Run "build"
-  //             WorkingDirectory = "." })
 )
 
-//// --------------------------------------------------------------------------------------
-//// Minimal Azure deploy script - just overwrite old files with new ones
-//// --------------------------------------------------------------------------------------
-
-//Target "clean" (fun _ ->
-//  CleanDirs ["bin"]
-//)
+Target.create "clean" (fun _ ->
+  Shell.cleanDirs [publishDirectory]
+)
 
 Target.create "build" (fun _ ->
   DotNet.build (fun p ->
@@ -140,50 +133,53 @@ Target.create "build" (fun _ ->
 
 Target.create "run" (fun _ ->
   DotNet.exec (fun p ->
-    { p with WorkingDirectory = project }) "run" (sprintf "-c %O" config)
+    { p with WorkingDirectory = project }) "run" (sprintf "--no-build -c %O" config)
   |> ignore
 )
 
+Target.create "publish" (fun _ ->
+    DotNet.publish (fun p ->
+        { p with 
+            Configuration = config
+            Runtime = runtime
+            OutputPath = Some publishDirectory
+        }) project
+)
 
-//Target.create "publish" (fun _ ->
-//    DotNet.publish (fun p ->
-//        { p with 
-//            Configuration = config }) "run" __SOURCE_DIRECTORY__
-//)
+let newName prefix f = 
+  Seq.initInfinite (sprintf "%s_%d" prefix) |> Seq.skipWhile (f >> not) |> Seq.head
 
-//let newName prefix f = 
-//  Seq.initInfinite (sprintf "%s_%d" prefix) |> Seq.skipWhile (f >> not) |> Seq.head
-
-//Target "deploy" (fun _ ->
-//  // Pick a subfolder that does not exist
-//  let wwwroot = "../wwwroot"
-//  let subdir = newName "deploy" (fun sub -> not (Directory.Exists(wwwroot </> sub)))
+Target.create "deploy" (fun _ ->
+  // Pick a subfolder that does not exist
+  let wwwroot = "../wwwroot"
+  let subdir = newName "deploy" (fun sub -> not (Directory.Exists(wwwroot </> sub)))
+  let deployroot = wwwroot </> subdir
   
-//  // Deploy everything into new empty folder
-//  let deployroot = wwwroot </> subdir
-//  CleanDir deployroot
-//  CleanDir (deployroot </> "bin")
-//  CleanDir (deployroot </> "templates")
-//  CleanDir (deployroot </> "web")
-//  CopyRecursive "bin" (deployroot </> "bin") false |> ignore
-//  CopyRecursive "templates" (deployroot </> "templates") false |> ignore
-//  CopyRecursive "web" (deployroot </> "web") false |> ignore
-  
-//  let config = File.ReadAllText("web.config").Replace("%DEPLOY_SUBDIRECTORY%", subdir)
-//  File.WriteAllText(wwwroot </> "web.config", config)
+  // Clean & Deploy everything into new empty folder
+  Shell.cleanDir deployroot
+  Shell.cleanDir (deployroot </> "bin")
+  Shell.cleanDir (deployroot </> "templates")
+  Shell.cleanDir (deployroot </> "web")
 
-//  // Try to delete previous folders, but ignore failures
-//  for dir in Directory.GetDirectories(wwwroot) do
-//    if Path.GetFileName(dir) <> subdir then 
-//      try CleanDir dir; DeleteDir dir with _ -> ()
-//)
+  Shell.copyRecursive publishDirectory (deployroot </> "bin") false |> ignore
+  Shell.copyRecursive "templates" (deployroot </> "templates") false |> ignore
+  Shell.copyRecursive "web" (deployroot </> "web") false |> ignore
+  let config = File.ReadAllText("web.config").Replace("%DEPLOY_SUBDIRECTORY%", subdir)
+  File.WriteAllText(wwwroot </> "web.config", config)
 
-"minify" ==> "build"
-"minify" ==> "run"
+  // Try to delete previous folders, but ignore failures
+  for dir in Directory.GetDirectories(wwwroot) do
+    if Path.GetFileName(dir) <> subdir then 
+      try Shell.cleanDir dir; Shell.deleteDir dir with _ -> ()
+)
 
-//"minify" ==> "deploy"
-//"clean" ==> "build" ==> "deploy"
+"minify" 
+==> "build"
+==> "run"
 
-//RunTargetOrDefault "run"
+"clean"
+==> "minify"
+==> "publish"
+==> "deploy"
 
 Target.runOrDefault "run"
