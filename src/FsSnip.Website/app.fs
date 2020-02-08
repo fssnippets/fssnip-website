@@ -2,11 +2,14 @@
 
 open System.IO
 open Suave
+open Suave.Operators
+open Suave.Filters
+open Suave.Logging
 open FsSnip
 open FsSnip.Utils
 open FsSnip.Pages
 
-let createApp (homeDir : string) =
+let createApp (config : SuaveConfig) (homeDir : string) =
   // Configure DotLiquid templates & register filters (in 'filters.fs')
   [ for t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes() do
       if t.Name = "Filters" && not (t.FullName.StartsWith "<") then yield t ]
@@ -46,7 +49,10 @@ let createApp (homeDir : string) =
         browseStaticFiles
         RequestErrors.NOT_FOUND "Found no handlers." ]
 
-  app
+  let fmtLog (ctx : HttpContext) =
+    sprintf "%O %s response %O %s" ctx.request.method ctx.request.url.PathAndQuery ctx.response.status.code (ctx.response.status.reason)
+
+  app >=> log config.logger fmtLog
 
 // -------------------------------------------------------------------------------------------------
 // To run the web site, you can use `build.sh` or `build.cmd` script, which is nice because it
@@ -56,11 +62,11 @@ let createApp (homeDir : string) =
 
 
 [<EntryPoint>]
-let main args =
+let main _ =
   let homeDir = Path.Combine(__SOURCE_DIRECTORY__ , "../..") |> Path.GetFullPath
   System.Environment.SetEnvironmentVariable("FSSNIP_HOME_DIR", homeDir)
-  let app = createApp homeDir
   let port = Some 5000
+  let logLevel = LogLevel.Info
 
   //match args |> Seq.tryPick (fun s ->
   //    if s.StartsWith("port=") then Some(int(s.Substring("port=".Length)))
@@ -70,7 +76,10 @@ let main args =
       let serverConfig =
         { Web.defaultConfig with
             homeFolder = Some homeDir
+            logger = LiterateConsoleTarget([|"Suave"|], logLevel)
             bindings = [ HttpBinding.createSimple HTTP "127.0.0.1" port ] }
+
+      let app = createApp serverConfig homeDir
       Web.startWebServer serverConfig app
   | None -> ()
 
