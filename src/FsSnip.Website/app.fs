@@ -52,7 +52,7 @@ let createApp (config : SuaveConfig) (homeDir : string) =
   let fmtLog (ctx : HttpContext) =
     sprintf "%O %s response %O %s" ctx.request.method ctx.request.url.PathAndQuery ctx.response.status.code (ctx.response.status.reason)
 
-  app >=> log config.logger fmtLog
+  app >=> logWithLevel LogLevel.Verbose config.logger fmtLog
 
 // -------------------------------------------------------------------------------------------------
 // To run the web site, you can use `build.sh` or `build.cmd` script, which is nice because it
@@ -66,7 +66,12 @@ let main _ =
   let homeDir = Path.Combine(__SOURCE_DIRECTORY__ , "../..") |> Path.GetFullPath
   System.Environment.SetEnvironmentVariable("FSSNIP_HOME_DIR", homeDir)
   let port = Some 5000
-  let logLevel = LogLevel.Info
+  let logLevel = 
+  #if DEBUG
+    LogLevel.Verbose
+  #else
+    LogLevel.Info
+  #endif
 
   //match args |> Seq.tryPick (fun s ->
   //    if s.StartsWith("port=") then Some(int(s.Substring("port=".Length)))
