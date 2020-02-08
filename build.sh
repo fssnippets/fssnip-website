@@ -1,4 +1,4 @@
 #!/bin/bash
 
 dotnet tool restore
-dotnet fake build "$@"
+dotnet fake run build.fsx "$@"

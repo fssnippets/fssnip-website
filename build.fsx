@@ -1,9 +1,3 @@
-// --------------------------------------------------------------------------------------
-// A simple FAKE build script that:
-//  1) Hosts Suave server locally & reloads web part that is defined in 'app.fsx'
-//  2) Deploys the web application to Azure web sites when called with 'build deploy'
-// --------------------------------------------------------------------------------------
-
 #r "paket: groupref build //"
 #load "./.fake/build.fsx/intellisense.fsx"
 
@@ -13,103 +7,17 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.DotNet
 open Fake.JavaScript
-
-open System
 open System.IO
 
 let project = "src/FsSnip.Website"
 let publishDirectory = "artifacts"
-let config = DotNet.BuildConfiguration.fromEnvironVarOrDefault "Configuration" DotNet.BuildConfiguration.Release
-let runtime = Environment.environVarOrNone "Runtime"
 
-// --------------------------------------------------------------------------------------
-// The following uses FileSystemWatcher to look for changes in 'app.fsx'. When
-// the file changes, we run `#load "app.fsx"` using the F# Interactive service
-// and then get the `App.app` value (top-level value defined using `let app = ...`).
-// The loaded WebPart is then hosted at localhost:8083.
-// --------------------------------------------------------------------------------------
+// FAKE 5 does not apply cli args to environment before module initialization, delay
+// override syntax: dotnet fake run build.fsx -e foo=bar -e foo=bar -t target
+let config () = DotNet.BuildConfiguration.fromEnvironVarOrDefault "configuration" DotNet.BuildConfiguration.Release
+let runtime () = Environment.environVarOrNone "runtime"
 
 System.Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-
-//let sbOut = new Text.StringBuilder()
-//let sbErr = new Text.StringBuilder()
-
-//let fsiSession =
-//  let inStream = new StringReader("")
-//  let outStream = new StringWriter(sbOut)
-//  let errStream = new StringWriter(sbErr)
-//  let fsiConfig = FsiEvaluationSession.GetDefaultConfiguration()
-//  let argv = Array.append [|"/fake/fsi.exe"; "--quiet"; "--noninteractive"; "-d:DO_NOT_START_SERVER"|] [||]
-//  FsiEvaluationSession.Create(fsiConfig, argv, inStream, outStream, errStream)
-
-//let reportFsiError (e:exn) =
-//  traceError "Reloading app.fsx script failed."
-//  traceError (sprintf "Message: %s\nError: %s" e.Message (sbErr.ToString().Trim()))
-//  sbErr.Clear() |> ignore
-
-//let reloadScript () =
-//  try
-//    traceImportant "Minifying JS script"
-//    Run "minify"
-    
-//    //Reload application
-//    traceImportant "Reloading app.fsx script..."
-//    let appFsx = __SOURCE_DIRECTORY__ @@ "app.fsx"
-//    fsiSession.EvalInteraction(sprintf "#load @\"%s\"" appFsx)
-//    fsiSession.EvalInteraction("open App")
-//    match fsiSession.EvalExpression("app") with
-//    | Some app -> Some(app.ReflectionValue :?> WebPart)
-//    | None -> failwith "Couldn't get 'app' value"
-//  with e -> reportFsiError e; None
-
-//// --------------------------------------------------------------------------------------
-//// Suave server that redirects all request to currently loaded version
-//// --------------------------------------------------------------------------------------
-
-//let currentApp = ref (fun _ -> async { return None })
-
-//let rec findPort port =
-//  try
-//    let tcpListener = System.Net.Sockets.TcpListener(System.Net.IPAddress.Parse("127.0.0.1"), port)
-//    tcpListener.Start()
-//    tcpListener.Stop()
-//    port
-//  with :? System.Net.Sockets.SocketException as ex ->
-//    findPort (port + 1)
-
-//let getLocalServerConfig port =
-//  { defaultConfig with
-//      homeFolder = Some __SOURCE_DIRECTORY__
-//      logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Debug
-//      bindings = [ HttpBinding.mkSimple HTTP  "127.0.0.1" port ] }
-
-//let reloadAppServer (changedFiles: string seq) =
-//  traceImportant <| sprintf "Changes in %s" (String.Join(",",changedFiles))
-//  reloadScript() |> Option.iter (fun app ->
-//    currentApp.Value <- app
-//    traceImportant "Refreshed app." )
-
-//Target "run" (fun _ ->
-//  let app ctx = currentApp.Value ctx
-//  let port = findPort 8083
-//  let _, server = startWebServerAsync (getLocalServerConfig port) app
-
-//  // Start Suave to host it on localhost
-//  reloadAppServer ["app.fsx"]
-//  Async.Start(server)
-//  // Open web browser with the loaded file
-//  System.Diagnostics.Process.Start(sprintf "http://localhost:%d" port) |> ignore
-  
-//  // Watch for changes & reload when app.fsx changes
-//  let sources = 
-//    { BaseDirectory = __SOURCE_DIRECTORY__
-//      Includes = [ "**/*.fsx"; "**/*.fs" ; "**/*.fsproj"; "web/content/app/*.js" ]; 
-//      Excludes = [] }
-      
-//  use watcher = sources |> WatchChanges (Seq.map (fun x -> x.FullPath) >> reloadAppServer)  
-//  traceImportant "Waiting for app.fsx edits. Press any key to stop."
-//  Console.ReadLine() |> ignore
-//)
 
 //// -------------------------------------------------------------------------------------
 //// Minifying JS for better performance 
@@ -126,22 +34,17 @@ Target.create "clean" (fun _ ->
   Shell.cleanDirs [publishDirectory]
 )
 
-Target.create "build" (fun _ ->
-  DotNet.build (fun p ->
-    { p with Configuration = config }) project
-)
-
 Target.create "run" (fun _ ->
   DotNet.exec (fun p ->
-    { p with WorkingDirectory = project }) "run" (sprintf "--no-build -c %O" config)
+    { p with WorkingDirectory = project }) "run" (sprintf "-c %O" config)
   |> ignore
 )
 
 Target.create "publish" (fun _ ->
     DotNet.publish (fun p ->
         { p with 
-            Configuration = config
-            Runtime = runtime
+            Configuration = config ()
+            Runtime = runtime ()
             OutputPath = Some publishDirectory
         }) project
 )
@@ -173,8 +76,7 @@ Target.create "deploy" (fun _ ->
       try Shell.cleanDir dir; Shell.deleteDir dir with _ -> ()
 )
 
-"minify" 
-==> "build"
+"minify"
 ==> "run"
 
 "clean"
@@ -182,4 +84,4 @@ Target.create "deploy" (fun _ ->
 ==> "publish"
 ==> "deploy"
 
-Target.runOrDefault "run"
+Target.runOrDefaultWithArguments "run"
