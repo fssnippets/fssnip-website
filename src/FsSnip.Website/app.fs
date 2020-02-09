@@ -53,7 +53,7 @@ let createApp (config : SuaveConfig) (homeDir : string) =
   let fmtLog (ctx : HttpContext) =
     sprintf "%O %s response %O %s" ctx.request.method ctx.request.url.PathAndQuery ctx.response.status.code (ctx.response.status.reason)
 
-  app >=> logWithLevel LogLevel.Debug config.logger fmtLog
+  app >=> logWithLevel LogLevel.Info config.logger fmtLog
 
 let defaultHomeDir = Path.Combine(__SOURCE_DIRECTORY__, "../..")
 
