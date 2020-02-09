@@ -67,6 +67,8 @@ let main _ =
   let homeDir = Environment.GetEnvironmentVariable("FSSNIP_HOME_DIR", defaultHomeDir)
   Environment.SetEnvironmentVariable("FSSNIP_HOME_DIR", homeDir)
 
+  Recaptcha.ensureConfigured()
+
   let serverConfig =
     { Web.defaultConfig with
         homeFolder = Some homeDir

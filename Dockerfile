@@ -9,9 +9,10 @@ COPY . .
 
 RUN ./build.sh -t download-data-dump && ./build.sh -t publish
 
-EXPOSE 5000
+ENV LOG_LEVEL=Info
+ENV DISABLE_RECAPTCHA=true
 ENV IP_ADDRESS=0.0.0.0
 ENV PORT=5000
-ENV LOG_LEVEL=Info
+EXPOSE 5000
 
 CMD ["./artifacts/fssnip"]

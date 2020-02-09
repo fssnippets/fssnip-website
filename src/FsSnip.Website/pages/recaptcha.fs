@@ -11,14 +11,21 @@ open FSharp.Data
 type RecaptchaResponse = JsonProvider<"""{"success":true}""">
 
 /// reCAPTCHA secret 
-let recaptchaSecret = 
-    Environment.GetEnvironmentVariable("RECAPTCHA_SECRET")
+let recaptchaSecret = Environment.GetEnvironmentVariable "RECAPTCHA_SECRET"
+let isRecaptchaDisabled = 
+  match Environment.GetEnvironmentVariable "DISABLE_RECAPTCHA" with
+  | null -> false
+  | value -> try Boolean.Parse value with _ -> false
 
-let isConfigured() = recaptchaSecret <> null
+let ensureConfigured() =
+  if not isRecaptchaDisabled && isNull recaptchaSecret then
+    failwith "reCAPTCHA not configured properly."
 
 /// Validates that reCAPTCHA has been entered properly
 let validateRecaptcha form = async {
-  if not <| isConfigured() then return true else // circumvent check if secret undefined
+  do ensureConfigured()
+
+  if isRecaptchaDisabled then return true else
 
   let formValue = form |> Seq.tryPick (fun (k, v) -> 
       if k = "g-recaptcha-response" then v else None)
