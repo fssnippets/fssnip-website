@@ -49,8 +49,9 @@ Target.create "download-data-dump" (fun _ ->
 )
 
 Target.create "run" (fun _ ->
+  let environment = Map.ofList [("LOG_LEVEL", "Debug")]
   DotNet.exec (fun p ->
-    { p with WorkingDirectory = project }) "run" (sprintf "-c %O" config)
+    { p with WorkingDirectory = project ; Environment = environment }) "run" (sprintf "-c %O" config)
   |> ignore
 )
 

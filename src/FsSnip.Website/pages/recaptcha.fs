@@ -14,8 +14,12 @@ type RecaptchaResponse = JsonProvider<"""{"success":true}""">
 let recaptchaSecret = 
     Environment.GetEnvironmentVariable("RECAPTCHA_SECRET")
 
+let isConfigured() = recaptchaSecret <> null
+
 /// Validates that reCAPTCHA has been entered properly
 let validateRecaptcha form = async {
+  if not <| isConfigured() then return true else // circumvent check if secret undefined
+
   let formValue = form |> Seq.tryPick (fun (k, v) -> 
       if k = "g-recaptcha-response" then v else None)
   let response = defaultArg formValue ""

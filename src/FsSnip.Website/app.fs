@@ -1,5 +1,6 @@
 ﻿module FsSnip.App
 
+open System
 open System.IO
 open Suave
 open Suave.Operators
@@ -52,40 +53,27 @@ let createApp (config : SuaveConfig) (homeDir : string) =
   let fmtLog (ctx : HttpContext) =
     sprintf "%O %s response %O %s" ctx.request.method ctx.request.url.PathAndQuery ctx.response.status.code (ctx.response.status.reason)
 
-  app >=> logWithLevel LogLevel.Verbose config.logger fmtLog
-
-// -------------------------------------------------------------------------------------------------
-// To run the web site, you can use `build.sh` or `build.cmd` script, which is nice because it
-// automatically reloads the script when it changes. But for debugging, you can also use run or
-// run with debugger in VS or XS. This runs the code below.
-// -------------------------------------------------------------------------------------------------
-
+  app >=> logWithLevel LogLevel.Debug config.logger fmtLog
 
 [<EntryPoint>]
 let main _ =
-  let homeDir = Path.Combine(__SOURCE_DIRECTORY__ , "../..") |> Path.GetFullPath
-  System.Environment.SetEnvironmentVariable("FSSNIP_HOME_DIR", homeDir)
-  let port = Some 5000
-  let logLevel = 
-  #if DEBUG
-    LogLevel.Verbose
-  #else
-    LogLevel.Info
-  #endif
+  let ipAddress = Environment.GetEnvironmentVariable("IP_ADDRESS", "127.0.0.1")
+  let port = Environment.GetEnvironmentVariable("PORT", "5000") |> int
+  let logLevel = Environment.GetEnvironmentVariable("LOG_LEVEL", "Info") |> LogLevel.ofString
+  // Use FSSNIP_HOME_DIR environment variable to inject data to local storage module
+  // Do it like this to avoid comprehensive refactoring.
+  // Ugly, but it just works.
+  let defaultHomeDir = Path.Combine(__SOURCE_DIRECTORY__, "../..") |> Path.GetFullPath
+  let homeDir = Environment.GetEnvironmentVariable("FSSNIP_HOME_DIR", defaultHomeDir)
+  Environment.SetEnvironmentVariable("FSSNIP_HOME_DIR", homeDir)
 
-  //match args |> Seq.tryPick (fun s ->
-  //    if s.StartsWith("port=") then Some(int(s.Substring("port=".Length)))
-  //    else Some 5000 ) with
-  match port with
-  | Some port ->
-      let serverConfig =
-        { Web.defaultConfig with
-            homeFolder = Some homeDir
-            logger = LiterateConsoleTarget([|"Suave"|], logLevel)
-            bindings = [ HttpBinding.createSimple HTTP "127.0.0.1" port ] }
+  let serverConfig =
+    { Web.defaultConfig with
+        homeFolder = Some homeDir
+        logger = LiterateConsoleTarget([|"Suave"|], logLevel)
+        bindings = [ HttpBinding.createSimple HTTP ipAddress port ] }
 
-      let app = createApp serverConfig homeDir
-      Web.startWebServer serverConfig app
-  | None -> ()
+  let app = createApp serverConfig homeDir
+  Web.startWebServer serverConfig app
 
-  System.Threading.Tasks.TaskCompletionSource<int>().Task.Result
+  0

@@ -126,3 +126,10 @@ let parseNugetPackages = function
     s.Split([|","|], StringSplitOptions.RemoveEmptyEntries)
   |> Array.map (fun s -> s.Trim())
   | _ -> [| |]
+
+
+type Environment with
+  static member GetEnvironmentVariable(variable : string, defaultValue : string) =
+    match Environment.GetEnvironmentVariable variable with
+    | null -> defaultValue
+    | value -> value

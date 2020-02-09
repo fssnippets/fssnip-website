@@ -30,13 +30,11 @@ type InsertSnippetModel =
 
 let insertSnippet ctx = async {
   if ctx.request.form |> Seq.exists (function "submit", _ -> true | _ -> false) then
-#if !DEBUG
     // Give up early if the reCAPTCHA was not correct
     let! valid = Recaptcha.validateRecaptcha ctx.request.form
     if not valid then
         return! Recaptcha.recaptchaError ctx
     else
-#endif
 
     // Parse the inputs and the F# source file
     let form = Utils.readForm<InsertForm> ctx.request.form
