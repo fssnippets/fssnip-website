@@ -1,20 +1,20 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2002
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29721.120
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsSnip.Website", "src\FsSnip.Website\FsSnip.Website.fsproj", "{F13DAD45-C70D-491F-B203-B8B4F4241BE8}" 
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsSnip.Website", "src\FsSnip.Website\FsSnip.Website.fsproj", "{F13DAD45-C70D-491F-B203-B8B4F4241BE8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{F1A76CF6-25D7-4EDA-B86B-F5533DE281C8}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{F1A76CF6-25D7-4EDA-B86B-F5533DE281C8}"
 	ProjectSection(SolutionItems) = preProject
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{F6586E5F-1DFE-4C42-AF48-B080E0E4D757}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{F6586E5F-1DFE-4C42-AF48-B080E0E4D757}"
 	ProjectSection(SolutionItems) = preProject
 		.paket\Paket.Restore.targets = .paket\Paket.Restore.targets
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{41671E92-DB62-4132-A393-795D99F1F1A1}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{41671E92-DB62-4132-A393-795D99F1F1A1}"
 	ProjectSection(SolutionItems) = preProject
 		.deployment = .deployment
 		.dockerignore = .dockerignore
@@ -23,7 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		build.cmd = build.cmd
 		build.fsx = build.fsx
 		build.sh = build.sh
-		docker.fsx = docker.fsx
 		Dockerfile = Dockerfile
 		fssnip-website.sln = fssnip-website.sln
 		global.json = global.json
@@ -35,9 +34,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		web.config = web.config
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9831BC01-ABF4-4FC8-A7BF-58C1F0160357}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9831BC01-ABF4-4FC8-A7BF-58C1F0160357}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{FDA824F0-ADDE-4681-927E-EBDB1D11BAFF}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{FDA824F0-ADDE-4681-927E-EBDB1D11BAFF}"
 	ProjectSection(SolutionItems) = preProject
 		templates\author.html = templates\author.html
 		templates\authors.html = templates\authors.html
@@ -54,19 +53,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{
 		templates\update.html = templates\update.html
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{04DC9280-9D4D-419A-859D-A86F57515EAB}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{04DC9280-9D4D-419A-859D-A86F57515EAB}"
 	ProjectSection(SolutionItems) = preProject
 		web\favicon.ico = web\favicon.ico
 		web\robots.txt = web\robots.txt
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{2FAEB068-380C-4E3A-AC8A-44A0C081B7E1}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{2FAEB068-380C-4E3A-AC8A-44A0C081B7E1}"
 	ProjectSection(SolutionItems) = preProject
 		web\content\snippets.css = web\content\snippets.css
 		web\content\style.css = web\content\style.css
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{B73F3306-C850-4981-BD48-845EAFD148FB}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{B73F3306-C850-4981-BD48-845EAFD148FB}"
 	ProjectSection(SolutionItems) = preProject
 		web\content\app\codecheck.js = web\content\app\codecheck.js
 		web\content\app\copycontent.js = web\content\app\copycontent.js
@@ -76,7 +75,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{B73F3306-C85
 		web\content\app\tips.js = web\content\app\tips.js
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dist", "dist", "{F5607499-120B-4DED-9CBD-BF5B7ED2C800}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dist", "dist", "{F5607499-120B-4DED-9CBD-BF5B7ED2C800}"
 	ProjectSection(SolutionItems) = preProject
 		web\content\dist\codecheck.min.js = web\content\dist\codecheck.min.js
 		web\content\dist\copycontent.min.js = web\content\dist\copycontent.min.js
@@ -86,7 +85,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dist", "dist", "{F5607499-1
 		web\content\dist\tips.min.js = web\content\dist\tips.min.js
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "fonts", "fonts", "{B2B3C576-DD97-49D7-B49A-ABFA11E77DA5}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "fonts", "fonts", "{B2B3C576-DD97-49D7-B49A-ABFA11E77DA5}"
 	ProjectSection(SolutionItems) = preProject
 		web\fonts\glyphicons-halflings-regular.eot = web\fonts\glyphicons-halflings-regular.eot
 		web\fonts\glyphicons-halflings-regular.svg = web\fonts\glyphicons-halflings-regular.svg
@@ -95,12 +94,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "fonts", "fonts", "{B2B3C576
 		web\fonts\glyphicons-halflings-regular.woff2 = web\fonts\glyphicons-halflings-regular.woff2
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{1DD555B5-CFB7-47C9-9997-F3E9A3A45527}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{1DD555B5-CFB7-47C9-9997-F3E9A3A45527}"
 	ProjectSection(SolutionItems) = preProject
 		web\img\fswebsnippets.png = web\img\fswebsnippets.png
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{721B3F4D-B6E0-4398-917E-769AAADD81D0}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{721B3F4D-B6E0-4398-917E-769AAADD81D0}"
 	ProjectSection(SolutionItems) = preProject
 		web\lib\bootstrap.min.css = web\lib\bootstrap.min.css
 		web\lib\bootstrap.min.js = web\lib\bootstrap.min.js

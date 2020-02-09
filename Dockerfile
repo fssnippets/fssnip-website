@@ -7,18 +7,20 @@ RUN apt-get update && \
 WORKDIR /src
 COPY . .
 
-RUN ./build.sh -t deploy
+RUN ./build.sh -t download-data-dump && ./build.sh -t deploy
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1.101-buster
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1.1-buster-slim
 
-COPY --from=base /wwwroot /wwwroot
-WORKDIR /wwwroot/deploy_0
+WORKDIR /wwwroot
+COPY --from=base /wwwroot/deploy_0 .
+COPY --from=base /src/data data/
 
-ENV FSSNIP_HOME_DIR=/wwwroot/deploy_0
+ENV FSSNIP_HOME_DIR=/wwwroot
+ENV FSSNIP_DATA_DIR=/wwwroot/data
 ENV LOG_LEVEL=Info
 ENV DISABLE_RECAPTCHA=true
-#ENV CUSTOMCONNSTR_FSSNIP_STORAGE=???
-#ENV RECAPTCHA_SECRET=???
+#ENV CUSTOMCONNSTR_FSSNIP_STORAGE=
+#ENV RECAPTCHA_SECRET=
 ENV IP_ADDRESS=0.0.0.0
 ENV PORT=5000
 EXPOSE 5000

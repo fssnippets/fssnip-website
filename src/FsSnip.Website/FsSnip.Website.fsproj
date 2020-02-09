@@ -9,9 +9,9 @@
 
   <ItemGroup>
     <None Include="samples\index.json" />
+    <Compile Include="common\utils.fs" />
     <Compile Include="common\storage\azure.fs" />
     <Compile Include="common\storage\local.fs" />
-    <Compile Include="common\utils.fs" />
     <Compile Include="common\filters.fs" />
     <Compile Include="common\data.fs" />
     <Compile Include="common\rssfeed.fs" />

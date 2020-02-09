@@ -2,12 +2,14 @@ module FsSnip.Storage.Local
 
 open System
 open System.IO
+open FsSnip.Utils
 
 // -------------------------------------------------------------------------------------------------
 // Local file system storage - the `functions` value should be compatible with `azure.fs`
 // -------------------------------------------------------------------------------------------------
 
-let private dataFolder = Path.Combine(__SOURCE_DIRECTORY__, "../../../../data") |> Path.GetFullPath
+let private defaultDataFolder = Path.Combine(__SOURCE_DIRECTORY__, "../../../../data")
+let private dataFolder = Environment.GetEnvironmentVariable("FSSNIP_DATA_DIR", defaultValue = defaultDataFolder) |> Path.GetFullPath
 let private indexFile = Path.Combine(dataFolder, "index.json")
 
 let readIndex () = 

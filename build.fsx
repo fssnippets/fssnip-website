@@ -104,8 +104,11 @@ Target.create "deploy" (fun _ ->
       try Shell.cleanDir dir; Shell.deleteDir dir with _ -> ()
 )
 
-"minify"
+Target.create "root" ignore
+
+"root"
 =?> ("download-data-dump", not (File.Exists "data/index.json"))
+==> "minify"
 ==> "run"
 
 "clean"
