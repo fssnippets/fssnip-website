@@ -55,23 +55,20 @@ let createApp (config : SuaveConfig) (homeDir : string) =
 
   app >=> logWithLevel LogLevel.Debug config.logger fmtLog
 
+let defaultHomeDir = Path.Combine(__SOURCE_DIRECTORY__, "../..")
+
 [<EntryPoint>]
 let main _ =
-  let ipAddress = Environment.GetEnvironmentVariable("IP_ADDRESS", "127.0.0.1")
-  let port = Environment.GetEnvironmentVariable("PORT", "5000") |> int
-  let logLevel = Environment.GetEnvironmentVariable("LOG_LEVEL", "Info") |> LogLevel.ofString
-  // Use FSSNIP_HOME_DIR environment variable to inject data to local storage module
-  // Do it like this to avoid comprehensive refactoring.
-  // Ugly, but it just works.
-  let defaultHomeDir = Path.Combine(__SOURCE_DIRECTORY__, "../..") |> Path.GetFullPath
-  let homeDir = Environment.GetEnvironmentVariable("FSSNIP_HOME_DIR", defaultHomeDir)
-  Environment.SetEnvironmentVariable("FSSNIP_HOME_DIR", homeDir)
+  let ipAddress = Environment.GetEnvironmentVariable("IP_ADDRESS", defaultValue = "127.0.0.1")
+  let port = Environment.GetEnvironmentVariable("PORT", defaultValue = "5000") |> int
+  let logLevel = Environment.GetEnvironmentVariable("LOG_LEVEL", defaultValue = "Info") |> LogLevel.ofString
+  let homeDir = Environment.GetEnvironmentVariable("FSSNIP_HOME_DIR", defaultValue = defaultHomeDir)
 
   Recaptcha.ensureConfigured()
 
   let serverConfig =
     { Web.defaultConfig with
-        homeFolder = Some homeDir
+        homeFolder = Some (Path.GetFullPath homeDir)
         logger = LiterateConsoleTarget([|"Suave"|], logLevel)
         bindings = [ HttpBinding.createSimple HTTP ipAddress port ] }
 

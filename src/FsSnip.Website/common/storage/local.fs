@@ -7,7 +7,7 @@ open System.IO
 // Local file system storage - the `functions` value should be compatible with `azure.fs`
 // -------------------------------------------------------------------------------------------------
 
-let private dataFolder = Path.Combine(Environment.GetEnvironmentVariable("FSSNIP_HOME_DIR"), "data")
+let private dataFolder = Path.Combine(__SOURCE_DIRECTORY__, "../../../../data") |> Path.GetFullPath
 let private indexFile = Path.Combine(dataFolder, "index.json")
 
 let readIndex () = 
