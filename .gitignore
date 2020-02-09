@@ -8,7 +8,8 @@ bin/
 *.svclog
 temp
 web/content/dist
-.fake
+.fake/
+.vs/
 node_modules/
 paket-files/
 artifacts/
