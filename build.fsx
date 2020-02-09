@@ -29,8 +29,21 @@ System.Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
 
 Target.create "minify" (fun _ -> 
   Trace.trace "Node js web compilation thing"
-  Npm.install (fun p -> { p with WorkingDirectory = __SOURCE_DIRECTORY__ })
-  Npm.exec "run-script build" (fun p -> { p with WorkingDirectory = __SOURCE_DIRECTORY__ })
+
+  // Use nuget tools if windows, require already installed otherwise
+  let npmPath = Path.GetFullPath "packages/jstools/Npm.js/tools"
+  let nodePath = Path.GetFullPath "packages/jstools/Node.js"
+
+  if Environment.isWindows then
+    [ npmPath ; nodePath ; Environment.environVar "PATH" ]
+    |> String.concat ";"
+    |> Environment.setEnvironVar "PATH"
+
+  let getNpmFilePath (p : Npm.NpmParams) = 
+    if Environment.isWindows then Path.Combine(npmPath, "npm.cmd") else p.NpmFilePath
+
+  Npm.install (fun p -> { p with NpmFilePath = getNpmFilePath p })
+  Npm.exec "run-script build" (fun p -> { p with NpmFilePath = getNpmFilePath p })
 )
 
 Target.create "clean" (fun _ ->

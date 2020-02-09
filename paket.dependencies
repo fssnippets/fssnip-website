@@ -21,5 +21,10 @@ group Build
   nuget Fake.Core.Target        ~> 5.19.0
   nuget Fake.IO.FileSystem      ~> 5.19.0
   nuget Fake.DotNet.Cli	        ~> 5.19.0
-  nuget Fake.IO.FileSystem      ~> 5.19.0
   nuget Fake.JavaScript.Npm     ~> 5.19.0
+
+group JsTools
+  source https://api.nuget.org/v3/index.json
+
+  nuget Node.js
+  nuget Npm.js
