@@ -14,10 +14,10 @@ let cleanTitle (title:string) =
   generateCleanTitle title
 
 let urlEncode (url:string) =
-  System.Web.HttpUtility.UrlEncode(url)
+  System.Net.WebUtility.UrlEncode(url)
 
 let urlDecode (input:string) =
-  System.Web.HttpUtility.UrlDecode(input)
+  System.Net.WebUtility.UrlDecode(input)
 
 let niceDate (dt:DateTime) =
   let print (elapsed:float) timeUnit =
