@@ -1,30 +1,14 @@
-source https://api.nuget.org/v3/index.json
-framework: netcoreapp3.1
-storage: none
+redirects:on
+source https://nuget.org/api/v2
 
-nuget FSharp.Core ~> 4.7.0
-nuget FSharp.Literate ~> 4.0 prerelease
-nuget FSharp.Compiler.Service ~> 34.0
-
-nuget Suave ~> 2.5.6
-nuget Suave.DotLiquid ~> 2.5.6
-nuget FSharp.Data ~> 3.3.3
-nuget DotLiquid ~> 2.0.314
-nuget Paket.Core ~> 5.0
-nuget WindowsAzure.Storage ~> 9.3.3
-
-group Build
-  source https://api.nuget.org/v3/index.json
-  storage: none
-
-  nuget Fake.Core.UserInput	    ~> 5.19.0
-  nuget Fake.Core.Target        ~> 5.19.0
-  nuget Fake.IO.FileSystem      ~> 5.19.0
-  nuget Fake.DotNet.Cli	        ~> 5.19.0
-  nuget Fake.JavaScript.Npm     ~> 5.19.0
-
-group JsTools
-  source https://api.nuget.org/v3/index.json
-
-  nuget Node.js
-  nuget Npm.js
+nuget FAKE
+nuget Suave
+nuget Suave.DotLiquid
+nuget FSharp.Data
+nuget FSharp.Compiler.Service
+nuget DotLiquid
+nuget FSharp.Formatting >= 2.10.3
+nuget FSharp.Azure.StorageTypeProvider
+nuget Paket.Core
+nuget Node.js
+nuget Npm.js

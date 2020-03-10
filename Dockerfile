@@ -1,28 +1,7 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.101-buster as base
-
-RUN apt-get update && \
-    apt-get install -y nodejs npm && \
-    rm -rf /var/lib/apt/lists/*
-
-WORKDIR /src
-COPY . .
-
-RUN ./build.sh -t download-data-dump && ./build.sh -t deploy
-
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1.1-buster-slim
-
-WORKDIR /wwwroot
-COPY --from=base /wwwroot/deploy_0 .
-COPY --from=base /src/data data/
-
-ENV FSSNIP_HOME_DIR=/wwwroot
-ENV FSSNIP_DATA_DIR=/wwwroot/data
-ENV LOG_LEVEL=Info
-ENV DISABLE_RECAPTCHA=true
-#ENV CUSTOMCONNSTR_FSSNIP_STORAGE=
-#ENV RECAPTCHA_SECRET=
-ENV IP_ADDRESS=0.0.0.0
-ENV PORT=5000
-EXPOSE 5000
-
-CMD ["./bin/fssnip"]
+FROM fsharp/fsharp
+ENV source /src
+WORKDIR ${source}
+ADD . $source
+RUN mono ./.paket/paket.bootstrapper.exe
+RUN mono ./.paket/paket.exe restore
+CMD ["fsharpi", "--debug", "docker.fsx"]

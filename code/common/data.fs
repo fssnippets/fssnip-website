@@ -1,7 +1,11 @@
 module FsSnip.Data
 
 open System
+open System.IO
+open FSharp.Azure.StorageTypeProvider
+open Microsoft.WindowsAzure.Storage.Blob
 open FsSnip.Utils
+open FsSnip.Storage
 open FSharp.Data
 
 // -------------------------------------------------------------------------------------------------

@@ -8,11 +8,7 @@ bin/
 *.svclog
 temp
 web/content/dist
-.fake/
-.vs/
-node_modules/
-paket-files/
-artifacts/
+.fake
 
 #!! ERROR:  is undefined. Use list command to see defined gitignore types !!#
 
