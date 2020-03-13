@@ -1,5 +1,5 @@
 STORAGE: NONE
-RESTRICTION: == netcoreapp3.0
+RESTRICTION: == netcoreapp3.1
 NUGET
   remote: https://api.nuget.org/v3/index.json
     Chessie (0.6)
@@ -180,7 +180,6 @@ NUGET
       System.Runtime (>= 4.3)
     System.Reflection.Emit (4.7)
     System.Reflection.Metadata (1.8)
-      System.Collections.Immutable (>= 1.7)
     System.Reflection.Primitives (4.3)
       Microsoft.NETCore.Platforms (>= 1.1)
       Microsoft.NETCore.Targets (>= 1.1)
