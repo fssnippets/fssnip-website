@@ -107,8 +107,8 @@ Target.create "deploy" (fun _ ->
 Target.create "root" ignore
 
 "root"
-=?> ("download-data-dump", not (File.Exists "data/index.json"))
 ==> "minify"
+=?> ("download-data-dump", not (File.Exists "data/index.json"))
 ==> "run"
 
 "clean"
