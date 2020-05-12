@@ -3,8 +3,8 @@ framework: netcoreapp3.1
 storage: none
 
 nuget FSharp.Core ~> 4.7.0
-nuget FSharp.Literate ~> 4.0 prerelease
-nuget FSharp.Compiler.Service ~> 34.0
+nuget FSharp.Literate ~> 4.0
+nuget FSharp.Compiler.Service ~> 35.0
 
 nuget Suave ~> 2.5.6
 nuget Suave.DotLiquid ~> 2.5.6
