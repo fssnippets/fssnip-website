@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.101-buster as base
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1.201-buster as base
 
 RUN apt-get update && \
     apt-get install -y nodejs npm && \
@@ -9,7 +9,7 @@ COPY . .
 
 RUN ./build.sh -t deploy
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1.1-buster-slim
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1-buster-slim
 
 WORKDIR /wwwroot
 COPY --from=base /wwwroot/deploy_0 .
