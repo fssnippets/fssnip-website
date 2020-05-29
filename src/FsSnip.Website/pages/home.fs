@@ -49,7 +49,7 @@ let getShuffledLinksByCount take top (names:seq<string>) =
   |> Seq.withSizeBy snd
   |> Seq.map (fun ((n,c),s) -> 
       { Text = n; Size = 80 + s; Count = c;
-        Link = HttpUtility.UrlEncode(n) })
+        Link = System.Net.WebUtility.UrlEncode(n) })
 
 let getAuthors () = 
   publicSnippets

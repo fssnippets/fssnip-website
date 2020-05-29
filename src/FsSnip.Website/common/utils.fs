@@ -41,7 +41,7 @@ let pathWithId pf f =
       return! f id ctx
     else return None } )
 
-let private sha = new SHA1Cng()
+let private sha = new SHA1Managed()
 
 /// Returns SHA1 hash of a given string formatted as Base64 string
 let sha1Hash (password:string) = 
@@ -59,7 +59,7 @@ let delay (f:unit -> WebPart) ctx =
 
 /// Cleanup url for title: "concurrent memoization" -> concurrent-memoization
 let generateCleanTitle title = 
-    System.Web.HttpUtility.UrlEncode(
+    System.Net.WebUtility.UrlEncode(
         System.Text.RegularExpressions.Regex.Replace(
             System.Text.RegularExpressions.Regex.Replace(title, "[^a-zA-Z0-9 ]", ""), 
             " +", "-"))
@@ -126,3 +126,10 @@ let parseNugetPackages = function
     s.Split([|","|], StringSplitOptions.RemoveEmptyEntries)
   |> Array.map (fun s -> s.Trim())
   | _ -> [| |]
+
+
+type Environment with
+  static member GetEnvironmentVariable(variable : string, defaultValue : string) =
+    match Environment.GetEnvironmentVariable variable with
+    | null -> defaultValue
+    | value -> value
