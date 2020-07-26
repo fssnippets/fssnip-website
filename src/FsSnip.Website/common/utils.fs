@@ -1,10 +1,9 @@
 module FsSnip.Utils
 
 open System
-open Microsoft.FSharp.Reflection
-open FSharp.CodeFormat
+open FSharp.Reflection
+open FSharp.Formatting.Literate
 open Suave
-open Suave.Http
 open Suave.Filters
 open System.Text
 open System.Security.Cryptography
@@ -127,6 +126,11 @@ let parseNugetPackages = function
   |> Array.map (fun s -> s.Trim())
   | _ -> [| |]
 
+module Literate =
+  let writeHtmlToString (prefix : string) (lineNumbers : bool) (doc : LiterateDocument) : string =
+    use sw = new System.IO.StringWriter()
+    Literate.WriteHtml(doc, sw, prefix = prefix, lineNumbers = lineNumbers, generateAnchors = true)
+    sw.ToString()
 
 type Environment with
   static member GetEnvironmentVariable(variable : string, defaultValue : string) =

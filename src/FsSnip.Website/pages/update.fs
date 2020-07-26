@@ -3,11 +3,9 @@
 open System
 open Suave
 open FsSnip
-open FSharp.Literate
 open FsSnip.Data
 open FsSnip.Utils
 open FsSnip.Snippet
-open FSharp.CodeFormat
 
 // -------------------------------------------------------------------------------------------------
 // Updates an existing snippet with a new data (provided the passcode matches)
@@ -60,7 +58,7 @@ let handlePost (snippetInfo:Data.Snippet) ctx mangledId id = async {
 
   let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
   let doc = Parser.parseScript form.Session form.Code nugetReferences
-  let html = Literate.WriteHtml(doc, "fs", true, true)
+  let html = Literate.writeHtmlToString "fs" true doc
   Parser.completeSession form.Session
   let newSnippetInfo = 
     { ID = id; Title = form.Title; Comment = defaultArg form.Description "";

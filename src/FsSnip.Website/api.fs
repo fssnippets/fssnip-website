@@ -7,8 +7,6 @@ open FsSnip.Utils
 open System
 open System.Text
 open FSharp.Data
-open FSharp.CodeFormat
-open FSharp.Literate
 
 open Suave
 open Suave.Operators
@@ -105,7 +103,7 @@ let putSnippet =
             let id = Data.getNextId()
             let session = (System.Guid.NewGuid().ToString())
             let doc = Parser.parseScript session json.Code json.Nugetpkgs
-            let html = Literate.WriteHtml(doc, "fs", true, true)
+            let html = Literate.writeHtmlToString "fs" true doc
             Data.insertSnippet 
               { ID = id; Title = json.Title; Comment = json.Description; Author = json.Author; 
                 Link = json.Link; Date = System.DateTime.UtcNow; Likes = 0; Private = false; 
@@ -135,7 +133,7 @@ let formatSnippets = request (fun r ->
         let session = Guid.NewGuid().ToString()
         let snippets = snippets |> String.concat ("\n(** " + session + " *)\n")
         let doc = Parser.parseScript session snippets packages
-        let html = Literate.WriteHtml(doc, prefix, lineNumbers)
+        let html = Literate.writeHtmlToString prefix lineNumbers doc
         let indexOfTips = html.IndexOf("<div class=\"tip\"")
         let html, tips = 
             if indexOfTips = -1 then html, ""
