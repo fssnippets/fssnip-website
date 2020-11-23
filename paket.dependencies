@@ -2,9 +2,9 @@ source https://api.nuget.org/v3/index.json
 framework: netcoreapp3.1
 storage: none
 
-nuget FSharp.Core ~> 4.7.0
-nuget FSharp.Formatting ~> 6.1
-nuget FSharp.Compiler.Service ~> 36.0
+nuget FSharp.Core ~> 5.0
+nuget FSharp.Formatting ~> 7.2
+nuget FSharp.Compiler.Service ~> 38.0
 
 nuget Suave ~> 2.5.6
 nuget Suave.DotLiquid ~> 2.5.6
