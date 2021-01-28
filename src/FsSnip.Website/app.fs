@@ -41,6 +41,7 @@ let createApp (config : SuaveConfig) (homeDir : string) =
         Like.webPart
         Update.webPart
         Insert.webPart
+        Test.webPart
 
         // REST API and RSS feeds
         Api.webPart

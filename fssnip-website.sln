@@ -52,6 +52,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{
 		templates\tag.html = templates\tag.html
 		templates\tags.html = templates\tags.html
 		templates\update.html = templates\update.html
+		templates\test.html = templates\test.html
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{04DC9280-9D4D-419A-859D-A86F57515EAB}"
