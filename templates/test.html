@@ -1,0 +1,87 @@
+{% extends "page.html" %}
+{% block head %}
+<title>Test Snippet | F# Snippets</title>
+{% endblock %}
+
+{% block customPageScripts %}
+<script>
+  $(document).ready(initChosen);
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+
+    <h3>Test code '{{ model.Details.Title }}'</h3>
+
+    <form class="form-horizontal" name="insert-form" id="insert-form"
+      action="/{{ model.Details.Id | format_id }}/update" method="post">
+      <div class="form-group">
+        <label for="title" class="col-sm-2 control-label">Title</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="title" name="title" value="{{ model.Details.Title }}">
+        </div>
+      </div>
+
+      {% if model.Details.Passcode != "" -%}
+      <div class="form-group">
+        <label for="passcode" class="col-sm-2 control-label">Passcode</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control" id="passcode" name="passcode" placeholder="Password">
+        </div>
+      </div>
+      {% endif -%}
+
+      <div class="public-details" {% if model.Details.Private -%}style="display:none" {% endif -%}>
+        <div class="form-group">
+          <label for="description" class="col-sm-2 control-label">Description</label>
+          <div class="col-sm-10">
+            <textarea class="form-control" name="description" rows="2"
+              id="description">{{ model.Details.Comment }}</textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="code" class="col-sm-2 control-label">Source code</label>
+        <div class="col-sm-10">
+          <textarea class="form-control" name="code" rows="15" id="code">{{ model.Raw }}</textarea>
+        </div>
+      </div>
+
+      <input type="hidden" name="session" value="{{ model.Session }}"></input>
+      <input type="hidden" name="hidden" id="hidden" value="{{ model.Details.Private }}"></input>
+    </form>
+  </div>
+</div>
+  
+<script>
+  
+  SEC_HTTPS = true;
+  SEC_BASE = "compilers.widgets.sphere-engine.com";
+
+  (function (d, s, id) {
+    SEC = window.SEC || (window.SEC = []);
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = (SEC_HTTPS ? "https" : "http") + "://" + SEC_BASE + "/static/sdk/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, "script", "sphere-engine-compilers-jssdk"));
+  SEC.ready = function (e) {
+    "loading" != document.readyState && "interactive" != document.readyState ? e() : window.addEventListener("load",
+      e)
+  };
+  SEC.ready(function() {
+        var sourceCode = document.getElementById('code').value;
+        var SECWidget = SEC.widget("example-widget");
+        SECWidget.loadSourceCode(124, sourceCode, "");
+        SECWidget.setCompilers([124]);
+    });
+</script>
+<div class="col-sm-10" data-id="example-widget" class="sec-widget" data-widget="3286855e6dc3a4ea6764fa7cf253106d" data-theme="dark"></div>
+
+{% endblock %}
