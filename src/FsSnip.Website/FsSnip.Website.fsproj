@@ -27,7 +27,6 @@
     <Compile Include="pages\author.fs" />
     <Compile Include="pages\rss.fs" />
     <Compile Include="pages\update.fs" />
-    <Compile Include="pages\test.fs" />
     <Compile Include="api.fs" />
     <Compile Include="app.fs" />
     <None Include="paket.references" />

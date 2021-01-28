@@ -2,7 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /pages/Update/
 Disallow: /*/update
-Disallow: /pages/Test/
-Disallow: /*/test
 Disallow: /embed/
 Host: fssnip.net
