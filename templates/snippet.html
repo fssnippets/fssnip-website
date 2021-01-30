@@ -56,15 +56,6 @@
     <button class="btn btn-default" data-action="show-link" data-snippetid="{{ model.Details.Id | format_id }}" data-toggle="modal" data-target="#linkModal" >Copy link</button>
     <button class="btn btn-default" data-action="show-source" data-snippetid="{{ model.Details.Id | format_id }}" data-toggle="modal" data-target="#linkModal" >Copy source</button>
     <a class="btn btn-default" href="/raw/{{ model.Details.Id | format_id }}">Raw view</a>
-    <div class="btn-group" role="group">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Load in
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a href="http://tryfs.net/snippets/snippet-{{ model.Details.Id | format_id }}">tryfs.net</a></li>
-      </ul>
-    </div>
     <a class="btn btn-default" href="/{{ model.Details.Id | format_id }}/update">New version</a>
   </div>
 
