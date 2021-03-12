@@ -1,12 +1,11 @@
 module FsSnip.Pages.Insert
 
 open System
-open System.IO
 open Suave
 open Suave.Operators
 open FsSnip
-open FSharp.CodeFormat
-open FSharp.Literate
+open FsSnip.Utils
+open FSharp.Formatting.CodeFormat
 
 // -------------------------------------------------------------------------------------------------
 // Snippet details and raw view pages
@@ -42,7 +41,7 @@ let insertSnippet ctx = async {
 
     let id = Data.getNextId()
     let doc = Parser.parseScript form.Session form.Code nugetReferences
-    let html = Literate.WriteHtml(doc, "fs", true, true)
+    let html = Literate.writeHtmlToString "fs" true doc
     Parser.completeSession form.Session
 
     // Insert as private or public, depending on the check box
@@ -101,7 +100,7 @@ let checkSnippet = request (fun request ->
       let nugetReferences = Utils.parseNugetPackages form.NugetPkgs
       let doc = Parser.parseScript form.Session form.Code nugetReferences
       let errors = 
-        [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Errors ->
+        [| for SourceError((l1,c1),(l2,c2),kind,msg) in doc.Diagnostics ->
             CheckResponse.Error([| l1; c1; l2; c2 |], (kind = ErrorKind.Error), msg) |]
 
       // Recommend tags based on the snippet contents

@@ -3,9 +3,8 @@
 open System
 open System.IO
 open Paket
-open FsSnip
-open FSharp.Literate
-open FSharp.CodeFormat
+open FSharp.Formatting.CodeFormat
+open FSharp.Formatting.Literate
 open FSharp.Compiler.SourceCodeServices
 open FSharp.Compiler.Text
 

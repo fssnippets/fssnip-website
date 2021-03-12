@@ -3,11 +3,9 @@ module FsSnip.Pages.Test
 open System
 open Suave
 open FsSnip
-open FSharp.Literate
 open FsSnip.Data
 open FsSnip.Utils
 open FsSnip.Snippet
-open FSharp.CodeFormat
 
 // -------------------------------------------------------------------------------------------------
 // Displays a test page for running the snippet
