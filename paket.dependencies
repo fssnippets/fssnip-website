@@ -3,7 +3,7 @@ framework: netcoreapp3.1
 storage: none
 
 nuget FSharp.Core ~> 5.0
-nuget FSharp.Formatting ~> 9.0.1
+nuget FSharp.Formatting ~> 11.1.0
 nuget FSharp.Compiler.Service ~> 39.0
 
 nuget Suave ~> 2.5.6
