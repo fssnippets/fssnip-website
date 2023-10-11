@@ -59,7 +59,14 @@ let defaultHomeDir = Path.Combine(__SOURCE_DIRECTORY__, "../..")
 
 [<EntryPoint>]
 let main _ =
-  let ipAddress = Environment.GetEnvironmentVariable("IP_ADDRESS", defaultValue = "127.0.0.1")
+  let siteNameVar = "WEBSITE_SITE_NAME"
+  let isLocal = Environment.GetEnvironmentVariable siteNameVar |> String.IsNullOrEmpty
+
+  if isLocal
+    then printfn "%s missing or empty: running locally" siteNameVar
+    else printfn "%s found: running in Azure" siteNameVar
+
+  let ipAddress = Environment.GetEnvironmentVariable("IP_ADDRESS", defaultValue = "0.0.0.0")
   let port = Environment.GetEnvironmentVariable("PORT", defaultValue = "5000") |> int
   let logLevel = Environment.GetEnvironmentVariable("LOG_LEVEL", defaultValue = "Info") |> LogLevel.ofString
   let homeDir = Environment.GetEnvironmentVariable("FSSNIP_HOME_DIR", defaultValue = defaultHomeDir)

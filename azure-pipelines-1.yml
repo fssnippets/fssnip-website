@@ -1,0 +1,37 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+variables:
+- group: fssnip-variable-group
+
+pool:
+  vmImage: ubuntu-latest
+
+resources:
+  pipelines:
+  - pipeline: fssnip
+    source: FsSnip Build And Deploy
+    trigger: true
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '7.0.x'
+
+# This restrictive global.json is needed for the build commands above, but it would prevent the .fsx in the next task from running.
+- script: rm global.json
+
+# The FSSNIP_STORAGE_CONNECTION_STRING variable should always contain a valid connection string.
+# It is set in the FsSnip Build and Deploy pipeline and sourced from the storage account deployed by that pipeline.
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Microsoft Azure Sponsorship - MVP(6de41c46-1ff3-440f-9f74-abf070a7e88e)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      $Env:fssnip_data_url="$(FSSNIP_DATA_URL)"
+      $Env:fssnip_storage_key="$(FSSNIP_STORAGE_CONNECTION_STRING)"
+      dotnet fsi upload-blobs.fsx

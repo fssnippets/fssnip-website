@@ -10,6 +10,7 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.DotNet
 open Fake.JavaScript
+open System
 open System.IO
 
 let project = "src/FsSnip.Website"
@@ -31,19 +32,19 @@ Target.create "minify" (fun _ ->
   Trace.trace "Node js web compilation thing"
 
   // Use nuget tools if windows, require already installed otherwise
-  let npmPath = Path.GetFullPath "packages/jstools/Npm.js/tools"
-  let nodePath = Path.GetFullPath "packages/jstools/Node.js"
+  //let npmPath = Path.GetFullPath "packages/jstools/Npm.js/tools"
+  //let nodePath = Path.GetFullPath "packages/jstools/Node.js"
 
-  if Environment.isWindows then
-    [ npmPath ; nodePath ; Environment.environVar "PATH" ]
-    |> String.concat ";"
-    |> Environment.setEnvironVar "PATH"
+  //if Environment.isWindows then
+  //  [ npmPath ; nodePath ; Environment.environVar "PATH" ]
+  //  |> String.concat ";"
+  //  |> Environment.setEnvironVar "PATH"
 
-  let getNpmFilePath (p : Npm.NpmParams) = 
-    if Environment.isWindows then Path.Combine(npmPath, "npm.cmd") else p.NpmFilePath
+  //let getNpmFilePath (p : Npm.NpmParams) = 
+  //  if Environment.isWindows then Path.Combine(npmPath, "npm.cmd") else p.NpmFilePath
 
-  Npm.install (fun p -> { p with NpmFilePath = getNpmFilePath p })
-  Npm.exec "run-script build" (fun p -> { p with NpmFilePath = getNpmFilePath p })
+  Npm.install (fun p -> p) //{ p with NpmFilePath = getNpmFilePath p })
+  Npm.exec "run-script build" (fun p -> p) //{ p with NpmFilePath = getNpmFilePath p })
 )
 
 Target.create "clean" (fun _ ->
@@ -70,7 +71,8 @@ Target.create "run" (fun _ ->
 
 Target.create "publish" (fun _ ->
     DotNet.publish (fun p ->
-        { p with 
+        printfn "Selfcontained: %A" p.SelfContained
+        { p with
             Configuration = config ()
             Runtime = runtime ()
             OutputPath = Some publishDirectory
@@ -81,27 +83,17 @@ let newName prefix f =
   Seq.initInfinite (sprintf "%s_%d" prefix) |> Seq.skipWhile (f >> not) |> Seq.head
 
 Target.create "deploy" (fun _ ->
-  // Pick a subfolder that does not exist
-  let wwwroot = "../wwwroot"
-  let subdir = newName "deploy" (fun sub -> not (Directory.Exists(wwwroot </> sub)))
-  let deployroot = wwwroot </> subdir
-  
-  // Clean & Deploy everything into new empty folder
-  Shell.cleanDir deployroot
-  Shell.cleanDir (deployroot </> "bin")
-  Shell.cleanDir (deployroot </> "templates")
-  Shell.cleanDir (deployroot </> "web")
-
-  Shell.copyRecursive publishDirectory (deployroot </> "bin") false |> ignore
-  Shell.copyRecursive "templates" (deployroot </> "templates") false |> ignore
-  Shell.copyRecursive "web" (deployroot </> "web") false |> ignore
-  let config = File.ReadAllText("web.config").Replace("%DEPLOY_SUBDIRECTORY%", subdir)
-  File.WriteAllText(wwwroot </> "web.config", config)
-
-  // Try to delete previous folders, but ignore failures
-  for dir in Directory.GetDirectories(wwwroot) do
-    if Path.GetFileName(dir) <> subdir then 
-      try Shell.cleanDir dir; Shell.deleteDir dir with _ -> ()
+  let wwwroot = "wwwroot"
+  Shell.mkdir wwwroot
+  Shell.cleanDir wwwroot
+  Shell.mkdir (wwwroot </> "templates")
+  Shell.mkdir (wwwroot </> "web")
+  printfn "copying binaries into wwwroot"
+  Shell.copyRecursive publishDirectory wwwroot false |> ignore
+  printfn "copying templates into wwwroot/templates"
+  Shell.copyRecursive "templates" (wwwroot </> "templates") false |> ignore
+  printfn "copying web into wwwroot/web"
+  Shell.copyRecursive "web" (wwwroot </> "web") false |> ignore
 )
 
 Target.create "root" ignore
@@ -116,4 +108,4 @@ Target.create "root" ignore
 ==> "publish"
 ==> "deploy"
 
-Target.runOrDefaultWithArguments "run"
+Target.runOrDefaultWithArguments "deploy"

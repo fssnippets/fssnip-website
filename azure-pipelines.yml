@@ -1,0 +1,92 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+parameters:
+- name: cancelPriorDeployments
+  displayName: Cancel prior deployments
+  type: boolean
+  default: true
+
+variables:
+- group: fssnip-variable-group
+- name: cancelPriorDeployments
+  value: '${{ parameters.cancelPriorDeployments }}'
+- name: devOpsApiVersion
+  value: 6.0
+
+trigger:
+- master
+
+stages:
+- stage: CancelPriorDeploymentsStage
+  displayName: Cancel prior deployments
+  condition: eq(variables.cancelPriorDeployments, 'true')
+  jobs:  
+  - job: CancelPriorDeploymentsJob
+    displayName: List builds, cancel prior in progress
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - checkout: none
+      - task: PowerShell@2
+        displayName: Powershell AzDO Invoke-RestMethod
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        inputs:
+          targetType: inline
+          script: |
+            $header = @{ Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN" }
+            $buildsUrl = "$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_apis/build/builds?api-version=$(devOpsApiVersion)"
+            Write-Host "GET $buildsUrl"
+            $builds = Invoke-RestMethod -Uri $buildsUrl -Method Get -Header $header
+            $buildsToStop = $builds.value.Where({ ($_.status -eq 'inProgress') -and ($_.definition.name -eq "$(Build.DefinitionName)") -and ($_.id -lt $(Build.BuildId)) })
+            ForEach($build in $buildsToStop)
+            {
+              $urlToCancel = "$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_apis/build/builds/$($build.id)?api-version=$(devOpsApiVersion)"
+              $body = @{ status = "cancelling" } | ConvertTo-Json
+              Write-Host "PATCH $urlToCancel"
+              Invoke-RestMethod -Uri $urlToCancel -Method Patch -Header $header -ContentType application/json -Body $body
+            }
+
+- stage: BuildAndDeploy
+  displayName: Build and deploy
+  jobs:
+  - job: BuildAndDeploy
+    displayName: Build And Deploy
+    pool:
+        vmImage: 'ubuntu-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        useGlobalJson: true
+    - script: dotnet tool restore
+    - script: dotnet paket restore
+    - script: dotnet fake run build.fsx %*
+
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '7.0.x'
+    # This restrictive global.json is needed for the build commands above, but it would prevent the .fsx in the next task from running.
+    - script: rm global.json
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Microsoft Azure Sponsorship - MVP(6de41c46-1ff3-440f-9f74-abf070a7e88e)'
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        # The deploy.fsx writes it's output to a text file, contents of that is then read into $key
+        # and the the last line command writes that value into the FSSNIP_STORAGE_CONNECTION_STRING variable
+        # in the fssnip-variable-group group. This is a hackaround to pass output of this pipeline to the next.
+        # The '> $null' disables echoing of the last line command output.
+        inlineScript: |
+          dotnet fsi deploy.fsx
+          $key=Get-Content 'deployed_storage_key.txt' -Raw
+          az pipelines variable-group variable update --group-id $(group_id) --name FSSNIP_STORAGE_CONNECTION_STRING --value $key --org https://dev.azure.com/compositional-it --project 'FSharp Snippets' > $null
+      env:
+        RECAPTCHA_SECRET: $(RECAPTCHA_SECRET)
+        AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+
