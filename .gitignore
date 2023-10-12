@@ -52,3 +52,6 @@ node_modules
 .node_repl_history
 
 .ionide/
+/wwwroot
+/.farmer
+/.paket
