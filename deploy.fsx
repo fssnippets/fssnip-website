@@ -5,7 +5,7 @@ open Farmer
 open Farmer.Arm
 open Farmer.Builders
 
-let appName = "fs-snip"
+let appName = "fssnip"
     
 let trimmedAppName = appName.Replace("-", "")
 let storageAccountName = $"{trimmedAppName}cit"
