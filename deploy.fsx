@@ -8,7 +8,7 @@ open Farmer.Builders
 let appName = "fssnip"
     
 let trimmedAppName = appName.Replace("-", "")
-let storageAccountName = $"{trimmedAppName}cit"
+let storageAccountName = $"{trimmedAppName}-storage"
 let artifactDir = "wwwroot"
 let blobContainerName = "data"
 let recaptchaSecret = Environment.GetEnvironmentVariable "RECAPTCHA_SECRET"
