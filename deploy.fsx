@@ -42,6 +42,7 @@ let app = webApp {
         "RECAPTCHA_SECRET", recaptchaSecret
     ]
     zip_deploy artifactDir
+    https_only
     always_on
 }
 
