@@ -70,7 +70,7 @@ let uploadDataAsync (folderSeparator:char) (dataFolderName:string) (containerCli
             |> Seq.map (fun fn ->
                 let blobClient = BlobClient(storageConnString, dataFolderName, fn)
                 let stream = File.OpenRead(Path.Combine [| dataFolderName; fn |]) :> Stream
-                blobClient.UploadAsync(stream) |> Async.AwaitTask |> Async.Ignore
+                blobClient.UploadAsync(stream, true) |> Async.AwaitTask |> Async.Ignore
                 )
 
         let! _ = containerClient.CreateIfNotExistsAsync() |> Async.AwaitTask
