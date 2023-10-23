@@ -49,6 +49,8 @@ let uploadDataAsync (folderSeparator:char) (dataFolderName:string) (containerCli
                 containerClient.GetBlobs().AsPages()
                 |> Seq.collect (fun page -> page.Values)
                 |> Seq.filter (fun blob -> blob.Deleted |> not)
+                // Throw index.json out of this set to make sure it is uploaded even if it exists already.
+                |> Seq.filter (fun blob -> blob.Name <> "index.json")
                 |> Seq.map (fun blob -> blob.Name)
                 |> Set.ofSeq
             
