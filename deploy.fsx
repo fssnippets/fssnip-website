@@ -47,7 +47,7 @@ let app = webApp {
 }
 
 let deployment = arm {
-    location Location.UKSouth
+    location Location.WestEurope
     add_resources [
         logAnalytics
         insights
