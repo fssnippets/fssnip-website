@@ -20,16 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.dockerignore = .dockerignore
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
-		build-and-deploy.cmd = build-and-deploy.cmd
-		build-and-run.cmd = build-and-run.cmd
-		build-only.cmd = build-only.cmd
-		build.cmd = build.cmd
 		build.fsx = build.fsx
 		build.sh = build.sh
-		deploy-only.cmd = deploy-only.cmd
 		deploy.fsx = deploy.fsx
 		Dockerfile = Dockerfile
 		fssnip-website.sln = fssnip-website.sln
+		fssnip.ps1 = fssnip.ps1
 		global.json = global.json
 		localfs.Dockerfile = localfs.Dockerfile
 		package.json = package.json
@@ -37,8 +33,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		paket.lock = paket.lock
 		Procfile = Procfile
 		README.md = README.md
-		run.cmd = run.cmd
-		upload-blobs.cmd = upload-blobs.cmd
 		upload-blobs.fsx = upload-blobs.fsx
 	EndProjectSection
 EndProject
