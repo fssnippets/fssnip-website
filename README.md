@@ -23,6 +23,17 @@ Once you're done with this, you can run `build.sh` (on Mac/Linux) or `build.cmd`
 run the web site. There is also a Visual Studio solution which can be started with <kbd>F5</kbd>,
 but the build scripts are nicer because they automatically watch for changes.
 
+Updated dev scripts
+-------------------
+
+There is now a PowerShell script `fssnip.ps1` which you can call with a parameter that is one of 4 commands:
+- **build** : Builds the project and copies it into ./wwwroot directory
+- **run**   : Runs the project locally
+- **deploy**: Deploys the project into Azure
+- **upload**: Downloads the blobs from [the data dump](https://github.com/fssnippets/fssnip-data/archive/master.zip) and uploads them to Azure blob storage
+
+For some of these commands to work, you will need to edit the script to provide 2 environment variables (Recaptcha secret and the target blob service connection string).
+
 Project architecture & structure
 --------------------------------
 
