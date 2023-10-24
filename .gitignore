@@ -55,3 +55,4 @@ node_modules
 /wwwroot
 /.farmer
 /.paket
+/deployed_storage_key.txt
