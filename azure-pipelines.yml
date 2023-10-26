@@ -70,7 +70,7 @@ stages:
 
     - task: AzureCLI@2
       inputs:
-        azureSubscription: 'Microsoft Azure Sponsorship - MVP(6de41c46-1ff3-440f-9f74-abf070a7e88e)'
+        azureSubscription: $(AZURE_SUBSCRIPTION)
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         # The deploy.fsx writes it's output to a text file, contents of that is then read into $key
