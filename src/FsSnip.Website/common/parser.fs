@@ -5,7 +5,7 @@ open System.IO
 open Paket
 open FSharp.Formatting.CodeFormat
 open FSharp.Formatting.Literate
-open FSharp.Compiler.SourceCodeServices
+open FSharp.Compiler.CodeAnalysis
 open FSharp.Compiler.Text
 
 // -------------------------------------------------------------------------------------------------
@@ -14,7 +14,6 @@ open FSharp.Compiler.Text
 // -------------------------------------------------------------------------------------------------
 
 let private framework = TargetProfile.SinglePlatform (FrameworkIdentifier.DotNetCoreApp DotNetCoreAppVersion.V3_1)
-let private formatAgent = lazy CodeFormat.CreateAgent()
 let private checker = lazy FSharpChecker.Create()
 
 let private defaultOptions = lazy(
@@ -76,9 +75,9 @@ let parseScript session (content : string) packages =
     |> Seq.map (encloseInQuotes "--reference:")
     |> String.concat " "
 
-  Literate.ParseScriptString(content, scriptFile, formatAgent.Value, compilerOptions)
+  Literate.ParseScriptString(content, scriptFile, fscOptions = compilerOptions)
 
-/// Marks parsing session as complete - basically deletes working forlder for the given session
+/// Marks parsing session as complete - basically deletes working folder for the given session
 let completeSession session =
   let folder = workingFolderFor session
   if Directory.Exists folder then
