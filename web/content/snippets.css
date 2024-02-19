@@ -57,6 +57,17 @@ div.tip {
   z-index:1;
   pointer-events:none;
 }
+/* this is a quick fix to html files now being generated with the tooltip class under this name. */
+div.fsdocs-tip {
+    background: #475b5f;
+    border-radius: 4px;
+    font: 11pt 'Droid Sans', arial, sans-serif;
+    padding: 6px 8px 6px 8px;
+    display: none;
+    color: #d1d1d1;
+    z-index: 1;
+    pointer-events: none;
+}
 table.pre pre {
   padding:0px;
   margin:0px;
