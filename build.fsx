@@ -1,8 +1,9 @@
-#r "paket: groupref build //"
-#load "./.fake/build.fsx/intellisense.fsx"
-#if !NETCOREAPP
-#r "System.IO.Compression.FileSystem.dll"
-#endif
+#r "nuget:MSBuild.StructuredLogger, 2.2.100"
+#r "nuget:Fake.Core.UserInput	    ,6.0.0"
+#r "nuget:Fake.Core.Target        ,6.0.0"
+#r "nuget:Fake.IO.FileSystem      ,6.0.0"
+#r "nuget:Fake.DotNet.Cli	        ,6.0.0"
+#r "nuget:Fake.JavaScript.Npm     ,6.0.0"
 
 open Fake.Core
 open Fake.Core.TargetOperators
@@ -12,6 +13,15 @@ open Fake.DotNet
 open Fake.JavaScript
 open System
 open System.IO
+
+#if !FAKE
+Environment.GetCommandLineArgs()
+|> Array.skip 2
+|> Array.toList
+|> Fake.Core.Context.FakeExecutionContext.Create false __SOURCE_FILE__
+|> Fake.Core.Context.RuntimeContext.Fake
+|> Fake.Core.Context.setExecutionContext
+#endif
 
 let project = "src/FsSnip.Website"
 let publishDirectory = "artifacts"

@@ -17,7 +17,7 @@ function Build-App {
     Restore-GlobalJson
     dotnet tool restore
     dotnet paket restore
-    dotnet fake run build.fsx
+    dotnet fsi build.fsx
 }
 
 function Start-App {

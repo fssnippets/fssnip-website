@@ -4,7 +4,6 @@ data/
 packages/
 obj/
 bin/
-.paket/paket.exe
 *.svclog
 temp
 web/content/dist
@@ -54,5 +53,7 @@ node_modules
 .ionide/
 /wwwroot
 /.farmer
-/.paket
 /deployed_storage_key.txt
+
+# JetBrains Rider
+.idea/

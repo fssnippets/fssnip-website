@@ -1,30 +1,13 @@
 source https://api.nuget.org/v3/index.json
-framework: netcoreapp3.1
+framework: net8.0
 storage: none
 
-nuget FSharp.Core ~> 5.0
-nuget FSharp.Formatting ~> 11.1.0
-nuget FSharp.Compiler.Service ~> 39.0
+nuget FSharp.Core == 8.0.100 # Pin to work around Paket.Core requiring v6
+nuget FSharp.Formatting ~> 20.0.0-alpha-016
 
 nuget Suave ~> 2.5.6
 nuget Suave.DotLiquid ~> 2.5.6
 nuget FSharp.Data ~> 3.3.3
 nuget DotLiquid ~> 2.0.314
-nuget Paket.Core ~> 5.0
+nuget Paket.Core ~> 8.0
 nuget WindowsAzure.Storage ~> 9.3.3
-
-group Build
-  source https://api.nuget.org/v3/index.json
-  storage: none
-
-  nuget Fake.Core.UserInput	    ~> 5.19.0
-  nuget Fake.Core.Target        ~> 5.19.0
-  nuget Fake.IO.FileSystem      ~> 5.19.0
-  nuget Fake.DotNet.Cli	        ~> 5.19.0
-  nuget Fake.JavaScript.Npm     ~> 5.19.0
-
-group JsTools
-  source https://api.nuget.org/v3/index.json
-
-  nuget Node.js
-  nuget Npm.js

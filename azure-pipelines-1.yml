@@ -14,7 +14,7 @@ steps:
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
-    version: '7.0.x'
+    version: '8.0.x'
 
 # This restrictive global.json is needed for the build commands above, but it would prevent the .fsx in the next task from running.
 - script: rm global.json
